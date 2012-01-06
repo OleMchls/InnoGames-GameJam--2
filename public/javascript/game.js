@@ -1,6 +1,7 @@
 hk.Game = function() {
 
 	var that = this;
+	var bg_pos = 0;
 
 	/**
 	 * Initializes the game.
@@ -9,23 +10,44 @@ hk.Game = function() {
 		Crafty.init(1000, 600);
 		Crafty.canvas.init();
 
-		// background
-		var bg = Crafty.e("2D, DOM, Image").
-			attr({w: Crafty.viewport.width, h: Crafty.viewport.height}).
-			image("/images/back_kitchen.jpg", "repeat").
-			bind("EnterFrame", function() {
-				//
-			});
+		that.scrollBackground();
 
-		var player = Crafty.e("2D, Canvas, Animate, Collision, Color, HTML, player")
-			.attr({w: 15, h: 15, x: 43, y: Crafty.viewport.height - 20 - 15, last_x: 0, last_y: 0, move: {left: false, right: false, up: false, down: false}})
-			.color('#FF0000')
+		Crafty.e("2D, DOM, Image, player")
+			.attr({w: 15, h: 15, x: 43, y: 43, moving_key: 0})
+			.image('/images/ship.png')
 			.css('z-index', 100)
 			.bind("KeyDown", function(e) {
-				//
+				this.moving_key = e.keyCode;
 			})
 			.bind("KeyUp", function(e) {
-				//
+				this.moving_key = 0;
+			})
+			.bind("EnterFrame", function() {
+				if (this.moving_key) {
+					switch (this.moving_key) {
+						case Crafty.keys.RIGHT_ARROW:
+							this.x += 10;
+							break;
+						case Crafty.keys.LEFT_ARROW:
+							this.x -= 10;
+							break;
+						case Crafty.keys.UP_ARROW:
+							this.y -= 10;
+							break;
+						case Crafty.keys.DOWN_ARROW:
+							this.y += 10;
+							break;
+						default:
+							break;
+					}
+				}
 			});
+	}
+
+	this.scrollBackground = function() {
+		bg_pos -= 2;
+		$('#cr-stage').css('background-position', bg_pos);
+
+		setTimeout(that.scrollBackground, 30);
 	}
 }
