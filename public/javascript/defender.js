@@ -14,6 +14,9 @@ hk.defender = function() {
 			}).
 			image("/images/dropzone.png")
 
+		$('#defender-controlls .enemy').bind('click.defender', function(event){
+			hk.defender.selectUnit(event.currentTarget.id);
+		})
 	}
 
 	this.selectUnit = function(unit_name) {
@@ -27,9 +30,5 @@ hk.defender = function() {
 }
 
 $('body').bind('crafty_loaded', function(){
-	var defender = new hk.defender();
-	defender.init();
-	$('#defender-controlls .enemy').bind('click.defender', function(event){
-		defender.selectUnit(event.currentTarget.id);
-	})
+
 })

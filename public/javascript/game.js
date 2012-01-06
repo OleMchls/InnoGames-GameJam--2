@@ -27,5 +27,8 @@ hk.Game = function() {
 			.bind("KeyUp", function(e) {
 				//
 			});
+
+		var defender = new hk.defender();
+		defender.init();
 	}
 }
