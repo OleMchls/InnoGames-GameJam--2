@@ -1,15 +1,15 @@
 !!!
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src='/javascript/crafty-min.js')
-    script(src='/socket.io/socket.io.js')
-    script
-        var socket = io.connect('http://localhost');
-            socket.on('news', function (data) {
-            console.log(data);
-            socket.emit('my other event', { my: 'data' });
-        });
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src='/javascript/crafty-min.js')
+		script(src='/socket.io/socket.io.js')
+		script
+			var socket = io.connect('http://localhost');
+				socket.on('news', function (data) {
+				console.log(data);
+				socket.emit('my other event', { my: 'data' });
+			});
 
-  body!= body
+	body!= body
