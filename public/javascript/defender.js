@@ -14,10 +14,14 @@ hk.defender = function() {
 			}).
 			image("/images/dropzone.png")
 
+		$('#defender-controlls .enemy').bind('click.defender', function(event){
+			that.selectUnit(event.currentTarget.id);
+		})
 	}
 
 	this.selectUnit = function(unit_name) {
 		selectedUnit = unit_name;
+		$('#selected-unit img').attr('src', '/images/'+unit_name+'.png')
 	}
 
 	this.spawUnit = function() {
@@ -25,11 +29,3 @@ hk.defender = function() {
 	}
 
 }
-
-$('body').bind('crafty_loaded', function(){
-	var defender = new hk.defender();
-	defender.init();
-	$('#defender-controlls .enemy').bind('click.defender', function(event){
-		defender.selectUnit(event.currentTarget.id);
-	})
-})

@@ -42,6 +42,9 @@ hk.Game = function() {
 					}
 				}
 			});
+
+		var defender = new hk.defender();
+		defender.init();
 	}
 
 	this.scrollBackground = function() {
