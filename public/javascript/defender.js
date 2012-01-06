@@ -28,7 +28,3 @@ hk.defender = function() {
 	}
 
 }
-
-$('body').bind('crafty_loaded', function(){
-
-})
