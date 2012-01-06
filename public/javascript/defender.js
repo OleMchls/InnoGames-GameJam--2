@@ -49,16 +49,60 @@ hk.defender = function() {
 				})
 				break;
 			case 'enemy2':
-				unit = new enemy1();
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML")
+				.attr({
+					w: 50,
+					h: 50,
+					x: x,
+					y: y
+				})
+				.image('/images/enemy1.png')
+				.css('z-index', 100)
+				.bind('EnterFrame', function() {
+					this.x -= 1;
+				})
 				break;
 			case 'enemy3':
-				unit = new enemy1();
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML")
+				.attr({
+					w: 50,
+					h: 50,
+					x: x,
+					y: y
+				})
+				.image('/images/enemy1.png')
+				.css('z-index', 100)
+				.bind('EnterFrame', function() {
+					this.x -= 1;
+				})
 				break;
 			case 'enemy4':
-				unit = new enemy1();
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML")
+				.attr({
+					w: 50,
+					h: 50,
+					x: x,
+					y: y
+				})
+				.image('/images/enemy1.png')
+				.css('z-index', 100)
+				.bind('EnterFrame', function() {
+					this.x -= 1;
+				})
 				break;
 			case 'enemy5':
-				unit = new enemy1();
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML")
+				.attr({
+					w: 50,
+					h: 50,
+					x: x,
+					y: y
+				})
+				.image('/images/enemy1.png')
+				.css('z-index', 100)
+				.bind('EnterFrame', function() {
+					this.x -= 1;
+				})
 				break;
 		}
 
