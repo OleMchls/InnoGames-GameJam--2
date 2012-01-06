@@ -16,5 +16,11 @@ html
 				socket.emit('my other event', { my: 'data' });
 			});
 		script(src='/javascript/game.js')
+		script
+			$(function() {
+				var game = new hk.Game();
+				game.init();
+			})
+
 
 	body!= body
