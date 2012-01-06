@@ -15,12 +15,13 @@ hk.defender = function() {
 			image("/images/dropzone.png")
 
 		$('#defender-controlls .enemy').bind('click.defender', function(event){
-			hk.defender.selectUnit(event.currentTarget.id);
+			that.selectUnit(event.currentTarget.id);
 		})
 	}
 
 	this.selectUnit = function(unit_name) {
 		selectedUnit = unit_name;
+		$('#selected-unit img').attr('src', '/images/'+unit_name+'.png')
 	}
 
 	this.spawUnit = function() {
