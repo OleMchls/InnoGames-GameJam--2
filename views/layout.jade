@@ -7,9 +7,10 @@ html
 		script(src='/javascript/jquery-ui-1.8.16.custom.min.js')
 		script(src='/javascript/crafty-min.js')
 		script(src='/socket.io/socket.io.js')
+		script(src='/javascript/game.js')
+		script(src='/javascript/communications.js')
 		script
 			var hk = {};
-		script
 			var socket = io.connect('http://localhost');
 				socket.on('news', function (data) {
 				console.log(data);
