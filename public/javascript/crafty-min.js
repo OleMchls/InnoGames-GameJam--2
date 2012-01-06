@@ -36,11 +36,11 @@
 var Crafty = function(selector) {
 		return new Crafty.fn.init(selector);
 	},
-	
+
 	GUID = 1, //GUID for entity IDs
 	FPS = 50,
 	frame = 1,
-	
+
 	components = {}, //map of components and their functions
 	entities = {}, //map of entities and their data
 	handlers = {}, //global event handlers
@@ -49,11 +49,11 @@ var Crafty = function(selector) {
 	tickID,
 
 	noSetter,
-	
-	loops = 0, 
+
+	loops = 0,
 	skipTicks = 1000 / FPS,
 	nextGameTick = (new Date).getTime(),
-	
+
 	slice = Array.prototype.slice,
 	rlist = /\s*,\s*/,
 	rspace = /\s+/;
@@ -77,7 +77,7 @@ Crafty.fn = Crafty.prototype = {
                 comps,
                 score,
                 i, l;
-			
+
 			if(selector === '*') {
 				for(e in entities) {
 					this[+e] = entities[e];
@@ -86,7 +86,7 @@ Crafty.fn = Crafty.prototype = {
 				this.length = elem;
 				return this;
 			}
-			
+
 			//multiple components OR
 			if(selector.indexOf(',') !== -1) {
 				or = true;
@@ -96,60 +96,60 @@ Crafty.fn = Crafty.prototype = {
 				and = true;
 				del = rspace;
 			}
-			
+
 			//loop over entities
 			for(e in entities) {
 				if(!entities.hasOwnProperty(e)) continue; //skip
 				current = entities[e];
-				
+
 				if(and || or) { //multiple components
-					comps = selector.split(del); 
+					comps = selector.split(del);
                     i = 0;
                     l = comps.length;
                     score = 0;
-					
+
 					for(;i<l;i++) //loop over components
-						if(current.__c[comps[i]]) score++; //if component exists add to score 
-					
+						if(current.__c[comps[i]]) score++; //if component exists add to score
+
 					//if anded comps and has all OR ored comps and at least 1
 					if(and && score === l || or && score > 0) this[elem++] = +e;
-					
+
 				} else if(current.__c[selector]) this[elem++] = +e; //convert to int
 			}
-			
+
 			//extend all common components
 			if(elem > 0 && !and && !or) this.extend(components[selector]);
 			if(comps && and) for(i=0;i<l;i++) this.extend(components[comps[i]]);
-			
+
 			this.length = elem; //length is the last index (already incremented)
-			
+
 		} else { //Select a specific entity
-			
+
 			if(!selector) { //nothin passed creates God entity
 				selector = 0;
 				if(!(selector in entities)) entities[selector] = this;
 			}
-			
+
 			//if not exists, return undefined
 			if(!(selector in entities)) {
 				this.length = 0;
 				return this;
 			}
-			
+
 			this[0] = selector;
 			this.length = 1;
-			
+
 			//update from the cache
 			if(!this.__c) this.__c = {};
-			
+
 			//update to the cache if NULL
-			if(!entities[selector]) entities[selector] = this; 
+			if(!entities[selector]) entities[selector] = this;
 			return entities[selector]; //return the cached selector
 		}
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.addComponent
 	* @comp Crafty Core
@@ -157,14 +157,14 @@ Crafty.fn = Crafty.prototype = {
 	* @param componentList - A string of components to add seperated by a comma `,`
 	* @sign public this .addComponent(String Component1[, .., String ComponentN])
 	* @param Component# - Component ID to add.
-	* Adds a component to the selected entities or entity. 
+	* Adds a component to the selected entities or entity.
 	*
-	* Components are used to extend the functionality of entities. 
-	* This means it will copy properties and assign methods to 
+	* Components are used to extend the functionality of entities.
+	* This means it will copy properties and assign methods to
 	* augment the functionality of the entity.
-	* 
-	* There are multiple methods of adding components. Passing a 
-	* string with a list of component names or passing multiple 
+	*
+	* There are multiple methods of adding components. Passing a
+	* string with a list of component names or passing multiple
 	* arguments with the component names.
 	*
 	* @example
@@ -176,7 +176,7 @@ Crafty.fn = Crafty.prototype = {
 	addComponent: function(id) {
 		var uninit = [], c = 0, ul, //array of components to init
             i = 0, l, comps;
-		
+
 		//add multiple arguments
 		if(arguments.length > 1) {
             l = arguments.length;
@@ -197,23 +197,23 @@ Crafty.fn = Crafty.prototype = {
 			this.__c[id] = true;
 			uninit.push(id);
 		}
-		
+
 		//extend the components
 		ul = uninit.length;
 		for(;c<ul;c++) {
 			comp = components[uninit[c]];
 			this.extend(comp);
-			
+
 			//if constructor, call it
 			if(comp && "init" in comp) {
 				comp.init.call(this);
 			}
 		}
-		
+
 		this.trigger("NewComponent", ul);
 		return this;
 	},
-	
+
 	/**@
 	* #.requires
 	* @comp Crafty Core
@@ -227,7 +227,7 @@ Crafty.fn = Crafty.prototype = {
 		var comps = list.split(rlist),
 			i = 0, l = comps.length,
 			comp;
-		
+
 		//loop over the list of components and add if needed
 		for(;i<l;++i) {
 			comp = comps[i];
@@ -236,14 +236,14 @@ Crafty.fn = Crafty.prototype = {
 
         return this;
 	},
-	
+
 	/**@
 	* #.removeComponent
 	* @comp Crafty Core
 	* @sign public this .removeComponent(String Component[, soft])
 	* @param component - Component to remove
 	* @param soft - Whether to soft remove it (defaults to `true`)
-	* Removes a component from an entity. A soft remove will only 
+	* Removes a component from an entity. A soft remove will only
 	* refrain `.has()` from returning true. Hard will remove all
 	* associated properties and methods.
 	*/
@@ -255,26 +255,26 @@ Crafty.fn = Crafty.prototype = {
 			}
 		}
 		delete this.__c[id];
-		
+
 		this.trigger("RemoveComponent", id);
 		return this;
 	},
-	
+
 	/**@
 	* #.has
 	* @comp Crafty Core
 	* @sign public Boolean .has(String component)
-	* Returns `true` or `false` depending on if the 
+	* Returns `true` or `false` depending on if the
 	* entity has the given component.
 	*
-	* For better performance, simply use the `.__c` object 
-	* which will be `true` if the entity has the component or 
+	* For better performance, simply use the `.__c` object
+	* which will be `true` if the entity has the component or
 	* will not exist (or be `false`).
 	*/
 	has: function(id) {
 		return !!this.__c[id];
 	},
-	
+
 	/**@
 	* #.attr
 	* @comp Crafty Core
@@ -300,7 +300,7 @@ Crafty.fn = Crafty.prototype = {
 			if(typeof key === "string") {
 				return this[key];
 			}
-			
+
 			//extend if object
 			this.extend(key);
 			this.trigger("Change", key); //trigger change event
@@ -314,7 +314,7 @@ Crafty.fn = Crafty.prototype = {
 		this.trigger("Change", change ); //trigger change event
 		return this;
 	},
-	
+
 	/**@
 	* #.toArray
 	* @comp Crafty Core
@@ -324,7 +324,7 @@ Crafty.fn = Crafty.prototype = {
 	toArray: function() {
 		return slice.call(this, 0);
 	},
-	
+
 	/**@
 	* #.delay
 	* @comp Crafty Core
@@ -352,7 +352,7 @@ Crafty.fn = Crafty.prototype = {
 		});
         return this;
 	},
-	
+
 	/**@
 	* #.bind
 	* @comp Crafty Core
@@ -361,15 +361,15 @@ Crafty.fn = Crafty.prototype = {
 	* @param callback - Method to execute when the event is triggered
 	* Attach the current entity (or entities) to listen for an event.
 	*
-	* Callback will be invoked when an event with the event name passed 
-	* is triggered. Depending on the event, some data may be passed 
+	* Callback will be invoked when an event with the event name passed
+	* is triggered. Depending on the event, some data may be passed
 	* via an argument to the callback function.
 	*
-	* The first argument is the event name (can be anything) whilst the 
-	* second argument is the callback. If the event has data, the 
+	* The first argument is the event name (can be anything) whilst the
+	* second argument is the callback. If the event has data, the
 	* callback should have an argument.
 	*
-	* Events are arbitrary and provide communication between components. 
+	* Events are arbitrary and provide communication between components.
 	* You can trigger or bind an event even if it doesn't exist yet.
 	* @example
 	* ~~~
@@ -388,33 +388,33 @@ Crafty.fn = Crafty.prototype = {
 		if(this.length === 1) {
 			if(!handlers[event]) handlers[event] = {};
 			var h = handlers[event];
-			
+
 			if(!h[this[0]]) h[this[0]] = []; //init handler array for entity
 			h[this[0]].push(fn); //add current fn
 			return this;
 		}
-		
+
 		this.each(function() {
 			//init event collection
 			if(!handlers[event]) handlers[event] = {};
 			var h = handlers[event];
-			
+
 			if(!h[this[0]]) h[this[0]] = []; //init handler array for entity
 			h[this[0]].push(fn); //add current fn
 		});
 		return this;
 	},
-	
+
 	/**@
 	* #.unbind
 	* @comp Crafty Core
 	* @sign public this .unbind(String eventName[, Function callback])
 	* @param eventName - Name of the event to unbind
 	* @param callback - Function to unbind
-	* Removes binding with an event from current entity. 
+	* Removes binding with an event from current entity.
 	*
-	* Passing an event name will remove all events binded to 
-	* that event. Passing a reference to the callback will 
+	* Passing an event name will remove all events binded to
+	* that event. Passing a reference to the callback will
 	* unbind only that callback.
 	* @see .bind, .trigger
 	*/
@@ -424,7 +424,7 @@ Crafty.fn = Crafty.prototype = {
 			//if no events, cancel
 			if(hdl && hdl[this[0]]) l = hdl[this[0]].length;
 			else return this;
-			
+
 			//if no function, delete all
 			if(!fn) {
 				delete hdl[this[0]];
@@ -439,22 +439,22 @@ Crafty.fn = Crafty.prototype = {
 				}
 			}
 		});
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.trigger
 	* @comp Crafty Core
 	* @sign public this .trigger(String eventName[, Object data])
 	* @param eventName - Event to trigger
 	* @param data - Arbitrary data that will be passed into every callback as an argument
-	* Trigger an event with arbitrary data. Will invoke all callbacks with 
+	* Trigger an event with arbitrary data. Will invoke all callbacks with
 	* the context (value of `this`) of the current entity object.
 	*
 	* *Note: This will only execute callbacks within the current entity, no other entity.*
 	*
-	* The first argument is the event name to trigger and the optional 
+	* The first argument is the event name to trigger and the optional
 	* second argument is the arbitrary event data. This can be absolutely anything.
 	*/
 	trigger: function(event, data) {
@@ -468,7 +468,7 @@ Crafty.fn = Crafty.prototype = {
 			}
 			return this;
 		}
-		
+
 		this.each(function() {
 			//find the handlers assigned to the event and entity
 			if(handlers[event] && handlers[event][this[0]]) {
@@ -480,15 +480,15 @@ Crafty.fn = Crafty.prototype = {
 		});
 		return this;
 	},
-	
+
 	/**@
 	* #.each
 	* @sign public this .each(Function method)
 	* @param method - Method to call on each iteration
-	* Iterates over found entities, calling a function for every entity. 
+	* Iterates over found entities, calling a function for every entity.
 	*
-	* The function will be called for every entity and will pass the index 
-	* in the iteration as an argument. The context (value of `this`) of the 
+	* The function will be called for every entity and will pass the index
+	* in the iteration as an argument. The context (value of `this`) of the
 	* function will be the current entity in the iteration.
 	* @example
 	* Destroy every second 2D entity
@@ -509,7 +509,7 @@ Crafty.fn = Crafty.prototype = {
 		}
 		return this;
 	},
-	
+
 	/**@
 	* #.clone
 	* @comp Crafty Core
@@ -523,17 +523,17 @@ Crafty.fn = Crafty.prototype = {
 			comp,
 			prop,
 			clone = Crafty.e();
-			
+
 		for(comp in comps) {
 			clone.addComponent(comp);
 		}
 		for(prop in this) {
 			clone[prop] = this[prop];
 		}
-		
+
 		return clone;
 	},
-	
+
 	/**@
 	* #.setter
 	* @comp Crafty Core
@@ -563,7 +563,7 @@ Crafty.fn = Crafty.prototype = {
 		}
         return this;
 	},
-	
+
 	/**@
 	* #.destroy
 	* @comp Crafty Core
@@ -592,15 +592,15 @@ Crafty.fn.init.prototype = Crafty.fn;
 */
 Crafty.extend = Crafty.fn.extend = function(obj) {
 	var target = this, key;
-	
+
 	//don't bother with nulls
 	if(!obj) return target;
-	
+
 	for(key in obj) {
 		if(target === obj[key]) continue; //handle circular reference
 		target[key] = obj[key];
 	}
-	
+
 	return target;
 };
 
@@ -627,14 +627,14 @@ Crafty.extend({
 	*/
 	init: function(w, h) {
 		Crafty.viewport.init(w,h);
-		
+
 		//call all arbitrary functions attached to onload
 		this.trigger("Load");
 		this.timer.init();
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #Crafty.stop
 	* @category Core
@@ -647,10 +647,10 @@ Crafty.extend({
 	stop: function() {
 		this.timer.stop();
 		Crafty.stage.elem.parentNode.removeChild(Crafty.stage.elem);
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #Crafty.pause
 	* @comp Core
@@ -661,7 +661,7 @@ Crafty.extend({
 	* Have an entity pause the game when it is clicked.
 	* ~~~
 	* button.bind("click", function() {
-	* 	Crafty.pause(); 
+	* 	Crafty.pause();
 	* });
 	* ~~~
 	*/
@@ -669,23 +669,23 @@ Crafty.extend({
 		if(!this._paused) {
 			this.trigger('Pause');
 			this._paused = true;
-			
+
 			Crafty.timer.stop();
 			Crafty.keydown = {};
 		} else {
 			this.trigger('Unpause');
 			this._paused = false;
-			
+
 			Crafty.timer.init();
 		}
 		return this;
 	},
-	
+
 	timer: {
 		prev: (+new Date),
 		current: (+new Date),
 		fps: 0,
-		
+
 		init: function() {
 			var onFrame = window.requestAnimationFrame ||
 					window.webkitRequestAnimationFrame ||
@@ -693,35 +693,35 @@ Crafty.extend({
 					window.oRequestAnimationFrame ||
 					window.msRequestAnimationFrame ||
 					null;
-			
+
 			if(onFrame) {
-				tick = function() { 
+				tick = function() {
 					Crafty.timer.step();
-					tickID = onFrame(tick); 
+					tickID = onFrame(tick);
 				}
-				
+
 				tick();
 			} else {
 				tick = setInterval(Crafty.timer.step, 1000 / FPS);
 			}
 		},
-		
+
 		stop: function() {
 			Crafty.trigger("CraftyStop");
-			
+
 			if(typeof tick === "number") clearInterval(tick);
-		
+
 			var onFrame = window.cancelRequestAnimationFrame ||
 					window.webkitCancelRequestAnimationFrame ||
 					window.mozCancelRequestAnimationFrame ||
 					window.oCancelRequestAnimationFrame ||
 					window.msCancelRequestAnimationFrame ||
 					null;
-						
+
 			if(onFrame) onFrame(tickID);
 			tick = null;
 		},
-		
+
 		step: function() {
 			loops = 0;
 			while((new Date).getTime() > nextGameTick) {
@@ -746,47 +746,47 @@ Crafty.extend({
 	* @param componentList - List of components to assign to new entity
 	* @sign public Entity Crafty.e(String component1[, .., String componentN])
 	* @param component# - Component to add
-	* Creates an entity. Any arguments will be applied in the same 
+	* Creates an entity. Any arguments will be applied in the same
 	* way `.addComponent()` is applied as a quick way to add components.
 	*
-	* From here, any component added will augment the functionality of 
-	* that entity by assigning the properties and methods to that entity. 
+	* From here, any component added will augment the functionality of
+	* that entity by assigning the properties and methods to that entity.
 	*/
 	e: function() {
 		var id = UID(), craft;
-		
+
 		entities[id] = null; //register the space
 		entities[id] = craft = Crafty(id);
-		
+
 		if(arguments.length > 0) {
 			craft.addComponent.apply(craft, arguments);
 		}
 		craft.addComponent("obj"); //every entity automatically assumes obj
-		
+
 		return craft;
 	},
-	
+
 	/**@
 	* #Crafty.c
 	* @category Core
 	* @sign public void Crafty.c(String name, Object component)
 	* @param name - Name of the component
 	* @param component - Object with the components properties and methods
-	* Creates a component where the first argument is the ID and the second 
+	* Creates a component where the first argument is the ID and the second
 	* is the object that will be inherited by entities.
 	*
-	* There is a convention for writing components. For instance properties or 
-	* methods that start with an underscore are considered private. A method called 
-	* `init` will automatically be called as soon as the component is added to 
-	* an entity. 
-	* 
-	* A method with the same name as the component ID is considered to be a constructor 
+	* There is a convention for writing components. For instance properties or
+	* methods that start with an underscore are considered private. A method called
+	* `init` will automatically be called as soon as the component is added to
+	* an entity.
+	*
+	* A method with the same name as the component ID is considered to be a constructor
 	* and is generally used when data is needed before executing.
 	*/
 	c: function(id, fn) {
 		components[id] = fn;
 	},
-	
+
 	/**@
 	* #Crafty.trigger
 	* @category Core, Events
@@ -802,7 +802,7 @@ Crafty.extend({
 		//loop over every object bound
 		for(h in hdl) {
 			if(!hdl.hasOwnProperty(h)) continue;
-			
+
 			//loop over every handler within object
 			for(i = 0, l = hdl[h].length; i < l; i++) {
 				if(hdl[h] && hdl[h][i]) {
@@ -816,7 +816,7 @@ Crafty.extend({
 			}
 		}
 	},
-	
+
 	/**@
 	* #Crafty.bind
 	* @category Core, Events
@@ -831,11 +831,11 @@ Crafty.extend({
 	bind: function(event, callback) {
 		if(!handlers[event]) handlers[event] = {};
 		var hdl = handlers[event];
-		
+
 		if(!hdl.global) hdl.global = [];
 		return hdl.global.push(callback) - 1;
 	},
-	
+
 	/**@
 	* #Crafty.unbind
 	* @category Core, Events
@@ -849,17 +849,17 @@ Crafty.extend({
 	*/
 	unbind: function(event, callback) {
 		var hdl = handlers[event], h, i, l;
-		
+
 		//loop over every object bound
 		for(h in hdl) {
 			if(!hdl.hasOwnProperty(h)) continue;
-			
+
 			//if passed the ID
 			if(typeof callback === "number") {
 				delete hdl[h][callback];
 				return true;
 			}
-			
+
 			//loop over every handler within object
 			for(i = 0, l = hdl[h].length; i < l; i++) {
 				if(hdl[h][i] === callback) {
@@ -868,10 +868,10 @@ Crafty.extend({
 				}
 			}
 		}
-		
+
 		return false;
 	},
-	
+
 	/**@
 	* #Crafty.frame
 	* @category Core
@@ -881,19 +881,19 @@ Crafty.extend({
 	frame: function() {
 		return frame;
 	},
-	
+
 	components: function() {
 		return components;
 	},
-	
+
 	isComp: function(comp) {
 		return comp in components;
 	},
-	
+
 	debug: function() {
 		return entities;
 	},
-	
+
 	/**@
 	* #Crafty.settings
 	* @category Core
@@ -902,7 +902,7 @@ Crafty.extend({
 	settings: (function() {
 		var states = {},
 			callbacks = {};
-		
+
 		return {
 			/**@
 			* #Crafty.settings.register
@@ -916,7 +916,7 @@ Crafty.extend({
 			register: function(setting, callback) {
 				callbacks[setting] = callback;
 			},
-			
+
 			/**@
 			* #Crafty.settings.modify
 			* @comp Crafty.settings
@@ -931,7 +931,7 @@ Crafty.extend({
 				callbacks[setting].call(states[setting], value);
 				states[setting] = value;
 			},
-			
+
 			/**@
 			* #Crafty.settings.get
 			* @comp Crafty.settings
@@ -946,7 +946,7 @@ Crafty.extend({
 			}
 		};
 	})(),
-	
+
 	clone: clone
 });
 
@@ -1020,7 +1020,7 @@ HashMap.prototype = {
 			i = 0,
 			j,
 			hash;
-			
+
 		//insert into all x buckets
 		for(i=keys.x1;i<=keys.x2;i++) {
 			//insert into all y buckets
@@ -1030,30 +1030,30 @@ HashMap.prototype = {
 				this.map[hash].push(obj);
 			}
 		}
-		
+
 		return entry;
 	},
-	
+
 	search: function(rect,filter) {
 		var keys = HashMap.key(rect),
 			i,j,
 			hash,
 			results = [];
-			
+
 			if(filter === undefined) filter = true; //default filter to true
-		
+
 		//search in all x buckets
 		for(i=keys.x1;i<=keys.x2;i++) {
 			//insert into all y buckets
 			for(j=keys.y1;j<=keys.y2;j++) {
 				hash =  i + SPACE + j;
-				
+
 				if(this.map[hash]) {
 					results = results.concat(this.map[hash]);
 				}
 			}
 		}
-		
+
 		if(filter) {
 			var obj, id, finalresult = [], found = {};
 			//add unique elements to lookup table with the entity ID as unique key
@@ -1061,40 +1061,40 @@ HashMap.prototype = {
 				obj = results[i];
 				if(!obj) continue; //skip if deleted
 				id = obj[0]; //unique ID
-				
+
 				//check if not added to hash and that actually intersects
 				if(!found[id] && obj.x < rect._x + rect._w && obj._x + obj._w > rect._x &&
-								 obj.y < rect._y + rect._h && obj._h + obj._y > rect._y) 
+								 obj.y < rect._y + rect._h && obj._h + obj._y > rect._y)
 				   found[id] = results[i];
 			}
-			
+
 			//loop over lookup table and copy to final array
 			for(obj in found) finalresult.push(found[obj]);
-			
+
 			return finalresult;
 		} else {
 			return results;
 		}
 	},
-	
+
 	remove: function(keys,obj) {
 		var i = 0, j, hash;
-			
+
 		if(arguments.length == 1) {
 			obj = keys;
 			keys = HashMap.key(obj);
-		}	
-		
+		}
+
 		//search in all x buckets
 		for(i=keys.x1;i<=keys.x2;i++) {
 			//insert into all y buckets
 			for(j=keys.y1;j<=keys.y2;j++) {
 				hash = i + SPACE + j;
-				
+
 				if(this.map[hash]) {
 					var cell = this.map[hash], m = 0, n = cell.length;
 					//loop over objs in cell and delete
-					for(;m<n;m++) if(cell[m] && cell[m][0] === obj[0]) 
+					for(;m<n;m++) if(cell[m] && cell[m][0] === obj[0])
 						cell.splice(m,1);
 				}
 			}
@@ -1197,7 +1197,7 @@ Crafty.c("2D", {
 	/**@
 	* #.rotation
 	* Set the rotation of your entity. Rotation takes degrees in a clockwise direction.
-	* It is important to note there is no limit on the rotation value. Setting a rotation 
+	* It is important to note there is no limit on the rotation value. Setting a rotation
 	* mod 360 will give the same rotation without reaching huge numbers.
 	*/
 	_rotation: 0,
@@ -1215,19 +1215,19 @@ Crafty.c("2D", {
 	*/
 	_visible: true,
 	_global: null,
-	
+
 	_origin: null,
 	_mbr: null,
 	_entry: null,
 	_children: null,
 	_parent: null,
 	_changed: false,
-	
+
 	init: function() {
 		this._global = this[0];
 		this._origin = {x: 0, y: 0};
 		this._children = [];
-		
+
 		if(Crafty.support.setter) {
 			//create getters and setters
 			this.__defineSetter__('x', function(v) { this._attr('_x',v); });
@@ -1238,7 +1238,7 @@ Crafty.c("2D", {
 			this.__defineSetter__('rotation', function(v) { this._attr('_rotation', v); });
 			this.__defineSetter__('alpha', function(v) { this._attr('_alpha',v); });
 			this.__defineSetter__('visible', function(v) { this._attr('_visible',v); });
-			
+
 			this.__defineGetter__('x', function() { return this._x; });
 			this.__defineGetter__('y', function() { return this._y; });
 			this.__defineGetter__('w', function() { return this._w; });
@@ -1249,34 +1249,34 @@ Crafty.c("2D", {
 			this.__defineGetter__('visible', function() { return this._visible; });
 			this.__defineGetter__('parent', function() { return this._parent; });
 			this.__defineGetter__('numChildren', function() { return this._children.length; });
-			
+
 		//IE9 supports Object.defineProperty
 		} else if(Crafty.support.defineProperty) {
-			
+
 			Object.defineProperty(this, 'x', { set: function(v) { this._attr('_x',v); }, get: function() { return this._x; } });
 			Object.defineProperty(this, 'y', { set: function(v) { this._attr('_y',v); }, get: function() { return this._y; } });
 			Object.defineProperty(this, 'w', { set: function(v) { this._attr('_w',v); }, get: function() { return this._w; } });
 			Object.defineProperty(this, 'h', { set: function(v) { this._attr('_h',v); }, get: function() { return this._h; } });
 			Object.defineProperty(this, 'z', { set: function(v) { this._attr('_z',v); }, get: function() { return this._z; } });
-			
-			Object.defineProperty(this, 'rotation', { 
-				set: function(v) { this._attr('_rotation',v); }, get: function() { return this._rotation; } 
+
+			Object.defineProperty(this, 'rotation', {
+				set: function(v) { this._attr('_rotation',v); }, get: function() { return this._rotation; }
 			});
-			
-			Object.defineProperty(this, 'alpha', { 
-				set: function(v) { this._attr('_alpha',v); }, get: function() { return this._alpha; } 
+
+			Object.defineProperty(this, 'alpha', {
+				set: function(v) { this._attr('_alpha',v); }, get: function() { return this._alpha; }
 			});
-			
-			Object.defineProperty(this, 'visible', { 
-				set: function(v) { this._attr('_visible',v); }, get: function() { return this._visible; } 
+
+			Object.defineProperty(this, 'visible', {
+				set: function(v) { this._attr('_visible',v); }, get: function() { return this._visible; }
 			});
-			
+
 		} else {
 			/*
-			if no setters, check on every frame for a difference 
+			if no setters, check on every frame for a difference
 			between this._(x|y|w|h|z...) and this.(x|y|w|h|z)
 			*/
-			
+
 			//set the public properties to the current private properties
 			this.x = this._x;
 			this.y = this._y;
@@ -1286,7 +1286,7 @@ Crafty.c("2D", {
 			this.rotation = this._rotation;
 			this.alpha = this._alpha;
 			this.visible = this._visible;
-			
+
 			//on every frame check for a difference in any property
 			this.bind("EnterFrame", function() {
 				//if there are differences between the public and private properties
@@ -1294,10 +1294,10 @@ Crafty.c("2D", {
 				   this.w !== this._w || this.h !== this._h ||
 				   this.z !== this._z || this.rotation !== this._rotation ||
 				   this.alpha !== this._alpha || this.visible !== this._visible) {
-					
+
 					//save the old positions
 					var old = this.mbr() || this.pos();
-					
+
 					//if rotation has changed, use the private rotate method
 					if(this.rotation !== this._rotation) {
 						this._rotate(this.rotation);
@@ -1311,11 +1311,11 @@ Crafty.c("2D", {
 							else if(this.h !== this._h) { mbr._h -= this.h - this._h; moved = true; }
 							else if(this.z !== this._z) { mbr._z -= this.z - this._z; moved = true; }
 						}
-						
+
 						//if the moved flag is true, trigger a move
 						if(moved) this.trigger("Move", old);
 					}
-					
+
 					//set the public properties to the private properties
 					this._x = this.x;
 					this._y = this.y;
@@ -1334,31 +1334,31 @@ Crafty.c("2D", {
 				}
 			});
 		}
-		
+
 		//insert self into the HashMap
 		this._entry = Crafty.map.insert(this);
-		
+
 		//when object changes, update HashMap
 		this.bind("Move", function(e) {
 			var area = this._mbr || this;
 			this._entry.update(area);
 			this._cascade(e);
 		});
-		
+
 		this.bind("Rotate", function(e) {
 			var old = this._mbr || this;
 			this._entry.update(old);
 			this._cascade(e);
 		});
-		
+
 		//when object is removed, remove from HashMap
 		this.bind("Remove", function() {
 			Crafty.map.remove(this);
-			
+
 			this.detach();
 		});
 	},
-	
+
 	/**
 	* Calculates the MBR when rotated with an origin point
 	*/
@@ -1367,15 +1367,15 @@ Crafty.c("2D", {
 			rad = theta * DEG_TO_RAD,
 			ct = Math.cos(rad), //cache the sin and cosine of theta
 			st = Math.sin(rad),
-			o = {x: this._origin.x + this._x, 
-				 y: this._origin.y + this._y}; 
-		
+			o = {x: this._origin.x + this._x,
+				 y: this._origin.y + this._y};
+
 		//if the angle is 0 and is currently 0, skip
 		if(!theta) {
 			this._mbr = null;
 			if(!this._rotation % 360) return;
 		}
-		
+
 		var x0 = o.x + (this._x - o.x) * ct + (this._y - o.y) * st,
 			y0 = o.y - (this._x - o.x) * st + (this._y - o.y) * ct,
 			x1 = o.x + (this._x + this._w - o.x) * ct + (this._y - o.y) * st,
@@ -1388,23 +1388,23 @@ Crafty.c("2D", {
 			miny = Math.floor(Math.min(y0,y1,y2,y3)),
 			maxx = Math.ceil(Math.max(x0,x1,x2,x3)),
 			maxy = Math.ceil(Math.max(y0,y1,y2,y3));
-			
+
 		this._mbr = {_x: minx, _y: miny, _w: maxx - minx, _h: maxy - miny};
-		
+
 		//trigger rotation event
 		var difference = this._rotation - v,
 			drad = difference * DEG_TO_RAD;
-			
+
 		this.trigger("Rotate", {
-			cos: Math.cos(drad), 
-			sin: Math.sin(drad), 
-			deg: difference, 
-			rad: drad, 
+			cos: Math.cos(drad),
+			sin: Math.sin(drad),
+			deg: difference,
+			rad: drad,
 			o: {x: o.x, y: o.y},
 			matrix: {M11: ct, M12: st, M21: -st, M22: ct}
 		});
 	},
-	
+
 	/**@
 	* #.area
 	* @comp 2D
@@ -1414,7 +1414,7 @@ Crafty.c("2D", {
 	area: function() {
 		return this._w * this._h;
 	},
-	
+
 	/**@
 	* #.intersect
 	* @comp 2D
@@ -1434,11 +1434,11 @@ Crafty.c("2D", {
 		} else {
 			rect = {x: x, y: y, w: w, h: h};
 		}
-		
+
 		return obj._x < rect.x + rect.w && obj._x + obj._w > rect.x &&
 			   obj._y < rect.y + rect.h && obj._h + obj._y > rect.y;
 	},
-	
+
 	/**@
 	* #.within
 	* @comp 2D
@@ -1458,11 +1458,11 @@ Crafty.c("2D", {
 		} else {
 			rect = {x: x, y: y, w: w, h: h};
 		}
-		
+
 		return rect.x <= this.x && rect.x + rect.w >= this.x + this.w &&
 				rect.y <= this.y && rect.y + rect.h >= this.y + this.h;
 	},
-	
+
 	/**@
 	* #.contains
 	* @comp 2D
@@ -1482,19 +1482,19 @@ Crafty.c("2D", {
 		} else {
 			rect = {x: x, y: y, w: w, h: h};
 		}
-		
+
 		return rect.x >= this.x && rect.x + rect.w <= this.x + this.w &&
 				rect.y >= this.y && rect.y + rect.h <= this.y + this.h;
 	},
-	
+
 	/**@
 	* #.pos
 	* @comp 2D
 	* @sign public Object .pos(void)
-	* Returns the x, y, w, h properties as a rect object 
+	* Returns the x, y, w, h properties as a rect object
 	* (a rect object is just an object with the keys _x, _y, _w, _h).
 	*
-	* The keys have an underscore prefix. This is due to the x, y, w, h 
+	* The keys have an underscore prefix. This is due to the x, y, w, h
 	* properties being merely setters and getters that wrap the properties with an underscore (_x, _y, _w, _h).
 	*/
 	pos: function() {
@@ -1505,7 +1505,7 @@ Crafty.c("2D", {
 			_h: (this._h)
 		};
 	},
-	
+
 	/**
 	* Returns the minimum bounding rectangle. If there is no rotation
 	* on the entity it will return the rect.
@@ -1519,14 +1519,14 @@ Crafty.c("2D", {
 			_h: (this._mbr._h)
 		};
 	},
-	
+
 	/**@
 	* #.isAt
 	* @comp 2D
 	* @sign public Boolean .isAt(Number x, Number y)
 	* @param x - X position of the point
 	* @param y - Y position of the point
-	* Determines whether a point is contained by the entity. Unlike other methods, 
+	* Determines whether a point is contained by the entity. Unlike other methods,
 	* an object can't be passed. The arguments require the x and y value
 	*/
 	isAt: function(x,y) {
@@ -1536,7 +1536,7 @@ Crafty.c("2D", {
 		return this.x <= x && this.x + this.w >= x &&
 			   this.y <= y && this.y + this.h >= y;
 	},
-	
+
 	/**@
 	* #.move
 	* @comp 2D
@@ -1550,15 +1550,15 @@ Crafty.c("2D", {
 		if(dir.charAt(0) === 's') this.y += by;
 		if(dir === 'e' || dir.charAt(1) === 'e') this.x += by;
 		if(dir === 'w' || dir.charAt(1) === 'w') this.x -= by;
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.shift
 	* @comp 2D
 	* @sign public this .shift(Number x, Number y, Number w, Number h)
-	* @param x - Amount to move X 
+	* @param x - Amount to move X
 	* @param y - Amount to move Y
 	* @param w - Amount to widen
 	* @param h - Amount to increase height
@@ -1570,10 +1570,10 @@ Crafty.c("2D", {
 		if(y) this.y += y;
 		if(w) this.w += w;
 		if(h) this.h += h;
-		
+
 		return this;
 	},
-	
+
 	/**
 	* Move or rotate all the children for this entity
 	*/
@@ -1593,20 +1593,20 @@ Crafty.c("2D", {
 				dy = rect._y - e._y,
 				dw = rect._w - e._w,
 				dh = rect._h - e._h;
-			
+
 			for(;i<l;++i) {
 				obj = children[i];
 				obj.shift(dx,dy,dw,dh);
 			}
 		}
 	},
-	
+
 	/**
 	* #.attach
 	* @comp 2D
 	* @sign public this .attach(Entity obj[, .., Entity objN])
 	* @param obj - Entity(s) to attach
-	* Attaches an entities position and rotation to current entity. When the current entity moves, 
+	* Attaches an entities position and rotation to current entity. When the current entity moves,
 	* the attached entity will move by the same amount.
 	*
 	* As many objects as wanted can be attached and a hierarchy of objects is possible by attaching.
@@ -1619,10 +1619,10 @@ Crafty.c("2D", {
 			obj._parent = this;
 			this._children.push(obj);
 		}
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.detach
 	* @comp 2D
@@ -1640,7 +1640,7 @@ Crafty.c("2D", {
 			this._children = [];
 			return this;
 		}
-		
+
 		//if obj passed, find the handler and unbind
 		for (var i = 0; i < this._children.length; i++) {
 			if (this._children[i] == obj) {
@@ -1648,10 +1648,10 @@ Crafty.c("2D", {
 			}
 		}
 		obj._parent = null;
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.origin
 	* @comp 2D
@@ -1660,7 +1660,7 @@ Crafty.c("2D", {
 	* @param y - Pixel value of origin offset on the Y axis
 	* @sign public this .origin(String offset)
 	* @param offset - Combination of center, top, bottom, middle, left and right
-	* Set the origin point of an entity for it to rotate around. 
+	* Set the origin point of an entity for it to rotate around.
 	* @example
 	* ~~~
 	* this.origin("top left")
@@ -1681,25 +1681,25 @@ Crafty.c("2D", {
 				if(cmd[0] === "top") y = 0;
 				else if(cmd[0] === "bottom") y = this._h;
 				else if(cmd[0] === "middle" || cmd[1] === "center" || cmd[1] === "centre") y = this._h / 2;
-				
+
 				if(cmd[1] === "center" || cmd[1] === "centre" || cmd[1] === "middle") x = this._w / 2;
 				else if(cmd[1] === "left") x = 0;
 				else if(cmd[1] === "right") x = this._w;
 			}
 		}
-		
+
 		this._origin.x = x;
 		this._origin.y = y;
-		
+
 		return this;
 	},
-	
+
 	flip: function(dir) {
 		dir = dir || "X";
 		this["_flip"+dir] = true;
 		this.trigger("Change");
 	},
-	
+
 	/**
 	* Method for rotation rather than through a setter
 	*/
@@ -1707,20 +1707,20 @@ Crafty.c("2D", {
 		//assume event data origin
 		this._origin.x = e.o.x - this._x;
 		this._origin.y = e.o.y - this._y;
-		
+
 		//modify through the setter method
 		this._attr('_rotation', e.theta);
 	},
-	
+
 	/**
-	* Setter method for all 2D properties including 
+	* Setter method for all 2D properties including
 	* x, y, w, h, alpha, rotation and visible.
 	*/
-	_attr: function(name,value) {	
+	_attr: function(name,value) {
 		//keep a reference of the old positions
 		var pos = this.pos(),
 			old = this.mbr() || pos;
-		
+
 		//if rotation, use the rotate method
 		if(name === '_rotation') {
 			this._rotate(value);
@@ -1737,10 +1737,10 @@ Crafty.c("2D", {
 			this[name] = value;
 			this.trigger("Move", old);
 		}
-		
+
 		//everything will assume the value
 		this[name] = value;
-		
+
 		//trigger a change
 		this.trigger("Change", old);
 	}
@@ -1750,7 +1750,7 @@ Crafty.c("Physics", {
 	_gravity: 0.4,
 	_friction: 0.2,
 	_bounce: 0.5,
-	
+
 	gravity: function(gravity) {
 		this._gravity = gravity;
 	}
@@ -1763,7 +1763,7 @@ Crafty.c("Gravity", {
 	_anti: null,
 
 	init: function() {
-		this.requires("2D");		
+		this.requires("2D");
 	},
 
 	gravity: function(comp) {
@@ -1831,14 +1831,14 @@ Crafty.c("Gravity", {
 /**@
 * #Crafty.Polygon
 * @category 2D
-* Polygon object used for hitboxes and click maps. Must pass an Array for each point as an 
+* Polygon object used for hitboxes and click maps. Must pass an Array for each point as an
 * argument where index 0 is the x position and index 1 is the y position.
 *
 * For example one point of a polygon will look like this: `[0,5]` where the `x` is `0` and the `y` is `5`.
 *
 * Can pass an array of the points or simply put each point as an argument.
 *
-* When creating a polygon for an entity, each point should be offset or relative from the entities `x` and `y` 
+* When creating a polygon for an entity, each point should be offset or relative from the entities `x` and `y`
 * (don't include the absolute values as it will automatically calculate this).
 */
 Crafty.polygon = function(poly) {
@@ -1874,7 +1874,7 @@ Crafty.polygon.prototype = {
 
 		return c;
 	},
-	
+
 	/**@
 	* #.shift
 	* @comp Crafty.Polygon
@@ -1897,17 +1897,17 @@ Crafty.polygon.prototype = {
 			current[1] += y;
 		}
 	},
-	
+
 	rotate: function(e) {
-		var i = 0, l = this.points.length, 
+		var i = 0, l = this.points.length,
 			current, x, y;
-			
+
 		for(;i<l;i++) {
 			current = this.points[i];
-			
+
 			x = e.o.x + (current[0] - e.o.x) * e.cos + (current[1] - e.o.y) * e.sin;
 			y = e.o.y - (current[0] - e.o.x) * e.sin + (current[1] - e.o.y) * e.cos;
-			
+
 			current[0] = Math.floor(x);
 			current[1] = Math.floor(y);
 		}
@@ -1927,18 +1927,18 @@ Crafty.polygon.prototype = {
 * new Crafty.circle(centerX, centerY, radius);
 * ~~~
 *
-* When creating a circle for an entity, each point should be offset or relative from the entities `x` and `y` 
+* When creating a circle for an entity, each point should be offset or relative from the entities `x` and `y`
 * (don't include the absolute values as it will automatically calculate this).
 */
 Crafty.circle = function(x, y, radius) {
 	this.x = x;
 	this.y = y;
 	this.radius = radius;
-	
+
 	// Creates an octogon that aproximate the circle for backward compatibility.
 	this.points = [];
 	var theta;
-	
+
 	for(var i = 0; i < 8; i++) {
 		theta = i * Math.PI / 4;
 		this.points[i] = [Math.sin(theta) * radius, Math.cos(theta) * radius];
@@ -1968,7 +1968,7 @@ Crafty.circle.prototype = {
 
 		return (deltaX * deltaX + deltaY * deltaY) < (radius * radius);
 	},
-	
+
 	/**@
 	* #.shift
 	* @comp Crafty.Circle
@@ -1986,7 +1986,7 @@ Crafty.circle.prototype = {
 	shift: function(x,y) {
 		this.x += x;
 		this.y += y;
-		
+
 		var i = 0, l = this.points.length, current;
 		for(;i<l;i++) {
 			current = this.points[i];
@@ -1994,7 +1994,7 @@ Crafty.circle.prototype = {
 			current[1] += y;
 		}
 	},
-	
+
 	rotate: function() {
 		// We are a circle, we don't have to rotate :)
 	}
@@ -2012,7 +2012,7 @@ Crafty.matrix.prototype = {
 		if (this.width != other.height) {
 			return;
 		}
-	 
+
 		var result = [];
 		for (var i = 0; i < this.height; i++) {
 			result[i] = [];
@@ -2024,10 +2024,10 @@ Crafty.matrix.prototype = {
 				result[i][j] = sum;
 			}
 		}
-		return new Crafty.matrix(result); 
+		return new Crafty.matrix(result);
 	},
-	
-	
+
+
 	e: function(row, col) {
 		//test if out of bounds
 		if(row < 1 || row > this.mtx.length || col < 1 || col > this.mtx[0].length) return null;
@@ -2041,22 +2041,22 @@ Crafty.matrix.prototype = {
 * Component to detect collision between any two convex polygons.
 */
 Crafty.c("Collision", {
-	
+
     init: function() {
         this.requires("2D");
     },
-    
+
 	/**@
 	* #.collision
 	* @comp Collision
 	* @sign public this .collision([Crafty.Polygon polygon])
 	* @param polygon - Crafty.Polygon object that will act as the hit area
-	* Constructor takes a polygon to use as the hit area. If left empty, 
+	* Constructor takes a polygon to use as the hit area. If left empty,
 	* will create a rectangle polygon based on the x, y, w, h dimensions.
 	*
 	* This must be called before any .hit() or .onhit() methods.
 	*
-	* The hit area (polygon) must be a convex shape and not concave 
+	* The hit area (polygon) must be a convex shape and not concave
 	* for the collision detection to work.
 	* @example
 	* ~~~
@@ -2068,7 +2068,7 @@ Crafty.c("Collision", {
 	*/
 	collision: function(poly) {
 		var area = this._mbr || this;
-		
+
 		//if no polygon presented, create a square
 		if(!poly) {
 			poly = new Crafty.polygon([0,0],[area._w,0],[area._w,area._h],[0,area._h]);
@@ -2076,20 +2076,20 @@ Crafty.c("Collision", {
 		this.map = poly;
 		this.attach(this.map);
 		this.map.shift(area._x, area._y);
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.hit
 	* @comp Collision
 	* @sign public Boolean/Array hit(String component)
 	* @param component - Check collision with entities that has this component
 	* @return `false` if no collision. If a collision is detected, returns an Array of objects that are colliding.
-	* Takes an argument for a component to test collision for. If a collision is found, an array of 
+	* Takes an argument for a component to test collision for. If a collision is found, an array of
 	* every object in collision along with the amount of overlap is passed.
 	*
-	* If no collision, will return false. The return collision data will be an Array of Objects with the 
+	* If no collision, will return false. The return collision data will be an Array of Objects with the
 	* type of collision used, the object collided and if the type used was SAT (a polygon was used as the hitbox) then an amount of overlap.
 	* ~~~
 	* [{
@@ -2098,7 +2098,7 @@ Crafty.c("Collision", {
 	*    overlap: [number]
 	* }]
 	* ~~~
-	* `MBR` is your standard axis aligned rectangle intersection (`.intersect` in the 2D component). 
+	* `MBR` is your standard axis aligned rectangle intersection (`.intersect` in the 2D component).
 	* `SAT` is collision between any convex polygon.
 	* @see .onHit, 2D
 	*/
@@ -2110,25 +2110,25 @@ Crafty.c("Collision", {
 			id, obj, oarea, key,
 			hasMap = ('map' in this && 'containsPoint' in this.map),
 			finalresult = [];
-		
+
 		if(!l) {
 			return false;
 		}
-		
+
 		for(;i<l;++i) {
 			obj = results[i];
 			oarea = obj._mbr || obj; //use the mbr
-			
+
 			if(!obj) continue;
 			id = obj[0];
-			
+
 			//check if not added to hash and that actually intersects
-			if(!dupes[id] && this[0] !== id && obj.__c[comp] && 
+			if(!dupes[id] && this[0] !== id && obj.__c[comp] &&
 							 oarea._x < area._x + area._w && oarea._x + oarea._w > area._x &&
-							 oarea._y < area._y + area._h && oarea._h + oarea._y > area._y) 
+							 oarea._y < area._y + area._h && oarea._h + oarea._y > area._y)
 			   dupes[id] = obj;
 		}
-		
+
 		for(key in dupes) {
 			obj = dupes[key];
 
@@ -2141,14 +2141,14 @@ Crafty.c("Collision", {
 				finalresult.push({obj: obj, type: "MBR"});
 			}
 		}
-		
+
 		if(!finalresult.length) {
 			return false;
 		}
-		
+
 		return finalresult;
 	},
-	
+
 	/**@
 	* #.onHit
 	* @comp Collision
@@ -2175,7 +2175,7 @@ Crafty.c("Collision", {
 		});
 		return this;
 	},
-	
+
 	_SAT: function(poly1, poly2) {
 		var points1 = poly1.points,
 			points2 = poly2.points,
@@ -2192,84 +2192,84 @@ Crafty.c("Collision", {
 			dot,
 			nextPoint,
 			currentPoint;
-		
+
 		//loop through the edges of Polygon 1
 		for(;i<l;i++) {
 			nextPoint = points1[(i==l-1 ? 0 : i+1)];
 			currentPoint = points1[i];
-			
+
 			//generate the normal for the current edge
 			normal.x = -(nextPoint[1] - currentPoint[1]);
 			normal.y = (nextPoint[0] - currentPoint[0]);
-			
+
 			//normalize the vector
 			length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
 			normal.x /= length;
 			normal.y /= length;
-			
+
 			//default min max
 			min1 = min2 = -1;
 			max1 = max2 = -1;
-			
+
 			//project all vertices from poly1 onto axis
 			for(j = 0; j < l; ++j) {
 				dot = points1[j][0] * normal.x + points1[j][1] * normal.y;
 				if(dot > max1 || max1 === -1) max1 = dot;
 				if(dot < min1 || min1 === -1) min1 = dot;
 			}
-			
+
 			//project all vertices from poly2 onto axis
 			for(j = 0; j < k; ++j) {
 				dot = points2[j][0] * normal.x + points2[j][1] * normal.y;
 				if(dot > max2 || max2 === -1) max2 = dot;
 				if(dot < min2 || min2 === -1) min2 = dot;
 			}
-			
+
 			//calculate the minimum translation vector should be negative
 			interval = (min1 < min2) ? min2 - max1 : min1 - max2;
-			
+
 			//exit early if positive
 			if(interval > 0) {
 				return false;
 			}
 			if(interval > MTV || MTV === null) MTV = interval;
 		}
-		
+
 		//loop through the edges of Polygon 1
 		for(i=0;i<k;i++) {
 			nextPoint = points2[(i==k-1 ? 0 : i+1)];
 			currentPoint = points2[i];
-			
+
 			//generate the normal for the current edge
 			normal.x = -(nextPoint[1] - currentPoint[1]);
 			normal.y = (nextPoint[0] - currentPoint[0]);
-			
+
 			//normalize the vector
 			length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
 			normal.x /= length;
 			normal.y /= length;
-			
+
 			//default min max
 			min1 = min2 = -1;
 			max1 = max2 = -1;
-			
+
 			//project all vertices from poly1 onto axis
 			for(j = 0; j < l; ++j) {
 				dot = points1[j][0] * normal.x + points1[j][1] * normal.y;
 				if(dot > max1 || max1 === -1) max1 = dot;
 				if(dot < min1 || min1 === -1) min1 = dot;
 			}
-			
+
 			//project all vertices from poly2 onto axis
 			for(j = 0; j < k; ++j) {
 				dot = points2[j][0] * normal.x + points2[j][1] * normal.y;
 				if(dot > max2 || max2 === -1) max2 = dot;
 				if(dot < min2 || min2 === -1) min2 = dot;
 			}
-			
+
 			//calculate the minimum translation vector should be negative
 			interval = (min1 < min2) ? min2 - max1 : min1 - max2;
-			
+
 			//exit early if positive
 			if(interval > 0) {
 				return false;
@@ -2280,7 +2280,7 @@ Crafty.c("Collision", {
         MN = {x: normal.x, y: normal.y};
       }
 		}
-		
+
 		return {overlap: MTV, normal: MN};
 	}
 });
@@ -2304,14 +2304,14 @@ Crafty.c("DOM", {
 		Crafty.stage.inner.appendChild(this._element);
 		this._element.style.position = "absolute";
 		this._element.id = "ent" + this[0];
-		
+
 		this.bind("Change", function() {
 			if(!this._changed) {
 				this._changed = true;
 				Crafty.DrawManager.add(this);
 			}
 		});
-		
+
 		function updateClass() {
 			var i = 0, c = this.__c, str = "";
 			for(i in c) {
@@ -2320,12 +2320,12 @@ Crafty.c("DOM", {
 			str = str.substr(1);
 			this._element.className = str;
 		}
-		
+
 		this.bind("NewComponent", updateClass).bind("RemoveComponent", updateClass);
-		
+
 		if(Crafty.support.prefix === "ms" && Crafty.support.version < 9) {
 			this._filters = {};
-			
+
 			this.bind("Rotate", function(e) {
 				var m = e.matrix,
 					elem = this._element.style,
@@ -2333,14 +2333,14 @@ Crafty.c("DOM", {
 					M12 = m.M12.toFixed(8),
 					M21 = m.M21.toFixed(8),
 					M22 = m.M22.toFixed(8);
-				
+
 				this._filters.rotation = "progid:DXImageTransform.Microsoft.Matrix(M11="+M11+", M12="+M12+", M21="+M21+", M22="+M22+",sizingMethod='auto expand')";
 			});
 		}
-		
+
 		this.bind("Remove", this.undraw);
 	},
-	
+
 	/**@
 	* #.DOM
 	* @comp DOM
@@ -2356,7 +2356,7 @@ Crafty.c("DOM", {
 		}
 		return this;
 	},
-	
+
 	/**@
 	* #.draw
 	* @comp DOM
@@ -2370,10 +2370,10 @@ Crafty.c("DOM", {
 			co = {x: coord[0], y: coord[1] },
 			prefix = Crafty.support.prefix,
 			trans = [];
-		
+
 		if(!this._visible) style.visibility = "hidden";
 		else style.visibility = "visible";
-		
+
 /*<<<<<<< HEAD
 		//utilize CSS3 if supported
 		if(Crafty.support.css3dtransform) {
@@ -2382,7 +2382,7 @@ Crafty.c("DOM", {
 			style.left = ~~(this._x) + "px";
 			style.top = ~~(this._y) + "px";
 		}
-		
+
 =======*/
 		if(Crafty.support.css3dtransform) trans.push("translate3d("+(~~this._x)+"px,"+(~~this._y)+"px,0)");
 		else {
@@ -2394,10 +2394,10 @@ Crafty.c("DOM", {
 		style.width = ~~(this._w) + "px";
 		style.height = ~~(this._h) + "px";
 		style.zIndex = this._z;
-		
+
 		style.opacity = this._alpha;
 		style[prefix+"Opacity"] = this._alpha;
-		
+
 		//if not version 9 of IE
 		if(prefix === "ms" && Crafty.support.version < 9) {
 			//for IE version 8, use ImageTransform filter
@@ -2408,7 +2408,7 @@ Crafty.c("DOM", {
 				this._filters.alpha = "alpha(opacity="+(this._alpha*100)+")";
 			}
 		}
-		
+
 		if(this._mbr) {
 			var origin = this._origin.x + "px " + this._origin.y + "px";
 			style.transformOrigin = origin;
@@ -2416,46 +2416,46 @@ Crafty.c("DOM", {
 			if(Crafty.support.css3dtransform) trans.push("rotateZ("+this._rotation+"deg)");
 			else trans.push("rotate("+this._rotation+"deg)");
 		}
-		
+
 		if(this._flipX) {
 			trans.push("scaleX(-1)");
 			if(prefix === "ms" && Crafty.support.version < 9) {
 				this._filters.flipX = "fliph";
 			}
 		}
-		
+
 		if(this._flipY) {
 			trans.push("scaleY(-1)");
 			if(prefix === "ms" && Crafty.support.version < 9) {
 				this._filters.flipY = "flipv";
 			}
 		}
-		
+
 		//apply the filters if IE
 		if(prefix === "ms" && Crafty.support.version < 9) {
 			this.applyFilters();
 		}
-		
+
 		style.transform = trans.join(" ");
 		style[prefix+"Transform"] = trans.join(" ");
-		
+
 		this.trigger("Draw", {style: style, type: "DOM", co: co});
-		
+
 		return this;
 	},
-	
+
 	applyFilters: function() {
 		this._element.style.filter = "";
 		var str = "";
-		
+
 		for(var filter in this._filters) {
 			if(!this._filters.hasOwnProperty(filter)) continue;
 			str += this._filters[filter] + " ";
 		}
-		
+
 		this._element.style.filter = str;
 	},
-	
+
 	/**@
 	* #.undraw
 	* @comp DOM
@@ -2466,7 +2466,7 @@ Crafty.c("DOM", {
 		Crafty.stage.inner.removeChild(this._element);
 		return this;
 	},
-	
+
 	/**@
 	* #.css
 	* @comp DOM
@@ -2475,7 +2475,7 @@ Crafty.c("DOM", {
 	* @param value - Value to give the CSS property
 	* @sign public * css(Object map)
 	* @param map - Object where the key is the CSS property and the value is CSS value
-	* Apply CSS styles to the element. 
+	* Apply CSS styles to the element.
 	*
 	* Can pass an object where the key is the style property and the value is style value.
 	*
@@ -2493,17 +2493,17 @@ Crafty.c("DOM", {
 	*/
 	css: function(obj, value) {
 		var key,
-			elem = this._element, 
+			elem = this._element,
 			val,
 			style = elem.style;
-		
+
 		//if an object passed
 		if(typeof obj === "object") {
 			for(key in obj) {
 				if(!obj.hasOwnProperty(key)) continue;
 				val = obj[key];
 				if(typeof val === "number") val += 'px';
-				
+
 				style[Crafty.DOM.camelize(key)] = val;
 			}
 		} else {
@@ -2515,9 +2515,9 @@ Crafty.c("DOM", {
 				return Crafty.DOM.getStyle(elem, obj);
 			}
 		}
-		
+
 		this.trigger("Change");
-		
+
 		return this;
 	}
 });
@@ -2547,11 +2547,11 @@ Crafty.extend({
 				this.width = window.innerWidth || (window.document.documentElement.clientWidth || window.document.body.clientWidth);
 				this.height = window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight);
 			},
-			
+
 			width: 0,
 			height: 0
 		},
-		
+
 		/**@
 		* #Crafty.DOM.inner
 		* @comp Crafty.DOM
@@ -2561,13 +2561,13 @@ Crafty.extend({
 		* Find a DOM elements position including
 		* padding and border.
 		*/
-		inner: function(obj) { 
+		inner: function(obj) {
 			var rect = obj.getBoundingClientRect(),
 				x = rect.left + (window.pageXOffset ? window.pageXOffset : document.body.scrollTop),
 				y = rect.top + (window.pageYOffset ? window.pageYOffset : document.body.scrollLeft),
 				borderX,
 				borderY;
-			
+
 			//border left
 			borderX = parseInt(this.getStyle(obj, 'border-left-width') || 0, 10);
 			borderY = parseInt(this.getStyle(obj, 'border-top-width') || 0, 10);
@@ -2575,13 +2575,13 @@ Crafty.extend({
 				borderX = parseInt(this.getStyle(obj, 'borderLeftWidth') || 0, 10);
 				borderY = parseInt(this.getStyle(obj, 'borderTopWidth') || 0, 10);
 			}
-			
+
 			x += borderX;
 			y += borderY;
-			
-			return {x: x, y: y}; 
+
+			return {x: x, y: y};
 		},
-		
+
 		/**@
 		* #Crafty.DOM.getStyle
 		* @comp Crafty.DOM
@@ -2599,23 +2599,23 @@ Crafty.extend({
 				result = document.defaultView.getComputedStyle(obj,null).getPropertyValue(this.csselize(prop));
 			return result;
 		},
-		
+
 		/**
 		* Used in the Zepto framework
 		*
 		* Converts CSS notation to JS notation
 		*/
-		camelize: function(str) { 
+		camelize: function(str) {
 			return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' });
 		},
-		
+
 		/**
 		* Converts JS notation to CSS notation
 		*/
 		csselize: function(str) {
 			return str.replace(/[A-Z]/g, function(chr){ return chr ? '-' + chr.toLowerCase() : '' });
 		},
-		
+
 		/**@
 		* #Crafty.DOM.translate
 		* @comp Crafty.DOM
@@ -2643,7 +2643,7 @@ Crafty.extend({
 */
 Crafty.c("HTML", {
 	inner: '',
-	
+
 	init: function () {
 		this.requires('2D, DOM');
 	},
@@ -2721,14 +2721,14 @@ Crafty.extend({
 	randRange: function(from, to) {
 		return Math.floor(Math.random() * (to - from + 1) + from);
 	},
-	
+
 	zeroFill: function(number, width) {
 		width -= number.toString().length;
 		if (width > 0)
 			return new Array(width + (/\./.test( number ) ? 2 : 1)).join( '0' ) + number;
 		return number.toString();
 	},
-	
+
 	/**@
 	* #Crafty.sprite
 	* @category Graphics
@@ -2740,14 +2740,14 @@ Crafty.extend({
 	* @param paddingY - Vertical space inbetween tiles. Defaults to paddingX.
 	* Generates components based on positions in a sprite image to be applied to entities.
 	*
-	* Accepts a tile size, URL and map for the name of the sprite and it's position. 
+	* Accepts a tile size, URL and map for the name of the sprite and it's position.
 	*
-	* The position must be an array containing the position of the sprite where index `0` 
-	* is the `x` position, `1` is the `y` position and optionally `2` is the width and `3` 
-	* is the height. If the sprite map has padding, pass the values for the `x` padding 
+	* The position must be an array containing the position of the sprite where index `0`
+	* is the `x` position, `1` is the `y` position and optionally `2` is the width and `3`
+	* is the height. If the sprite map has padding, pass the values for the `x` padding
 	* or `y` padding. If they are the same, just add one value.
 	*
-	* If the sprite image has no consistent tile size, `1` or no argument need be 
+	* If the sprite image has no consistent tile size, `1` or no argument need be
 	* passed for tile size.
 	*
 	* Entities that add the generated components are also given a component called `Sprite`.
@@ -2755,7 +2755,7 @@ Crafty.extend({
 	*/
 	sprite: function(tile, tileh, url, map, paddingX, paddingY) {
 		var pos, temp, x, y, w, h, img;
-		
+
 		//if no tile value, default to 16
 		if(typeof tile === "string") {
 			map = url;
@@ -2763,18 +2763,18 @@ Crafty.extend({
 			tile = 1;
 			tileh = 1;
 		}
-		
+
 		if(typeof tileh == "string") {
 			map = url;
 			url = tileh;
 			tileh = tile;
 		}
-		
+
 		//if no paddingY, use paddingX
 		if(!paddingY && paddingX) paddingY = paddingX;
 		paddingX = parseInt(paddingX || 0, 10); //just incase
 		paddingY = parseInt(paddingY || 0, 10);
-		
+
 		img = Crafty.assets[url];
 		if(!img) {
 			img = new Image();
@@ -2790,16 +2790,16 @@ Crafty.extend({
 				}
 			};
 		}
-		
+
 		for(pos in map) {
 			if(!map.hasOwnProperty(pos)) continue;
-			
+
 			temp = map[pos];
 			x = temp[0] * (tile + paddingX);
 			y = temp[1] * (tileh + paddingY);
 			w = temp[2] * tile || tile;
 			h = temp[3] * tileh || tileh;
-			
+
 			/**@
 			* #Sprite
 			* @category Graphics
@@ -2808,7 +2808,7 @@ Crafty.extend({
 			Crafty.c(pos, {
 				ready: false,
 				__coord: [x,y,w,h],
-				
+
 				init: function() {
 					this.requires("Sprite");
 					this.__trim = [0,0,0,0];
@@ -2818,7 +2818,7 @@ Crafty.extend({
 					this.__tileh = tileh;
 					this.__padding = [paddingX, paddingY];
 					this.img = img;
-		
+
 					//draw now
 					if(this.img.complete && this.img.width > 0) {
 						this.ready = true;
@@ -2831,10 +2831,10 @@ Crafty.extend({
 				}
 			});
 		}
-		
+
 		return this;
 	},
-	
+
 	_events: {},
 
 	/**@
@@ -2845,13 +2845,13 @@ Crafty.extend({
 	* @param obj - Element to add the DOM event to
 	* @param event - Event name to bind to
 	* @param callback - Method to execute when triggered
-	* Adds DOM level 3 events to elements. The arguments it accepts are the call 
-	* context (the value of `this`), the DOM element to attach the event to, 
-	* the event name (without `on` (`click` rather than `onclick`)) and 
-	* finally the callback method. 
+	* Adds DOM level 3 events to elements. The arguments it accepts are the call
+	* context (the value of `this`), the DOM element to attach the event to,
+	* the event name (without `on` (`click` rather than `onclick`)) and
+	* finally the callback method.
 	*
 	* If no element is passed, the default element will be `window.document`.
-	* 
+	*
 	* Callbacks are passed with event data.
 	* @see Crafty.removeEvent
 	*/
@@ -2884,8 +2884,8 @@ Crafty.extend({
 	* @param obj - Element the event is on
 	* @param event - Name of the event
 	* @param callback - Method executed when triggered
-	* Removes events attached by `Crafty.addEvent()`. All parameters must 
-	* be the same that were used to attach the event including a reference 
+	* Removes events attached by `Crafty.addEvent()`. All parameters must
+	* be the same that were used to attach the event including a reference
 	* to the callback method.
 	* @see Crafty.addEvent
 	*/
@@ -2907,7 +2907,7 @@ Crafty.extend({
 			delete this._events[id+obj+type+fn];
 		}
 	},
-	
+
 	/**@
 	* #Crafty.background
 	* @category Graphics, Stage
@@ -2919,7 +2919,7 @@ Crafty.extend({
 	background: function(color) {
 		Crafty.stage.elem.style.background = color;
 	},
-	
+
 	/**@
 	* #Crafty.viewport
 	* @category Stage
@@ -2927,38 +2927,38 @@ Crafty.extend({
 	* in turn will react just like a camera moving in that direction.
 	*/
 	viewport: {
-		width: 0, 
+		width: 0,
 		height: 0,
 		/**@
 		* #Crafty.viewport.x
 		* @comp Crafty.viewport
-		* Will move the stage and therefore every visible entity along the `x` 
+		* Will move the stage and therefore every visible entity along the `x`
 		* axis in the opposite direction.
 		*
-		* When this value is set, it will shift the entire stage. This means that entity 
-		* positions are not exactly where they are on screen. To get the exact position, 
+		* When this value is set, it will shift the entire stage. This means that entity
+		* positions are not exactly where they are on screen. To get the exact position,
 		* simply add `Crafty.viewport.x` onto the entities `x` position.
 		*/
 		_x: 0,
 		/**@
 		* #Crafty.viewport.y
 		* @comp Crafty.viewport
-		* Will move the stage and therefore every visible entity along the `y` 
+		* Will move the stage and therefore every visible entity along the `y`
 		* axis in the opposite direction.
 		*
-		* When this value is set, it will shift the entire stage. This means that entity 
-		* positions are not exactly where they are on screen. To get the exact position, 
+		* When this value is set, it will shift the entire stage. This means that entity
+		* positions are not exactly where they are on screen. To get the exact position,
 		* simply add `Crafty.viewport.y` onto the entities `y` position.
 		*/
 		_y: 0,
-		
+
 		scroll: function(axis, v) {
 			v = Math.floor(v);
 			var change = (v - this[axis]), //change in direction
 				context = Crafty.canvas.context,
 				style = Crafty.stage.inner.style,
 				canvas;
-			
+
 			//update viewport and DOM scroll
 			this[axis] = v;
 			if(axis == '_x') {
@@ -2969,21 +2969,21 @@ Crafty.extend({
 			if(context) Crafty.DrawManager.drawAll();
 			style[axis == '_x' ? "left" : "top"] = ~~v + "px";
 		},
-		
+
 		rect: function() {
 			return {_x: -this._x, _y: -this._y, _w: this.width, _h: this.height};
 		},
-		
+
 		init: function(w,h) {
 			Crafty.DOM.window.init();
-			
+
 			//fullscreen if mobile or not specified
 			this.width = (!w || Crafty.mobile) ? Crafty.DOM.window.width : w;
 			this.height = (!h || Crafty.mobile) ? Crafty.DOM.window.height : h;
-			
+
 			//check if stage exists
 			var crstage = document.getElementById("cr-stage");
-			
+
 			//create stage div to contain everything
 			Crafty.stage = {
 				x: 0,
@@ -2992,38 +2992,38 @@ Crafty.extend({
 				elem: (crstage ? crstage : document.createElement("div")),
 				inner: document.createElement("div")
 			};
-			
+
 			//fullscreen, stop scrollbars
 			if((!w && !h) || Crafty.mobile) {
 				document.body.style.overflow = "hidden";
 				Crafty.stage.fullscreen = true;
 			}
-			
+
 			Crafty.addEvent(this, window, "resize", function() {
 				Crafty.DOM.window.init();
 				var w = Crafty.DOM.window.width,
 					h = Crafty.DOM.window.height,
 					offset;
-				
-				
+
+
 				if(Crafty.stage.fullscreen) {
 					this.width = w;
 					this.height = h;
 					Crafty.stage.elem.style.width = w + "px";
 					Crafty.stage.elem.style.height = h + "px";
-					
+
 					if(Crafty._canvas) {
 						Crafty._canvas.width = w + "px";
 						Crafty._canvas.height = h + "px";
 						Crafty.DrawManager.drawAll();
 					}
 				}
-				
+
 				offset = Crafty.DOM.inner(Crafty.stage.elem);
 				Crafty.stage.x = offset.x;
 				Crafty.stage.y = offset.y;
 			});
-			
+
 			Crafty.addEvent(this, window, "blur", function() {
 				if(Crafty.settings.get("autoPause")) {
 					Crafty.pause();
@@ -3034,19 +3034,19 @@ Crafty.extend({
 					Crafty.pause();
 				}
 			});
-			
+
 			//make the stage unselectable
 			Crafty.settings.register("stageSelectable", function(v) {
 				Crafty.stage.elem.onselectstart = v ? function() { return true; } : function() { return false; };
 			});
 			Crafty.settings.modify("stageSelectable", false);
-			
+
 			//make the stage have no context menu
 			Crafty.settings.register("stageContextMenu", function(v) {
 				Crafty.stage.elem.oncontextmenu = v ? function() { return true; } : function() { return false; };
 			});
 			Crafty.settings.modify("stageContextMenu", false);
-			
+
 			Crafty.settings.register("autoPause", function(){});
 			Crafty.settings.modify("autoPause", false);
 
@@ -3055,46 +3055,46 @@ Crafty.extend({
 				document.body.appendChild(Crafty.stage.elem);
 				Crafty.stage.elem.id = "cr-stage";
 			}
-			
+
 			var elem = Crafty.stage.elem.style,
 				offset;
-			
+
 			Crafty.stage.elem.appendChild(Crafty.stage.inner);
 			Crafty.stage.inner.style.position = "absolute";
 			Crafty.stage.inner.style.zIndex = "1";
-			
+
 			//css style
 			elem.width = this.width + "px";
 			elem.height = this.height + "px";
 			elem.overflow = "hidden";
-			
+
 			if(Crafty.mobile) {
 				elem.position = "absolute";
 				elem.left = "0px";
 				elem.top = "0px";
-				
+
 				var meta = document.createElement("meta"),
 					head = document.getElementsByTagName("HEAD")[0];
-				
+
 				//stop mobile zooming and scrolling
 				meta.setAttribute("name", "viewport");
 				meta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no");
 				head.appendChild(meta);
-				
+
 				//hide the address bar
 				meta = document.createElement("meta");
 				meta.setAttribute("name", "apple-mobile-web-app-capable");
 				meta.setAttribute("content", "yes");
 				head.appendChild(meta);
 				setTimeout(function() { window.scrollTo(0,1); }, 0);
-				
+
 				Crafty.addEvent(this, window, "touchmove", function(e) {
 					e.preventDefault();
 				});
-				
+
 				Crafty.stage.x = 0;
 				Crafty.stage.y = 0;
-				
+
 			} else {
 				elem.position = "relative";
 				//find out the offset position of the stage
@@ -3102,7 +3102,7 @@ Crafty.extend({
 				Crafty.stage.x = offset.x;
 				Crafty.stage.y = offset.y;
 			}
-			
+
 			if(Crafty.support.setter) {
 				//define getters and setters to scroll the viewport
 				this.__defineSetter__('x', function(v) { this.scroll('_x', v); });
@@ -3117,13 +3117,13 @@ Crafty.extend({
 				//create empty entity waiting for enterframe
 				this.x = this._x;
 				this.y = this._y;
-				Crafty.e("viewport"); 
+				Crafty.e("viewport");
 			}
 		}
 	},
-	
+
 	support: {},
-	
+
 	/**@
 	* #Crafty.keys
 	* @category Input
@@ -3215,7 +3215,7 @@ Crafty.extend({
     * PLUS: 187,
     * COMMA: 188,
     * MINUS: 189,
-    * PERIOD: 190 
+    * PERIOD: 190
 	* ~~~
 	*/
 	keys: {
@@ -3305,7 +3305,7 @@ Crafty.extend({
         'PLUS': 187,
         'COMMA': 188,
         'MINUS': 189,
-        'PERIOD': 190 
+        'PERIOD': 190
 	}
 });
 
@@ -3317,21 +3317,21 @@ Crafty.extend({
 (function testSupport() {
 	var support = Crafty.support,
 		ua = navigator.userAgent.toLowerCase(),
-		match = /(webkit)[ \/]([\w.]+)/.exec(ua) || 
-				/(o)pera(?:.*version)?[ \/]([\w.]+)/.exec(ua) || 
-				/(ms)ie ([\w.]+)/.exec(ua) || 
+		match = /(webkit)[ \/]([\w.]+)/.exec(ua) ||
+				/(o)pera(?:.*version)?[ \/]([\w.]+)/.exec(ua) ||
+				/(ms)ie ([\w.]+)/.exec(ua) ||
 				/(moz)illa(?:.*? rv:([\w.]+))?/.exec(ua) || [],
 		mobile = /iPad|iPod|iPhone|Android|webOS/i.exec(ua);
-	
+
 	if(mobile) Crafty.mobile = mobile[0];
-	
+
 	/**@
 	* #Crafty.support.setter
 	* @comp Crafty.support
 	* Is `__defineSetter__` supported?
 	*/
 	support.setter = ('__defineSetter__' in this && '__defineGetter__' in this);
-	
+
 	/**@
 	* #Crafty.support.defineProperty
 	* @comp Crafty.support
@@ -3343,25 +3343,25 @@ Crafty.extend({
 		catch(e) { return false };
 		return true;
 	})();
-	
+
 	/**@
 	* #Crafty.support.audio
 	* @comp Crafty.support
 	* Is HTML5 `Audio` supported?
 	*/
 	support.audio = ('Audio' in window);
-	
+
 	/**@
 	* #Crafty.support.prefix
 	* @comp Crafty.support
 	* Returns the browser specific prefix (`Moz`, `O`, `ms`, `webkit`).
 	*/
 	support.prefix = (match[1] || match[0]);
-	
+
 	//browser specific quirks
 	if(support.prefix === "moz") support.prefix = "Moz";
 	if(support.prefix === "o") support.prefix = "O";
-	
+
 	if(match[2]) {
 		/**@
 		* #Crafty.support.versionName
@@ -3369,7 +3369,7 @@ Crafty.extend({
 		* Version of the browser
 		*/
 		support.versionName = match[2];
-		
+
 		/**@
 		* #Crafty.support.version
 		* @comp Crafty.support
@@ -3377,14 +3377,14 @@ Crafty.extend({
 		*/
 		support.version = +(match[2].split("."))[0];
 	}
-	
+
 	/**@
 	* #Crafty.support.canvas
 	* @comp Crafty.support
 	* Is the `canvas` element supported?
 	*/
 	support.canvas = ('getContext' in document.createElement("canvas"));
-	
+
 	support.css3dtransform = (typeof document.createElement("div").style[support.prefix + "Perspective"] !== "undefined");
 })();
 
@@ -3397,7 +3397,7 @@ Crafty.c("viewport", {
 			if(Crafty.viewport._x !== Crafty.viewport.x) {
 				Crafty.viewport.scroll('_x', Crafty.viewport.x);
 			}
-			
+
 			if(Crafty.viewport._y !== Crafty.viewport.y) {
 				Crafty.viewport.scroll('_y', Crafty.viewport.y);
 			}
@@ -3419,15 +3419,15 @@ Crafty.c("Sprite", {
 	__trim: null,
 	img: null,
 	ready: false,
-	
+
 	init: function() {
 		this.__trim = [0,0,0,0];
-		
+
 		var draw = function(e) {
 			var co = e.co,
 				pos = e.pos,
 				context = e.ctx;
-				
+
 			if(e.type === "canvas") {
 				//draw the image on the canvas element
 				context.drawImage(this.img, //image element
@@ -3444,17 +3444,17 @@ Crafty.c("Sprite", {
 				this._element.style.background = "url('" + this.__image + "') no-repeat -" + co.x + "px -" + co.y + "px";
 			}
 		};
-		
+
 		this.bind("Draw", draw).bind("RemoveComponent", function(id) {
-			if(id === "Sprite") this.unbind("Draw", draw);  
+			if(id === "Sprite") this.unbind("Draw", draw);
 		});
 	},
-	
+
 	/**@
 	* #.sprite
 	* @comp Sprite
 	* @sign public this .sprite(Number x, Number y, Number w, Number h)
-	* @param x - X cell position 
+	* @param x - X cell position
 	* @param y - Y cell position
 	* @param w - Width in cells
 	* @param h - Height in cells
@@ -3467,11 +3467,11 @@ Crafty.c("Sprite", {
 						y * this.__tileh + this.__padding[1] + this.__trim[1],
 						this.__trim[2] || w * this.__tile || this.__tile,
 						this.__trim[3] || h * this.__tileh || this.__tileh];
-		
+
 		this.trigger("Change");
 		return this;
 	},
-	
+
 	/**@
 	* #.crop
 	* @comp Sprite
@@ -3491,14 +3491,14 @@ Crafty.c("Sprite", {
 		this.__trim[1] = y;
 		this.__trim[2] = w;
 		this.__trim[3] = h;
-		
+
 		this.__coord[0] += x;
 		this.__coord[1] += y;
 		this.__coord[2] = w;
 		this.__coord[3] = h;
 		this._w = w;
 		this._h = h;
-		
+
 		this.trigger("Change", old);
 		return this;
 	}
@@ -3511,30 +3511,30 @@ Crafty.c("Sprite", {
 * the canvas element.
 */
 Crafty.c("Canvas", {
-	
+
 	init: function() {
 		if(!Crafty.canvas.context) {
 			Crafty.canvas.init();
 		}
-		
+
 		//increment the amount of canvas objs
 		Crafty.DrawManager.total2D++;
-		
+
 		this.bind("Change", function(e) {
-			//if within screen, add to list	
+			//if within screen, add to list
 			if(this._changed === false) {
 				this._changed = Crafty.DrawManager.add(e || this, this);
 			} else {
 				if(e) this._changed = Crafty.DrawManager.add(e, this);
 			}
 		});
-		
+
 		this.bind("Remove", function() {
 			Crafty.DrawManager.total2D--;
 			Crafty.DrawManager.add(this,this);
 		});
 	},
-	
+
 	/**@
 	* #.draw
 	* @comp Canvas
@@ -3548,7 +3548,7 @@ Crafty.c("Canvas", {
 	* Method to draw the entity on the canvas element. Can pass rect values for redrawing a segment of the entity.
 	*/
 	draw: function(ctx,x,y,w,h) {
-		if(!this.ready) return; 
+		if(!this.ready) return;
 		if(arguments.length === 4) {
 			h = w;
 			w = y;
@@ -3556,7 +3556,7 @@ Crafty.c("Canvas", {
 			x = ctx;
 			ctx = Crafty.canvas.context;
 		}
-		
+
 		var pos = { //inlined pos() function, for speed
 				_x: (this._x + (x || 0)),
 				_y: (this._y + (y || 0)),
@@ -3571,25 +3571,25 @@ Crafty.c("Canvas", {
 				w: w || coord[2],
 				h: h || coord[3]
 			};
-			
+
 		if(this._mbr) {
 			context.save();
-			
+
 			context.translate(this._origin.x + this._x, this._origin.y + this._y);
 			pos._x = -this._origin.x;
 			pos._y = -this._origin.y;
-			
+
 			context.rotate((this._rotation % 360) * (Math.PI / 180));
 		}
-		
+
 		//draw with alpha
 		if(this._alpha < 1.0) {
 			var globalpha = context.globalAlpha;
 			context.globalAlpha = this._alpha;
 		}
-		
+
 		this.trigger("Draw", {type: "canvas", pos: pos, co: co, ctx: context});
-		
+
 		if(this._mbr) {
 			context.restore();
 		}
@@ -3610,7 +3610,7 @@ Crafty.extend({
 		/**@
 		* #Crafty.canvas.context
 		* @comp Crafty.canvas
-		* This will return the 2D context of the main canvas element. 
+		* This will return the 2D context of the main canvas element.
 		* The value returned from `Crafty.canvas.elem.getContext('2d')`.
 		*/
 		context: null,
@@ -3620,7 +3620,7 @@ Crafty.extend({
 		* Main Canvas element
 		*/
 		elem: null,
-		
+
 		/**@
 		* #Crafty.canvas.init
 		* @comp Crafty.canvas
@@ -3639,7 +3639,7 @@ Crafty.extend({
 				Crafty.stop();
 				return;
 			}
-			
+
 			//create 3 empty canvas elements
 			var c;
 			c = document.createElement("canvas");
@@ -3648,7 +3648,7 @@ Crafty.extend({
 			c.style.position = 'absolute';
 			c.style.left = "0px";
 			c.style.top = "0px";
-			
+
 			Crafty.stage.elem.appendChild(c);
 			Crafty.canvas.context = c.getContext('2d');
 			Crafty.canvas._canvas = c;
@@ -3663,11 +3663,11 @@ Crafty.extend({
 	mousePos: {},
 	lastEvent: null,
 	keydown: {},
-		
+
 	mouseDispatch: function(e) {
 		if(!Crafty.mouseObjs) return;
 		Crafty.lastEvent = e;
-		
+
 		var maxz = -1,
 			closest,
 			q,
@@ -3677,14 +3677,14 @@ Crafty.extend({
 			dupes = {},
 			tar = e.target?e.target:e.srcElement,
 			type = e.type;
-			
+
 		if(type === "touchstart") type = "mousedown";
 		else if(type === "touchmove") type = "mousemove";
 		else if(type === "touchend") type = "mouseup";
-		
+
 		e.realX = x = Crafty.mousePos.x = pos.x;
 		e.realY = y = Crafty.mousePos.y = pos.y;
-		
+
 		if(tar.nodeName != "CANVAS") {
 			// we clicked on a dom element
 			while (typeof (tar.id) != 'string' && tar.id.indexOf('ent') == -1) {
@@ -3694,28 +3694,28 @@ Crafty.extend({
 			if (ent.has('Mouse') && ent.isAt(x,y))
 				closest = ent;
 		}
-		
+
 		if(!closest) {
 			//search for all mouse entities
 			q = Crafty.map.search({_x: x, _y:y, _w:1, _h:1}, false);
-			
+
 			for(l=q.length;i<l;++i) {
 				//check if has mouse component
 				if(!q[i].__c.Mouse) continue;
-				
+
 				var current = q[i],
 					flag = false;
-					
+
 				//weed out duplicates
 				if(dupes[current[0]]) continue;
 				else dupes[current[0]] = true;
-				
+
 				if(current.map) {
 					if(current.map.containsPoint(x, y)) {
 						flag = true;
 					}
 				} else if(current.isAt(x, y)) flag = true;
-				
+
 				if(flag && (current._z >= maxz || maxz === -1)) {
 					//if the Z is the same, select the closest GUID
 					if(current._z === maxz && current[0] < closest[0]) {
@@ -3726,7 +3726,7 @@ Crafty.extend({
 				}
 			}
 		}
-		
+
 		//found closest object to mouse
 		if(closest) {
 			//click must mousedown and out on tile
@@ -3735,12 +3735,12 @@ Crafty.extend({
 				this.down.trigger("MouseDown", e);
 			} else if(type === "mouseup") {
 				closest.trigger("MouseUp", e);
-				
+
 				//check that down exists and this is down
 				if(this.down && closest === this.down) {
 					this.down.trigger("Click", e);
 				}
-				
+
 				//reset down
 				this.down = null;
 			} else if(type === "mousemove") {
@@ -3759,12 +3759,12 @@ Crafty.extend({
 				this.over = null;
 			}
 		}
-		
+
 		if (type === "mousemove") {
 			this.lastEvent = e;
 		}
 	},
-	
+
 	keyboardDispatch: function(e) {
 		e.key = e.keyCode || e.which;
 		if(e.type === "keydown") {
@@ -3776,7 +3776,7 @@ Crafty.extend({
 			delete Crafty.keydown[e.key];
 			Crafty.trigger("KeyUp", e);
 		}
-		
+
 		//prevent searchable keys
 		/*
 		if((e.metaKey || e.altKey || e.ctrlKey) && !(e.key == 8 || e.key >= 112 && e.key <= 135)) {
@@ -3792,11 +3792,11 @@ Crafty.extend({
 Crafty.bind("Load", function() {
 	Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
 	Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
-        
+
 	Crafty.addEvent(this, Crafty.stage.elem, "mousedown", Crafty.mouseDispatch);
 	Crafty.addEvent(this, Crafty.stage.elem, "mouseup", Crafty.mouseDispatch);
 	Crafty.addEvent(this, Crafty.stage.elem, "mousemove", Crafty.mouseDispatch);
-	
+
 	Crafty.addEvent(this, Crafty.stage.elem, "touchstart", Crafty.mouseDispatch);
 	Crafty.addEvent(this, Crafty.stage.elem, "touchmove", Crafty.mouseDispatch);
 	Crafty.addEvent(this, Crafty.stage.elem, "touchend", Crafty.mouseDispatch);
@@ -3805,7 +3805,7 @@ Crafty.bind("Load", function() {
 /**@
 * #Mouse
 * @category Input
-* Give entities mouse events such as 
+* Give entities mouse events such as
 * `mouseover`, `mousedown`, `mouseout`, `mouseup` and `click`.
 */
 Crafty.c("Mouse", {
@@ -3815,7 +3815,7 @@ Crafty.c("Mouse", {
 			Crafty.mouseObjs--;
 		});
 	},
-	
+
 	/**@
 	* #.areaMap
 	* @comp Mouse
@@ -3834,10 +3834,10 @@ Crafty.c("Mouse", {
 			var args = Array.prototype.slice.call(arguments, 0);
 			poly = new Crafty.polygon(args);
 		}
-		
+
 		poly.shift(this._x, this._y);
 		this.map = poly;
-		
+
 		this.attach(this.map);
 		return this;
 	}
@@ -3852,44 +3852,44 @@ Crafty.c("Draggable", {
 	_startX: 0,
 	_startY: 0,
 	_dragging: false,
-	
+
 	_ondrag: null,
 	_ondown: null,
 	_onup: null,
-	
+
 	init: function() {
 		this.requires("Mouse");
 		this._ondrag = function(e) {
 			var pos = Crafty.DOM.translate(e.clientX, e.clientY);
 			this.x = pos.x - this._startX;
 			this.y = pos.y - this._startY;
-			
+
 			this.trigger("Dragging", e);
 		};
-		
+
 		this._ondown = function(e) {
 			if(e.button !== 0) return;
-			
+
 			//start drag
 			this._startX = e.realX - this._x;
 			this._startY = e.realY - this._y;
 			this._dragging = true;
-			
+
 			Crafty.addEvent(this, Crafty.stage.elem, "mousemove", this._ondrag);
 			Crafty.addEvent(this, Crafty.stage.elem, "mouseup", this._onup);
 			this.trigger("StartDrag", e);
 		};
-		
+
 		this._onup = function upper(e) {
 			Crafty.removeEvent(this, Crafty.stage.elem, "mousemove", this._ondrag);
 			Crafty.removeEvent(this, Crafty.stage.elem, "mouseup", this._onup);
 			this._dragging = false;
 			this.trigger("StopDrag", e);
 		};
-		
+
 		this.enableDrag();
 	},
-	
+
 	/**@
 	* #.stopDrag
 	* @comp Draggable
@@ -3900,12 +3900,12 @@ Crafty.c("Draggable", {
 	stopDrag: function() {
 		Crafty.removeEvent(this, Crafty.stage.elem, "mousemove", this._ondrag);
 		Crafty.removeEvent(this, Crafty.stage.elem, "mouseup", this._onup);
-		
+
 		this._dragging = false;
 		this.trigger("StopDrag");
 		return this;
 	},
-	
+
 	/**@
 	* #.startDrag
 	* @comp Draggable
@@ -3919,7 +3919,7 @@ Crafty.c("Draggable", {
 			Crafty.addEvent(this, Crafty.stage.elem, "mousemove", this._ondrag);
 		}
 	},
-	
+
 	/**@
 	* #.enableDrag
 	* @comp Draggable
@@ -3927,13 +3927,13 @@ Crafty.c("Draggable", {
 	* Rebind the mouse events. Use if `.disableDrag` has been called.
 	* @see .disableDrag
 	*/
-	enableDrag: function() {		
+	enableDrag: function() {
 		this.bind("MouseDown", this._ondown);
-		
+
 		Crafty.addEvent(this, Crafty.stage.elem, "mouseup", this._onup);
 		return this;
 	},
-	
+
 	/**@
 	* #.disableDrag
 	* @comp Draggable
@@ -3974,24 +3974,24 @@ Crafty.c("Keyboard", {
 /**@
 * #Multiway
 * @category Input
-* Used to bind keys to directions and have the entity move acordingly 
+* Used to bind keys to directions and have the entity move acordingly
 */
-Crafty.c("Multiway", {	
+Crafty.c("Multiway", {
 	_speed: 3,
-        
+
 	init: function() {
             this._keyDirection = {};
             this._keys = {};
             this._movement= { x: 0, y: 0};
 	},
-	
+
 	/**@
 	* #.multiway
 	* @comp Multiway
 	* @sign public this .multiway([Number speed,] Object keyBindings )
 	* @param speed - Amount of pixels to move the entity whilst a key is down
 	* @param keyBindings - What keys should make the entity go in which direction. Direction is specified in degrees
-	* Constructor to initialize the speed and keyBindings. Component will listen for key events and move the entity appropriately. 
+	* Constructor to initialize the speed and keyBindings. Component will listen for key events and move the entity appropriately.
 	*
 	* When direction changes a NewDirection event is triggered with an object detailing the new direction: {x: x_movement, y: y_movement}
 	* When entity has moved on either x- or y-axis a Moved event is triggered with an object specifying the old position {x: old_x, y: old_y}
@@ -4007,7 +4007,7 @@ Crafty.c("Multiway", {
 		} else {
 			keys = speed;
 		}
-		
+
 		this._keyDirection = keys;
 		this.speed(this._speed);
 
@@ -4027,7 +4027,7 @@ Crafty.c("Multiway", {
 		})
 		.bind("EnterFrame",function() {
 			if (this.disableControls) return;
-	
+
 			if(this._movement.x !== 0) {
 				this.x += this._movement.x;
 				this.trigger('Moved', {x: this.x - this._movement.x, y: this.y});
@@ -4044,14 +4044,14 @@ Crafty.c("Multiway", {
                 this.trigger("KeyDown", {key: Crafty.keys[k] });
             }
         }
-		
+
 		return this;
 	},
-        
+
     speed: function(speed) {
         for(var k in this._keyDirection) {
             var keyCode = Crafty.keys[k] || k;
-            this._keys[keyCode] = { 
+            this._keys[keyCode] = {
                 x: Math.round(Math.cos(this._keyDirection[k]*(Math.PI/180))*1000 * speed)/1000,
                 y: Math.round(Math.sin(this._keyDirection[k]*(Math.PI/180))*1000 * speed)/1000
             };
@@ -4066,34 +4066,34 @@ Crafty.c("Multiway", {
 * Move an entity in four directions by using the
 * arrow keys or `W`, `A`, `S`, `D`.
 */
-Crafty.c("Fourway", {	
-	
+Crafty.c("Fourway", {
+
 	init: function() {
 		this.requires("Multiway");
 	},
-	
+
 	/**@
 	* #.fourway
 	* @comp Fourway
 	* @sign public this .fourway(Number speed)
 	* @param speed - Amount of pixels to move the entity whilst a key is down
-	* Constructor to initialize the speed. Component will listen for key events and move the entity appropriately. 
+	* Constructor to initialize the speed. Component will listen for key events and move the entity appropriately.
 	* This includes `Up Arrow`, `Right Arrow`, `Down Arrow`, `Left Arrow` as well as `W`, `A`, `S`, `D`.
 	*
 	* The key presses will move the entity in that direction by the speed passed in the argument.
 	*/
 	fourway: function(speed) {
-		this.multiway(speed, { 
-            UP_ARROW: -90, 
-            DOWN_ARROW: 90, 
-            RIGHT_ARROW: 0, 
+		this.multiway(speed, {
+            UP_ARROW: -90,
+            DOWN_ARROW: 90,
+            RIGHT_ARROW: 0,
             LEFT_ARROW: 180,
-            W: -90, 
-            S: 90, 
-            D: 0, 
+            W: -90,
+            S: 90,
+            D: 0,
             A: 180
         });
-                
+
 		return this;
 	}
 });
@@ -4107,30 +4107,30 @@ Crafty.c("Fourway", {
 Crafty.c("Twoway", {
 	_speed: 3,
 	_up: false,
-	
+
 	init: function() {
 		this.requires("Keyboard");
 	},
-	
+
 	/**@
 	* #.twoway
 	* @comp Twoway
 	* @sign public this .twoway(Number speed[, Number jumpSpeed])
 	* @param speed - Amount of pixels to move left or right
 	* @param jumpSpeed - How high the entity should jump
-	* Constructor to initialize the speed and power of jump. Component will 
-	* listen for key events and move the entity appropriately. This includes 
-	* `Up Arrow`, `Right Arrow`, `Left Arrow` as well as W, A, D. Used with the 
+	* Constructor to initialize the speed and power of jump. Component will
+	* listen for key events and move the entity appropriately. This includes
+	* `Up Arrow`, `Right Arrow`, `Left Arrow` as well as W, A, D. Used with the
 	* `gravity` component to simulate jumping.
 	*
-	* The key presses will move the entity in that direction by the speed passed in 
+	* The key presses will move the entity in that direction by the speed passed in
 	* the argument. Pressing the `Up Arrow` or `W` will cause the entiy to jump.
 	* @see Gravity, Fourway
 	*/
 	twoway: function(speed,jump) {
 		if(speed) this._speed = speed;
 		jump = jump || this._speed * 2;
-		
+
 		this.bind("EnterFrame", function() {
 			if (this.disableControls) return;
 			if(this.isDown("RIGHT_ARROW") || this.isDown("D")) {
@@ -4146,7 +4146,7 @@ Crafty.c("Twoway", {
 		}).bind("KeyDown", function() {
 			if(this.isDown("UP_ARROW") || this.isDown("W")) this._up = true;
 		});
-		
+
 		return this;
 	}
 });
@@ -4154,11 +4154,11 @@ Crafty.c("Twoway", {
 
 Crafty.c("Animation", {
 	_reel: null,
-	
+
 	init: function() {
 		this._reel = {};
 	},
-	
+
 	addAnimation: function(label, skeleton) {
 		var key,
 			lastKey = 0,
@@ -4170,24 +4170,24 @@ Crafty.c("Animation", {
 			p,
 			temp,
 			frames = [];
-		
+
 		//loop over every frame
 		for(key in skeleton) {
-			
+
 			frame = skeleton[key];
 			prev = skeleton[lastKey] || this;
 			diff = {};
-			
+
 			//find the difference
 			for(prop in frame) {
 				if(typeof frame[prop] !== "number") {
 					diff[prop] = frame[prop];
 					continue;
 				}
-				
+
 				diff[prop] = (frame[prop] - prev[prop]) / (key - lastKey);
 			}
-			
+
 			for(i = +lastKey + 1, j = 1; i <= +key; ++i, ++j) {
 				temp = {};
 				for(p in diff) {
@@ -4197,29 +4197,29 @@ Crafty.c("Animation", {
 						temp[p] = diff[p];
 					}
 				}
-				
+
 				frames[i] = temp;
 			}
 			lastKey = key;
 		}
-		
+
 		this._reel[label] = frames;
-		
+
 		return this;
 	},
-	
+
 	playAnimation: function(label) {
 		var reel = this._reel[label],
 			i = 0,
 			l = reel.length,
 			prop;
-		
+
 		this.bind("EnterFrame", function e() {
 			for(prop in reel[i]) {
 				this[prop] = reel[i][prop];
 			}
 			i++;
-			
+
 			if(i > l) {
 				this.trigger("AnimationEnd");
 				this.unbind("EnterFrame", e);
@@ -4237,7 +4237,7 @@ Crafty.c("SpriteAnimation", {
 	_reels: null,
 	_frame: null,
 	_current: null,
-	
+
 	init: function() {
 		this._reels = {};
 	},
@@ -4254,10 +4254,10 @@ Crafty.c("SpriteAnimation", {
 	* @param frames - Array of containing an array with the `x` and `y` values
 	* @sign public this .animate(String id, Number duration[, Number repeatCount])
 	* @param duration - Play the animation with a duration (in frames)
-	* Method to setup animation reels or play pre-made reels. Animation works by changing the sprites over 
+	* Method to setup animation reels or play pre-made reels. Animation works by changing the sprites over
 	* a duration. Only works for sprites built with the Crafty.sprite methods. See the Tween component for animation of 2D properties.
 	*
-	* To setup an animation reel, pass the name of the reel (used to identify the reel and play it later), and either an 
+	* To setup an animation reel, pass the name of the reel (used to identify the reel and play it later), and either an
 	* array of absolute sprite positions or the start x on the sprite map, the y on the sprite map and then the end x on the sprite map.
 	*
 	* To play a reel, pass the name of the reel and the duration it should play for (in frames). If you need
@@ -4268,15 +4268,15 @@ Crafty.c("SpriteAnimation", {
 	*/
 	animate: function(id, fromx, y, tox) {
 		var reel, i, tile, tileh, duration, pos;
-        
+
         //play a reel
 		if(arguments.length < 4 && typeof fromx === "number") {
 			//make sure not currently animating
 			this._current = id;
-			
+
 			reel = this._reels[id];
 			duration = fromx;
-            
+
 			this._frame = {
 				reel: reel, //reel to play
 				frameTime: Math.ceil(duration / reel.length), //number of frames inbetween slides
@@ -4289,7 +4289,7 @@ Crafty.c("SpriteAnimation", {
 				if (y === -1) this._frame.repeatInfinitly = true;
 				else this._frame.repeat = y;
 			}
-			
+
 			pos = this._frame.reel[0];
 			this.__coord[0] = pos[0];
 			this.__coord[1] = pos[1];
@@ -4302,7 +4302,7 @@ Crafty.c("SpriteAnimation", {
 			reel = [];
 			tile = this.__tile;
 			tileh = this.__tileh;
-				
+
 			if (tox > fromx) {
 				for(;i<=tox;i++) {
 					reel.push([i * tile, y * tileh]);
@@ -4312,7 +4312,7 @@ Crafty.c("SpriteAnimation", {
 					reel.push([i * tile, y * tileh]);
 				}
 			}
-			
+
 			this._reels[id] = reel;
 		} else if(typeof fromx === "object") {
 			i=0;
@@ -4320,30 +4320,30 @@ Crafty.c("SpriteAnimation", {
 			tox = fromx.length-1;
 			tile = this.__tile;
 			tileh = this.__tileh;
-			
+
 			for(;i<=tox;i++) {
 				pos = fromx[i];
 				reel.push([pos[0] * tile, pos[1] * tileh]);
 			}
-			
+
 			this._reels[id] = reel;
 		}
-		
+
 		return this;
 	},
-	
+
 	drawFrame: function(e) {
 		var data = this._frame;
-		
+
 		if(this._frame.current++ === data.frameTime) {
 			var pos = data.reel[data.frame++];
-			
+
 			this.__coord[0] = pos[0];
 			this.__coord[1] = pos[1];
 			this._frame.current = 0;
 		}
-		
-		
+
+
 		if(data.frame === data.reel.length && this._frame.current === data.frameTime) {
 			data.frame = 0;
 			if (this._frame.repeatInfinitly === true || this._frame.repeat > 0) {
@@ -4356,10 +4356,10 @@ Crafty.c("SpriteAnimation", {
 				return;
 			}
 		}
-		
+
 		this.trigger("Change");
 	},
-	
+
 	/**@
 	* #.stop
 	* @comp SpriteAnimation
@@ -4372,10 +4372,10 @@ Crafty.c("SpriteAnimation", {
 		this.unbind("AnimationEnd");
 		this._current = null;
 		this._frame = null;
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.reset
 	* @comp SpriteAnimation
@@ -4384,15 +4384,15 @@ Crafty.c("SpriteAnimation", {
 	*/
 	reset: function() {
 		if(!this._frame) return this;
-		
+
 		var co = this._frame.reel[0];
 		this.__coord[0] = co[0];
 		this.__coord[1] = co[1];
 		this.stop();
-		
+
 		return this;
 	},
-	
+
 	/**@
 	* #.isPlaying
 	* @comp SpriteAnimation
@@ -4403,7 +4403,7 @@ Crafty.c("SpriteAnimation", {
 	*/
 	isPlaying: function(id) {
 		if(!id) return !!this._interval;
-		return this._current === id; 
+		return this._current === id;
 	}
 });
 
@@ -4415,7 +4415,7 @@ Crafty.c("SpriteAnimation", {
 Crafty.c("Tween", {
 	_step: null,
 	_numProps: 0,
-	
+
 	/**@
 	* #.tween
 	* @comp Tween
@@ -4446,7 +4446,7 @@ Crafty.c("Tween", {
 					}
 				});
 			}
-			
+
 			for (var prop in props) {
 				this._step[prop] = {val: (props[prop] - this[prop] )/duration, rem: duration};
 				this._numProps++;
@@ -4458,7 +4458,7 @@ Crafty.c("Tween", {
 
 function tweenEnterFrame(e) {
 	if (this._numProps <= 0) return;
-	
+
 	var prop, k;
 	for (k in this._step) {
 		prop = this._step[k];
@@ -4469,7 +4469,7 @@ function tweenEnterFrame(e) {
 			this._numProps--;
 		}
 	}
-		
+
 	if (this.has('Mouse')) {
 		var over = Crafty.over,
 			mouse = Crafty.mousePos;
@@ -4494,7 +4494,7 @@ function tweenEnterFrame(e) {
 Crafty.c("Color", {
 	_color: "",
 	ready: true,
-	
+
 	init: function() {
 		this.bind("Draw", function(e) {
 			if(e.type === "DOM") {
@@ -4506,7 +4506,7 @@ Crafty.c("Color", {
 			}
 		});
 	},
-	
+
 	/**@
 	* #.color
 	* @comp Color
@@ -4514,7 +4514,7 @@ Crafty.c("Color", {
 	* @param color - Color of the rectangle
 	* Will create a rectangle of solid color for the entity.
 	*
-	* The argument must be a color readable depending on how it's drawn. Canvas requires 
+	* The argument must be a color readable depending on how it's drawn. Canvas requires
 	* using `rgb(0 - 255, 0 - 255, 0 - 255)` or `rgba()` whereas DOM can be hex or any other css format.
 	*/
 	color: function(color) {
@@ -4534,20 +4534,20 @@ Crafty.c("Color", {
 Crafty.c("Tint", {
 	_color: null,
 	_strength: 1.0,
-	
+
 	init: function() {
         var draw = function d(e) {
     		var context = e.ctx || Crafty.canvas.context;
-			
+
 			context.fillStyle = this._color || "rgb(0,0,0)";
 			context.fillRect(e.pos._x, e.pos._y, e.pos._w, e.pos._h);
 		};
-        
+
 		this.bind("Draw", draw).bind("RemoveComponent", function(id) {
-            if(id === "Tint") this.unbind("Draw", draw);  
+            if(id === "Tint") this.unbind("Draw", draw);
         });
 	},
-	
+
 	/**@
 	* #.tint
 	* @comp Tint
@@ -4559,7 +4559,7 @@ Crafty.c("Tint", {
 	tint: function(color, strength) {
 		this._strength = strength;
 		this._color = Crafty.toRGB(color, this._strength);
-		
+
 		this.trigger("Change");
 		return this;
 	}
@@ -4573,32 +4573,32 @@ Crafty.c("Tint", {
 Crafty.c("Image", {
 	_repeat: "repeat",
 	ready: false,
-	
+
 	init: function() {
         var draw = function(e) {
     		if(e.type === "canvas") {
 				//skip if no image
 				if(!this.ready || !this._pattern) return;
-				
+
 				var context = e.ctx;
-				
+
 				context.fillStyle = this._pattern;
-				
+
 				//context.save();
 				//context.translate(e.pos._x, e.pos._y);
 				context.fillRect(this._x,this._y,this._w, this._h);
 				//context.restore();
 			} else if(e.type === "DOM") {
-				if(this.__image) 
+				if(this.__image)
 					e.style.background = "url(" + this.__image + ") "+this._repeat;
 			}
 		};
-        
+
 		this.bind("Draw", draw).bind("RemoveComponent", function(id) {
-            if(id === "Image") this.unbind("Draw", draw);  
+            if(id === "Image") this.unbind("Draw", draw);
         });
 	},
-	
+
 	/**@
 	* #.image
 	* @comp Image
@@ -4609,8 +4609,8 @@ Crafty.c("Image", {
 	*
 	* *Note: Default repeat is `no-repeat` which is different to standard DOM (which is `repeat`)*
 	*
-	* If the width and height are `0` and repeat is set to `no-repeat` the width and 
-	* height will automatically assume that of the image. This is an 
+	* If the width and height are `0` and repeat is set to `no-repeat` the width and
+	* height will automatically assume that of the image. This is an
 	* easy way to create an image without needing sprites.
 	* @example
 	* Will default to no-repeat. Entity width and height will be set to the images width and height
@@ -4628,27 +4628,27 @@ Crafty.c("Image", {
 	image: function(url, repeat) {
 		this.__image = url;
 		this._repeat = repeat || "no-repeat";
-		
-		
+
+
 		this.img = Crafty.assets[url];
 		if(!this.img) {
 			this.img = new Image();
 			Crafty.assets[url] = this.img;
 			this.img.src = url;
 			var self = this;
-			
+
 			this.img.onload = function() {
 				if(self.has("Canvas")) self._pattern = Crafty.canvas.context.createPattern(self.img, self._repeat);
 				self.ready = true;
-				
+
 				if(self._repeat === "no-repeat") {
 					self.w = self.img.width;
 					self.h = self.img.height;
 				}
-				
+
 				self.trigger("Change");
 			};
-			
+
 			return this;
 		} else {
 			this.ready = true;
@@ -4658,10 +4658,10 @@ Crafty.c("Image", {
 				this.h = this.img.height;
 			}
 		}
-		
-		
+
+
 		this.trigger("Change");
-		
+
 		return this;
 	}
 });
@@ -4669,7 +4669,7 @@ Crafty.c("Image", {
 Crafty.extend({
 	_scenes: [],
 	_current: null,
-	
+
 	/**@
 	* #Crafty.scene
 	* @category Scenes, Stage
@@ -4678,12 +4678,12 @@ Crafty.extend({
 	* @param init - Function execute when scene is played
 	* @sign public void Crafty.scene(String sceneName)
 	* @param sceneName - Name of scene to play
-	* Method to create scenes on the stage. Pass an ID and function to register a scene. 
+	* Method to create scenes on the stage. Pass an ID and function to register a scene.
 	*
-	* To play a scene, just pass the ID. When a scene is played, all 
+	* To play a scene, just pass the ID. When a scene is played, all
 	* entities with the `2D` component on the stage are destroyed.
 	*
-	* If you want some entities to persist over scenes (as in not be destroyed) 
+	* If you want some entities to persist over scenes (as in not be destroyed)
 	* simply add the component `persist`.
 	*/
 	scene: function(name, fn) {
@@ -4700,23 +4700,23 @@ Crafty.extend({
 		this._scenes[name] = fn;
 		return;
 	},
-	
+
 	rgbLookup:{},
-	
+
 	toRGB: function(hex,alpha) {
 		var lookup = this.rgbLookup[hex];
 		if(lookup) return lookup;
-		
+
 		var hex = (hex.charAt(0) === '#') ? hex.substr(1) : hex,
 			c = [], result;
-			
+
 		c[0] = parseInt(hex.substr(0, 2), 16);
 		c[1] = parseInt(hex.substr(2, 2), 16);
 		c[2] = parseInt(hex.substr(4, 2), 16);
-			
+
 		result = alpha === undefined ? 'rgb('+c.join(',')+')' : 'rgba('+c.join(',')+','+alpha+')';
 		lookup = result;
-		
+
 		return result;
 	}
 });
@@ -4730,28 +4730,28 @@ Crafty.DrawManager = (function() {
 	var register = [],
 	/** array of DOMs needed updating */
 		dom = [];
-	
+
 	return {
 		/** Quick count of 2D objects */
 		total2D: Crafty("2D").length,
-		
+
 		onScreen: function(rect) {
 			return Crafty.viewport._x + rect._x + rect._w > 0 && Crafty.viewport._y + rect._y + rect._h > 0 &&
 				   Crafty.viewport._x + rect._x < Crafty.viewport.width && Crafty.viewport._y + rect._y < Crafty.viewport.height;
 		},
-		
+
 		merge: function(set) {
 			do {
 				var newset = [], didMerge = false, i = 0,
 					l = set.length, current, next, merger;
-				
+
 				while(i < l) {
 					current = set[i];
 					next = set[i+1];
-					
+
 					if(i < l - 1 && current._x < next._x + next._w && current._x + current._w > next._x &&
-									current._y < next._y + next._h && current._h + current._y > next._y) {	
-						
+									current._y < next._y + next._h && current._h + current._y > next._y) {
+
 						merger = {
 							_x: ~~Math.min(current._x, next._x),
 							_y: ~~Math.min(current._y, next._y),
@@ -4762,9 +4762,9 @@ Crafty.DrawManager = (function() {
 						merger._h = merger._h - merger._y;
 						merger._w = (merger._w == ~~merger._w) ? merger._w : merger._w + 1 | 0;
 						merger._h = (merger._h == ~~merger._h) ? merger._h : merger._h + 1 | 0;
-						
+
 						newset.push(merger);
-					
+
 						i++;
 						didMerge = true;
 					} else newset.push(current);
@@ -4772,13 +4772,13 @@ Crafty.DrawManager = (function() {
 				}
 
 				set = newset.length ? Crafty.clone(newset) : set;
-				
+
 				if(didMerge) i = 0;
 			} while(didMerge);
-			
+
 			return set;
 		},
-		
+
 		/**
 		* Calculate the bounding rect of dirty data
 		* and add to the register
@@ -4788,11 +4788,11 @@ Crafty.DrawManager = (function() {
 				dom.push(old);
 				return;
 			}
-			
+
 			var rect,
 				before = old._mbr || old,
 				after = current._mbr || current;
-				
+
 			if(old === current) {
 				rect = old.mbr() || old.pos();
 			} else {
@@ -4802,42 +4802,42 @@ Crafty.DrawManager = (function() {
 					_w: Math.max(before._w, after._w) + Math.max(before._x, after._x),
 					_h: Math.max(before._h, after._h) + Math.max(before._y, after._y)
 				};
-				
+
 				rect._w = (rect._w - rect._x);
 				rect._h = (rect._h - rect._y);
 			}
-			
+
 			if(rect._w === 0 || rect._h === 0 || !this.onScreen(rect)) {
 				return false;
 			}
-			
+
 			//floor/ceil
 			rect._x = ~~rect._x;
 			rect._y = ~~rect._y;
 			rect._w = (rect._w === ~~rect._w) ? rect._w : rect._w + 1 | 0;
 			rect._h = (rect._h === ~~rect._h) ? rect._h : rect._h + 1 | 0;
-			
+
 			//add to register, check for merging
 			register.push(rect);
-			
+
 			//if it got merged
 			return true;
 		},
-		
+
 		debug: function() {
 			console.log(register, dom);
 		},
-		
+
 		drawAll: function(rect) {
 			var rect = rect || Crafty.viewport.rect(), q,
 				i = 0, l, ctx = Crafty.canvas.context,
 				current;
-			
+
 			q = Crafty.map.search(rect);
 			l = q.length;
-			
+
 			ctx.clearRect(rect._x, rect._y, rect._w, rect._h);
-			
+
 			q.sort(function(a,b) { return a._global - b._global; });
 			for(;i<l;i++) {
 				current = q[i];
@@ -4878,20 +4878,20 @@ Crafty.DrawManager = (function() {
 		draw: function draw() {
 			//if nothing in register, stop
 			if(!register.length && !dom.length) return;
-			
+
 			var i = 0, l = register.length, k = dom.length, rect, q,
 				j, len, dupes, obj, ent, objs = [], ctx = Crafty.canvas.context;
-				
+
 			//loop over all DOM elements needing updating
 			for(;i<k;++i) {
 				dom[i].draw()._changed = false;
 			}
 			//reset counter and DOM array
 			dom.length = i = 0;
-			
+
 			//again, stop if nothing in register
 			if(!l) { return; }
-			
+
 			//if the amount of rects is over 60% of the total objects
 			//do the naive method redrawing
 			if(l / this.total2D > 0.6) {
@@ -4899,50 +4899,50 @@ Crafty.DrawManager = (function() {
 				register.length = 0;
 				return;
 			}
-			
+
 			register = this.merge(register);
 			for(;i<l;++i) { //loop over every dirty rect
 				rect = register[i];
 				if(!rect) continue;
 				q = Crafty.map.search(rect, false); //search for ents under dirty rect
-				
+
 				dupes = {};
-				
+
 				//loop over found objects removing dupes and adding to obj array
 				for(j = 0, len = q.length; j < len; ++j) {
 					obj = q[j];
-					
+
 					if(dupes[obj[0]] || !obj._visible || !obj.__c.Canvas)
 						continue;
 					dupes[obj[0]] = true;
-					
+
 					objs.push({obj: obj, rect: rect});
 				}
-				
+
 				//clear the rect from the main canvas
 				ctx.clearRect(rect._x, rect._y, rect._w, rect._h);
-				
+
 			}
-			
+
 			//sort the objects by the global Z
 			objs.sort(function(a,b) { return a.obj._global - b.obj._global; });
 			if(!objs.length){  return; }
-			
+
 			//loop over the objects
 			for(i = 0, l = objs.length; i < l; ++i) {
 				obj = objs[i];
 				rect = obj.rect;
 				ent = obj.obj;
-				
-				var area = ent._mbr || ent, 
+
+				var area = ent._mbr || ent,
 					x = (rect._x - area._x <= 0) ? 0 : ~~(rect._x - area._x),
 					y = (rect._y - area._y < 0) ? 0 : ~~(rect._y - area._y),
 					w = ~~Math.min(area._w - x, rect._w - (area._x - rect._x), rect._w, area._w),
 					h = ~~Math.min(area._h - y, rect._h - (area._y - rect._y), rect._h, area._h);
-				
+
 				//no point drawing with no width or height
 				if(h === 0 || w === 0) continue;
-				
+
 				ctx.save();
 				ctx.beginPath();
 				ctx.moveTo(rect._x, rect._y);
@@ -4950,9 +4950,9 @@ Crafty.DrawManager = (function() {
 				ctx.lineTo(rect._x + rect._w, rect._h + rect._y);
 				ctx.lineTo(rect._x, rect._h + rect._y);
 				ctx.lineTo(rect._x, rect._y);
-				
+
 				ctx.clip();
-				
+
 				ent.draw();
 				ctx.closePath();
 				ctx.restore();
@@ -4960,7 +4960,7 @@ Crafty.DrawManager = (function() {
 				//allow entity to re-register
 				ent._changed = false;
 			}
-			
+
 			//empty register
 			register.length = 0;
 			//all merged IDs are now invalid
@@ -4978,14 +4978,14 @@ Crafty.extend({
 	isometric: {
 		_tile: 0,
 		_z: 0,
-		
+
 		/**@
 		* #Crafty.isometric.size
 		* @comp Crafty.isometric
 		* @sign public this Crafty.isometric.size(Number tileSize)
 		* @param tileSize - The size of the tiles to place.
 		* Method used to initialize the size of the isometric placement.
-		* Recommended to use a size alues in the power of `2` (128, 64 or 32). 
+		* Recommended to use a size alues in the power of `2` (128, 64 or 32).
 		* This makes it easy to calculate positions and implement zooming.
 		* @see Crafty.isometric.place
 		*/
@@ -4993,7 +4993,7 @@ Crafty.extend({
 			this._tile = tile;
 			return this;
 		},
-		
+
 		/**@
 		* #Crafty.isometric.place
 		* @comp Crafty.isometric
@@ -5009,7 +5009,7 @@ Crafty.extend({
 			var m = x * this._tile + (y & 1) * (this._tile / 2),
 				n = y * this._tile / 4,
 				n = n - z * (this._tile / 2);
-				
+
 			obj.attr({x: m  + Crafty.viewport._x, y: n  + Crafty.viewport._y}).z += z;
 			return this;
 		}
@@ -5021,29 +5021,29 @@ Crafty.extend({
 	* #Crafty.audio
 	* @category Audio
 	* Add sound files and play them. Chooses best format for browser support.
-	* Due to the nature of HTML5 audio, three types of audio files will be 
+	* Due to the nature of HTML5 audio, three types of audio files will be
 	* required for cross-browser capabilities. These formats are MP3, Ogg and WAV.
 	*/
 	audio: {
 		_elems: {},
 		_muted: false,
-		
+
 		/**@
 		* #Crafty.audio.MAX_CHANNELS
 		* @comp Crafty.audio
-		* Amount of Audio objects for a sound so overlapping of the 
+		* Amount of Audio objects for a sound so overlapping of the
 		* same sound can occur. More channels means more of the same sound
 		* playing at the same time.
 		*/
 		MAX_CHANNELS: 5,
-		
+
 		type: {
 			'mp3': 'audio/mpeg;',
 			'ogg': 'audio/ogg; codecs="vorbis"',
 			'wav': 'audio/wav; codecs="1"',
 			'mp4': 'audio/mp4; codecs="mp4a.40.2"'
 		},
-		
+
 		/**@
 		* #Crafty.audio.add
 		* @comp Crafty.audio
@@ -5054,14 +5054,14 @@ Crafty.extend({
 		* @param urls - Array of urls pointing to different format of the same sound, selecting the first that is playable
 		* @sign public this Crafty.audio.add(Object map)
 		* @param map - key-value pairs where the key is the `id` and the value is either a `url` or `urls`
-		* 
-		* Loads a sound to be played. Due to the nature of HTML5 audio, 
-		* three types of audio files will be required for cross-browser capabilities. 
+		*
+		* Loads a sound to be played. Due to the nature of HTML5 audio,
+		* three types of audio files will be required for cross-browser capabilities.
 		* These formats are MP3, Ogg and WAV.
 		*
 		* Passing an array of URLs will determine which format the browser can play and select it over any other.
 		*
-		* Accepts an object where the key is the audio name and 
+		* Accepts an object where the key is the audio name and
 		* either a URL or an Array of URLs (to determine which type to use).
 		*
 		* The ID you use will be how you refer to that sound when using `Crafty.audio.play`.
@@ -5070,20 +5070,20 @@ Crafty.extend({
 		* ~~~
 		* //adding audio from an object
 		* Crafty.audio.add({
-		* 	shoot: ["sounds/shoot.wav",  
-		* 			"sounds/shoot.mp3", 
+		* 	shoot: ["sounds/shoot.wav",
+		* 			"sounds/shoot.mp3",
 		* 			"sounds/shoot.ogg"],
-		* 
+		*
 		* 	coin: "sounds/coin.mp3"
 		* });
-		* 
+		*
 		* //adding a single sound
 		* Crafty.audio.add("walk", [
 		* 	"sounds/walk.mp3",
 		* 	"sounds/walk.ogg",
 		* 	"sounds/walk.wav"
 		* ]);
-		* 
+		*
 		* //only one format
 		* Crafty.audio.add("jump", "sounds/jump.mp3");
 		* ~~~
@@ -5091,30 +5091,30 @@ Crafty.extend({
 		*/
 		add: function(id, url) {
 			if(!Crafty.support.audio) return this;
-			
-			var elem, 
-				key, 
+
+			var elem,
+				key,
 				audio = new Audio(),
 				canplay,
 				i = 0,
 				sounds = [];
-						
+
 			//if an object is passed
 			if(arguments.length === 1 && typeof id === "object") {
 				for(key in id) {
 					if(!id.hasOwnProperty(key)) continue;
-					
+
 					//if array passed, add fallback sources
-					if(typeof id[key] !== "string") {	
+					if(typeof id[key] !== "string") {
 						var sources = id[key], i = 0, l = sources.length,
 							source;
-						
+
 						for(;i<l;++i) {
 							source = sources[i];
 							//get the file extension
 							ext = source.substr(source.lastIndexOf('.')+1).toLowerCase();
 							canplay = audio.canPlayType(this.type[ext]);
-							
+
 							//if browser can play this type, use it
 							if(canplay !== "" && canplay !== "no") {
 								url = source;
@@ -5124,7 +5124,7 @@ Crafty.extend({
 					} else {
 						url = id[key];
 					}
-					
+
 					for(;i<this.MAX_CHANNELS;i++) {
 						audio = new Audio(url);
 						audio.preload = "auto";
@@ -5134,20 +5134,20 @@ Crafty.extend({
 					this._elems[key] = sounds;
 					if(!Crafty.assets[url]) Crafty.assets[url] = this._elems[key][0];
 				}
-				
+
 				return this;
-			} 
+			}
 			//standard method
-			if(typeof url !== "string") { 
+			if(typeof url !== "string") {
 				var i = 0, l = url.length,
 					source;
-				
+
 				for(;i<l;++i) {
 					source = url[i];
 					//get the file extension
 					ext = source.substr(source.lastIndexOf('.')+1);
 					canplay = audio.canPlayType(this.type[ext]);
-					
+
 					//if browser can play this type, use it
 					if(canplay !== "" && canplay !== "no") {
 						url = source;
@@ -5155,7 +5155,7 @@ Crafty.extend({
 					}
 				}
 			}
-			
+
 			//create a new Audio object and add it to assets
 			for(;i<this.MAX_CHANNELS;i++) {
 				audio = new Audio(url);
@@ -5165,7 +5165,7 @@ Crafty.extend({
 			}
 			this._elems[id] = sounds;
 			if(!Crafty.assets[url]) Crafty.assets[url] = this._elems[id][0];
-			
+
 			return this;
 		},
 		/**@
@@ -5174,10 +5174,10 @@ Crafty.extend({
 		* @sign public this Crafty.audio.play(String id, Number repeatCount)
 		* @param id - A string to reffer to sounds
 		* @param repeatCount - Repeat count for the file, where -1 stands for repeat forever.
-		* 
+		*
 		* Will play a sound previously added by using the ID that was used in `Crafty.audio.add`.
-		* Has a default maximum of 5 channels so that the same sound can play simultaneously unless all of the channels are playing. 
-		
+		* Has a default maximum of 5 channels so that the same sound can play simultaneously unless all of the channels are playing.
+
 		* *Note that the implementation of HTML5 Audio is buggy at best.*
 		*
 		* @example
@@ -5191,11 +5191,11 @@ Crafty.extend({
 		*/
 		play: function(id, repeat) {
 			if(!Crafty.support.audio) return;
-			
+
 			var sounds = this._elems[id],
 				sound,
 				i = 0, l = sounds.length;
-			
+
 			for(;i<l;i++) {
 				sound = sounds[i];
 				//go through the channels and play a sound that is stopped
@@ -5219,7 +5219,7 @@ Crafty.extend({
 			}
 			return this;
 		},
-		
+
 		/**@
 		* #Crafty.audio.settings
 		* @comp Crafty.audio
@@ -5237,22 +5237,22 @@ Crafty.extend({
 				}
 				return this;
 			}
-			
+
 			var sounds = this._elems[id],
 				sound,
 				setting,
 				i = 0, l = sounds.length;
-			
+
 			for(var setting in settings) {
 				for(;i<l;i++) {
 					sound = sounds[i];
 					sound[setting] = settings[setting];
 				}
 			}
-			
+
 			return this;
 		},
-		
+
 		/**@
 		* #Crafty.audio.mute
 		* @sign public this Crafty.audio.mute(void)
@@ -5261,15 +5261,15 @@ Crafty.extend({
 		*/
 		mute: function() {
 			var sounds, sound, i, l, elem;
-			
+
 			//loop over every sound
 			for(sounds in this._elems) {
 				elem = this._elems[sounds];
-				
+
 				//loop over every channel for a sound
 				for(i = 0, l = elem.length; i < l; ++i) {
 					sound = elem[i];
-					
+
 					//if playing, stop
 					if(!sound.ended && sound.currentTime) {
 						if(this._muted) sound.pause();
@@ -5295,7 +5295,7 @@ Crafty.bind("Unpause", function() {Crafty.audio.mute()});
 */
 Crafty.c("Text", {
 	_text: "",
-	
+
 	init: function() {
 		this.bind("Draw", function(e) {
 			if(e.type === "DOM") {
@@ -5304,7 +5304,7 @@ Crafty.c("Text", {
 			}
 		});
 	},
-	
+
 	/**@
 	* #.text
 	* @comp Text
@@ -5325,7 +5325,7 @@ Crafty.extend({
 	/**@
 	* #Crafty.assets
 	* @category Assets
-	* An object containing every asset used in the current Crafty game. 
+	* An object containing every asset used in the current Crafty game.
 	* The key is the URL and the value is the `Audio` or `Image` object.
     *
 	* If loading an asset, check that it is in this object first to avoid loading twice.
@@ -5335,7 +5335,7 @@ Crafty.extend({
 	* ~~~
 	*/
 	assets: {},
-	
+
 	/**@
 	* #Crafty.loader
 	* @category Assets
@@ -5344,18 +5344,18 @@ Crafty.extend({
 	* @param onLoad - Callback when the assets are loaded
 	* @param onProgress - Callback when an asset is loaded. Contains information about assets loaded
 	* @param onError - Callback when an asset fails to load
-	* Preloader for all assets. Takes an array of URLs and 
+	* Preloader for all assets. Takes an array of URLs and
 	* adds them to the `Crafty.assets` object.
-	* 
-	* The `onProgress` function will be passed on object with information about 
-	* the progress including how many assets loaded, total of all the assets to 
+	*
+	* The `onProgress` function will be passed on object with information about
+	* the progress including how many assets loaded, total of all the assets to
 	* load and a percentage of the progress.
     *
 	* `onError` will be passed with the asset that couldn't load.
-	* 
+	*
 	* @example
 	* ~~~
-	* Crafty.load(["images/sprite.png", "sounds/jump.mp3"], 
+	* Crafty.load(["images/sprite.png", "sounds/jump.mp3"],
 	*     function() {
 	*         //when loaded
 	*         Crafty.scene("main"); //go to main scene
@@ -5389,13 +5389,13 @@ Crafty.extend({
 				total--;
 				continue; //skip if not applicable
 			}
-			
+
 			//add to global asset collection
 			this.assets[current] = obj;
-			
+
 			obj.onload = function() {
 				++j;
-				
+
 				//if progress callback, give information of assets loaded, total and percent
 				if(onprogress) {
 					onprogress.call(this, {loaded: j, total: total, percent: (j / total * 100)});
@@ -5404,7 +5404,7 @@ Crafty.extend({
 					if(oncomplete) oncomplete();
 				}
 			};
-			
+
 			//if there is an error, pass it in the callback (this will be the object that didn't load)
 			obj.onerror = function() {
 				if(onerror) {
