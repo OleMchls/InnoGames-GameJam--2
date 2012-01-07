@@ -109,4 +109,8 @@ hk.Game = function() {
 		hk.player.x = data.x;
 		hk.player.y = data.y;
 	});
+
+	socket.on('role_update', function(data) {
+		hk.role = data.role;
+	})
 }
