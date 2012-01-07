@@ -70,6 +70,25 @@ function broadcastProjectilesPos() {
 	}
 }
 
+function broadcastUnitsPos() {
+	for (var i in game.units) {
+		var unit = game.units[i];
+		unit.x += 15;
+
+		if (unit.x > game.viewport_w) {
+			// TODO: broadcast health
+			//broadcastUnitDestroy(unit);
+			game.units.splice(i, 1);
+			continue;
+		}
+
+		if (game.users.defender) {
+			game.users[game.roles.DEFENDER].broadcast.emit('update_unit_pos', unit);
+			game.users[game.roles.DEFENDER].emit('update_unit_pos', unit);
+		}
+	}
+}
+
 exports.events = function (socket) {
 	cleanupRoles();
 
@@ -120,19 +139,16 @@ exports.events = function (socket) {
 		socket.broadcast.emit('create_projectile', {id: game.unit_count, x: data.x, y: data.y});
 		socket.emit('create_projectile', {id: game.unit_count, x: data.x, y: data.y});
 		game.unit_count++;
-
-		console.log(game.projectiles);
 	});
-	socket.on('send_enemy', function (data) {
+	socket.on('spawn_unit', function (data) {
 		if (socket != game.users[game.roles.DEFENDER]) {
 			return;
 		}
 
-		game.units.push({x: data.x, y: data.y});
-
-		console.log(game.units);
-
-		socket.broadcast.emit('create_enemy', data);
+		game.units.push({id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		socket.broadcast.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		socket.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		game.unit_count++;
 	});
 
 	setInterval(broadcastAttackerPos, 35);

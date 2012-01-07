@@ -1,5 +1,6 @@
 var sink = 25000;
 var growth = 2000;
+var ai = require('../ai.js');
 
 exports.events = function (socket) {
 
@@ -27,6 +28,8 @@ exports.events = function (socket) {
 		sink += growth;
 		updateSink();
 	}, 5000);
+
+
 
 	updateSink();
 
