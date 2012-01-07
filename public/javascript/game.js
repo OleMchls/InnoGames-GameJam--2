@@ -12,7 +12,7 @@ hk.Game = function() {
 
 		that.scrollBackground();
 
-		Crafty.e("2D, DOM, Image, player")
+		Crafty.e("2D, DOM, Image, Collision, player")
 			.attr({w: 15, h: 15, x: 43, y: 43, moving_key: 0})
 			.image('/images/ship.png')
 			.css('z-index', 100)
@@ -41,6 +41,11 @@ hk.Game = function() {
 							break;
 					}
 				}
+			})
+			.collision()
+			.onHit('enemy', function() {
+				this.destroy();
+				alert('fucked');
 			});
 
 		var defender = new hk.defender();
