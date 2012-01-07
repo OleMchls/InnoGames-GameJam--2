@@ -42,9 +42,6 @@ hk.Game = function() {
 				this.moving_key = 0;
 			})
 			.bind("EnterFrame", function() {
-				this.last_x = this.x;
-				this.last_y = this.y;
-
 				if (this.moving_key && hk.role == 'attacker') {
 					switch (this.moving_key) {
 						case Crafty.keys.RIGHT_ARROW:
@@ -134,9 +131,12 @@ hk.Game = function() {
 	}
 
 	this.updatePosition = function() {
-		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 10) {
+		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 20) {
 			socket.emit('new_attacker_pos', {x: hk.player.x, y: hk.player.y});
 			ticks_player_unsynced = 0;
+
+			hk.player.last_x = hk.player.x;
+			hk.player.last_y = hk.player.y;
 		} else {
 			ticks_player_unsynced++;
 		}
