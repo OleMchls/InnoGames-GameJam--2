@@ -60,6 +60,9 @@ hk.Game = function() {
 						default:
 							break;
 					}
+
+					// update position
+					socket.emit('new_attacker_pos', {x: this.x, y: this.y});
 				}
 			})
 			.collision()
