@@ -7,6 +7,7 @@ hk.Game = function() {
 		'/images/bomb4.png', '/images/bomb5.png'
 	];
 	var ticks_player_unsynced = 0;
+	var projectile_cooldown = false;
 
 	/**
 	 * Initializes the game.
@@ -28,37 +29,62 @@ hk.Game = function() {
 		Crafty.canvas.init();
 
 		hk.player = Crafty.e("2D, DOM, Image, Collision, player")
-			.attr({w: 15, h: 15, x: 43, y: 43, last_x: 43, last_y: 43, moving_key: 0})
+			.attr({w: 15, h: 15, x: 43, y: 43, last_x: 43, last_y: 43, move: {left: false, right: false, up: false, down: false}})
 			.image('/images/player.png')
 			.css('z-index', 100)
 			.bind("KeyDown", function(e) {
-				this.moving_key = e.keyCode;
-
-				if (hk.role == 'attacker' && e.keyCode == Crafty.keys.SPACE) {
-					that.shootProjectile(true);
-				}
-			})
-			.bind("KeyUp", function(e) {
-				this.moving_key = 0;
-			})
-			.bind("EnterFrame", function() {
-				if (this.moving_key && hk.role == 'attacker') {
-					switch (this.moving_key) {
+				if (e.keyCode && hk.role == 'attacker') {
+					switch (e.keyCode) {
 						case Crafty.keys.RIGHT_ARROW:
-							this.x += 10;
+							this.move.right = true;
 							break;
 						case Crafty.keys.LEFT_ARROW:
-							this.x -= 10;
+							this.move.left = true;
 							break;
 						case Crafty.keys.UP_ARROW:
-							this.y -= 10;
+							this.move.up = true;
 							break;
 						case Crafty.keys.DOWN_ARROW:
-							this.y += 10;
+							this.move.down = true;
+							break;
+						case Crafty.keys.SPACE:
+							that.shootProjectile(true);
 							break;
 						default:
 							break;
 					}
+				}
+			})
+			.bind("KeyUp", function(e) {
+				switch (e.keyCode) {
+					case Crafty.keys.RIGHT_ARROW:
+						this.move.right = false;
+						break;
+					case Crafty.keys.LEFT_ARROW:
+						this.move.left = false;
+						break;
+					case Crafty.keys.UP_ARROW:
+						this.move.up = false;
+						break;
+					case Crafty.keys.DOWN_ARROW:
+						this.move.down = false;
+						break;
+					default:
+						break;
+				}
+			})
+			.bind("EnterFrame", function() {
+				if (this.move.right) {
+					this.x += 10;
+				}
+				if (this.move.left) {
+					this.x -= 10;
+				}
+				if (this.move.up) {
+					this.y -= 10;
+				}
+				if (this.move.down) {
+					this.y += 10;
 				}
 
 				// prevent player from moving outsite the map
@@ -109,6 +135,10 @@ hk.Game = function() {
 	}
 
 	this.shootProjectile = function(sync) {
+		if (projectile_cooldown) {
+			return;
+		}
+
 		var projectile_x = hk.player.x + hk.player.w;
 		var projectile_y = hk.player.y + (hk.player.h / 2) + 2;
 
@@ -128,6 +158,13 @@ hk.Game = function() {
 			// broadcast projectile
 			socket.emit('shoot_projectile', {x: projectile.x, y: projectile.y});
 		}
+
+		projectile_cooldown = true;
+		setTimeout(that.clearProjectileCooldown, 300);
+	}
+
+	this.clearProjectileCooldown = function() {
+		projectile_cooldown = false;
 	}
 
 	this.updatePosition = function() {
