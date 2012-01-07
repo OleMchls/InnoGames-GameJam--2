@@ -6,6 +6,7 @@ hk.Game = function() {
 		'/images/ship.png', '/images/dropzone.png', '/images/bomb1.png', '/images/bomb2.png', '/images/bomb3.png',
 		'/images/bomb4.png', '/images/bomb5.png'
 	];
+	var ticks_player_unsynced = 0;
 
 	/**
 	 * Initializes the game.
@@ -41,9 +42,6 @@ hk.Game = function() {
 				this.moving_key = 0;
 			})
 			.bind("EnterFrame", function() {
-				this.last_x = this.x;
-				this.last_y = this.y;
-
 				if (this.moving_key && hk.role == 'attacker') {
 					switch (this.moving_key) {
 						case Crafty.keys.RIGHT_ARROW:
@@ -63,7 +61,19 @@ hk.Game = function() {
 					}
 				}
 
-				
+				// prevent player from moving outsite the map
+				if (this.x < 0) {
+					this.x = 0;
+				}
+				if (this.y < 0) {
+					this.y = 0;
+				}
+				if (this.y > Crafty.viewport.height - this.h) {
+					this.y = Crafty.viewport.height - this.h;
+				}
+				if (this.x > Crafty.viewport.width - 160 - this.w) {
+					this.x = Crafty.viewport.width - 160 - this.w;
+				}
 			})
 			.collision()
 			.onHit('enemy1', function() {
@@ -107,6 +117,11 @@ hk.Game = function() {
 			.image('/images/schuss1.png')
 			.bind('EnterFrame', function() {
 				this.x += 7;
+			})
+			.bind('EnterFrame', function() {
+				if (this.x > Crafty.viewport.width) {
+					this.destroy();
+				}
 			});
 
 		if (sync) {
@@ -116,8 +131,14 @@ hk.Game = function() {
 	}
 
 	this.updatePosition = function() {
-		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y) {
+		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 20) {
 			socket.emit('new_attacker_pos', {x: hk.player.x, y: hk.player.y});
+			ticks_player_unsynced = 0;
+
+			hk.player.last_x = hk.player.x;
+			hk.player.last_y = hk.player.y;
+		} else {
+			ticks_player_unsynced++;
 		}
 
 		setTimeout(that.updatePosition, 35);
