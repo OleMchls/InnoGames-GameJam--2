@@ -20,6 +20,7 @@ var game  = {
 	state: null,
 	attacker_pos: {x: 43, y: 43},
 	projectiles: [],
+	projectiles_hit: [],
 	units: [],
 	unit_count: 1,
 	viewport_w: 1400,
@@ -29,6 +30,34 @@ var game  = {
 
 game.state = game.states.WAITING_FOR_PLAYERS;
 game.ai = require('../ai.js').ai();
+
+var units = {
+	'enemy1': {
+		price: 1000,
+		growth: 100,
+		life: 1000
+	},
+	'enemy2': {
+		price: 3000,
+		growth: 220,
+		life: 1000
+	},
+	'enemy3': {
+		price: 7500,
+		growth: 350,
+		life: 2000
+	},
+	'enemy4': {
+		price: 10000,
+		growth: 400,
+		life: 3000
+	},
+	'enemy5': {
+		price: 20000,
+		growth: 500,
+		life: 5000
+	}
+}
 
 function cleanupRoles() {
 	if (game.users.attacker && game.users.attacker.disconnected) {
@@ -102,14 +131,38 @@ function broadcastUnitsPos() {
 				break;
 		}
 
-		unit.x = data.x;
-		unit.y = data.y;
+		if (data.x < 0 || data.y < 0 || data.x > game.viewport_w || data.y > game.viewport_h) {
+			if (data.x < 0) {
+				game.users[game.roles.DEFENDER].emit('end_reached', {unit: unit.unit_name, refund: units[unit.unit_name].price * 2});
+			}
 
-		if (game.users.defender) {
-			game.users[game.roles.DEFENDER].broadcast.emit('update_unit_pos', unit);
-			game.users[game.roles.DEFENDER].emit('update_unit_pos', unit);
+			game.units.splice(i, 1);
+
+			if (game.users.defender) {
+				game.users[game.roles.DEFENDER].broadcast.emit('unit_down', {id: unit.id});
+				game.users[game.roles.DEFENDER].emit('unit_down', {id: unit.id});
+			}
+		} else {
+			unit.x = data.x;
+			unit.y = data.y;
+
+			if (game.users.defender) {
+				game.users[game.roles.DEFENDER].broadcast.emit('update_unit_pos', unit);
+				game.users[game.roles.DEFENDER].emit('update_unit_pos', unit);
+			}
 		}
 	}
+}
+
+function hasProjectileHit(id) {
+	var hit = false;
+	for (var i in game.projectiles_hit) {
+		if (game.projectiles_hit[i].id == id) {
+			hit = true;
+		}
+	}
+
+	return hit;
 }
 
 function changeGameState(socket, state) {
@@ -152,10 +205,6 @@ exports.events = function (socket) {
 
 		game.attacker_pos.x = data.x;
 		game.attacker_pos.y = data.y;
-
-		console.log(game.attacker_pos);
-
-		//socket.broadcast.emit('update_attacker_pos', data);
 	});
 	socket.on('shoot_projectile', function(data) {
 		if (socket != game.users[game.roles.ATTACKER]) {
@@ -172,10 +221,36 @@ exports.events = function (socket) {
 			return;
 		}
 
-		game.units.push({id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		game.units.push({id: game.unit_count, unit_name: data.unit_name, life: units[data.unit_name].life, x: data.x, y: data.y});
 		socket.broadcast.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
 		socket.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
 		game.unit_count++;
+	});
+
+	socket.on('unit_hit', function(data) {
+		for (var i in game.units) {
+			if (game.units[i].id == data.id && !hasProjectileHit(data.projectile_id)) {
+				if (game.units[i].unit_name != 'enemy1') {
+					game.projectiles_hit.push({id: data.projectile_id});
+				}
+
+				game.units[i].life -= data.damage;
+
+				if (game.units[i].life < 1) {
+					game.units.splice(i, 1);
+
+					socket.broadcast.emit('unit_down', {id: data.id});
+					socket.emit('unit_down', {id: data.id});
+				}
+			}
+		}
+	});
+	socket.on('projectile_down', function(data) {
+		for (var i in game.projectiles) {
+			if (game.projectiles[i].id == data.id) {
+				broadcastProjectileDestroy(game.projectiles[i]);
+			}
+		}
 	});
 
 	function extractMillisFromScore(scoreString) {

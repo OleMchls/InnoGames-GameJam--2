@@ -207,25 +207,31 @@ hk.Game = function() {
 	});
 
 	socket.on('create_projectile', function(data) {
-		var projectile = Crafty.e('2D, DOM, Image, projectile')
+		var projectile = Crafty.e('2D, DOM, Image, Collision, projectile')
 		.attr({
 			x: data.x,
 			y: data.y,
 			w: 23,
 			h: 4,
-			damage: 1000
+			damage: 1000,
+			projectile_id: data.id
 		})
 		.image('/images/schuss1.png')
-		.bind('EnterFrame', function() {
-			if (this.x >= Crafty.viewport.width) {
-				this.destroy();
-			}
+		.collision()
+		.onHit('enemy2', function() {
+			socket.emit('projectile_down', {id: data.id});
+		})
+		.onHit('enemy3', function() {
+			socket.emit('projectile_down', {id: data.id});
+		})
+		.onHit('enemy4', function() {
+			socket.emit('projectile_down', {id: data.id});
+		})
+		.onHit('enemy5', function() {
+			socket.emit('projectile_down', {id: data.id});
 		});
 
-		projectiles.push({
-			id: data.id,
-			projectile: projectile
-		});
+		projectiles.push({id: data.id, projectile: projectile});
 	});
 
 	socket.on('update_projectile_pos', function(data) {
