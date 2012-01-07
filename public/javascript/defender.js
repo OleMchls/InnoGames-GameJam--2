@@ -37,8 +37,8 @@ hk.defender = function() {
 			case 'enemy1':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
 				.attr({
-					w: 50,
-					h: 50,
+					w: 72,
+					h: 34,
 					x: x,
 					y: y
 				})
@@ -51,12 +51,12 @@ hk.defender = function() {
 			case 'enemy2':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
 				.attr({
-					w: 50,
-					h: 50,
+					w: 73,
+					h: 29,
 					x: x,
 					y: y
 				})
-				.image('/images/enemy1.png')
+				.image('/images/enemy2.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
@@ -65,12 +65,12 @@ hk.defender = function() {
 			case 'enemy3':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
 				.attr({
-					w: 50,
-					h: 50,
+					w: 144,
+					h: 70,
 					x: x,
 					y: y
 				})
-				.image('/images/enemy1.png')
+				.image('/images/enemy3.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
