@@ -17,6 +17,14 @@ html
 				var game = new hk.Game();
 				game.init();
 			})
+			function rand (min, max) {
+				var args = arguments.length;
+				if (args === 0) {
+					min = 0;
+					max = 32768;
+					}
+					return Math.floor( Math.random() * (max - min + 1) ) + min;
+			}
 
 
 	body!= body

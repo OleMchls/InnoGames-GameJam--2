@@ -81,7 +81,7 @@ hk.defender = function() {
 				.image('/images/enemy2.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					this.x -= 1;
+					this.x -= 3;
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						this.destroy();
 					}
@@ -98,10 +98,16 @@ hk.defender = function() {
 				.image('/images/enemy3.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					if (hk.player.x > this.x)
-						this.x -= 1;
+					if (hk.player.x < this.x)
+						this.x -= 0.8;
 					else
-						this.y += 1;
+						this.x -= 1;
+					if (hk.player.x < this.x) {
+						if (hk.player.y > this.y)
+							this.y += 1;
+						else
+							this.y -= 1;
+					}
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						this.destroy();
 					}
@@ -119,6 +125,8 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
+					this.y -= rand(0,3)
+					this.y += rand(0,3)
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						this.destroy();
 					}
@@ -135,7 +143,9 @@ hk.defender = function() {
 				.image('/images/enemy1.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					this.x -= 1;
+					this.x -= 3;
+					this.y -= rand(0,3)
+					this.y += rand(0,3)
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						this.destroy();
 					}
