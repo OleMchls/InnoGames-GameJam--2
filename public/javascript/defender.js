@@ -4,11 +4,11 @@ hk.defender = function() {
 	this.selectedUnit = null;
 
 	var units = {
-		'enemy1': {price: 1000},
-		'enemy2': {price: 1000},
-		'enemy3': {price: 1000},
+		'enemy1': {price: 100},
+		'enemy2': {price: 300},
+		'enemy3': {price: 750},
 		'enemy4': {price: 1000},
-		'enemy5': {price: 1000}
+		'enemy5': {price: 1200}
 	}
 
 	this.init = function() {
