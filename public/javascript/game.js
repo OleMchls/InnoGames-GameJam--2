@@ -134,7 +134,7 @@ hk.Game = function() {
 	}
 
 	this.updatePosition = function() {
-		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 5) {
+		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 10) {
 			socket.emit('new_attacker_pos', {x: hk.player.x, y: hk.player.y});
 			ticks_player_unsynced = 0;
 		} else {
