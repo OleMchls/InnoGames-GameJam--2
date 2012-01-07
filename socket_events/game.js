@@ -17,7 +17,7 @@ var game  = {
 		ATTACKER_WIN: 'attacker_win',
 		ATTACKER_LOST: 'attacker_lost'
 	},
-	state: game.states.WAITING_FOR_PLAYERS,
+	state: null,
 	attacker_pos: {x: 43, y: 43},
 	projectiles: [],
 	units: [],
@@ -25,6 +25,8 @@ var game  = {
 	viewport_w: 1400,
 	viewport_h: 600
 };
+
+game.state = game.states.WAITING_FOR_PLAYERS;
 
 function cleanupRoles() {
 	if (game.users.attacker && game.users.attacker.disconnected) {
