@@ -20,7 +20,7 @@ hk.Game = function() {
 				this.moving_key = e.keyCode;
 
 				if (e.keyCode == Crafty.keys.SPACE) {
-					console.log('pew')
+					that.shootProjectile();
 				}
 			})
 			.bind("KeyUp", function(e) {
@@ -60,5 +60,14 @@ hk.Game = function() {
 		$('#cr-stage').css('background-position', bg_pos);
 
 		setTimeout(that.scrollBackground, 30);
+	}
+
+	this.shootProjectile = function() {
+		var austritt_x = hk.player.x + hk.player.w;
+		var austritt_y = hk.player.y + (hk.player.h / 2);
+
+		Crafty.e('2D, DOM, Color')
+			.attr({x: austritt_x, y: austritt_y, w: 10, h: 10})
+			.color('#FF0000');
 	}
 }
