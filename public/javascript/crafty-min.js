@@ -2376,7 +2376,7 @@ Crafty.c("DOM", {
 
 /*<<<<<<< HEAD
 		//utilize CSS3 if supported
-		if(Crafty.support.css3dtransform) {
+		if(false && Crafty.support.css3dtransform) {
 			trans.push("translate3d("+(~~this._x)+"px,"+(~~this._y)+"px,0)");
 		} else {
 			style.left = ~~(this._x) + "px";
@@ -2384,7 +2384,7 @@ Crafty.c("DOM", {
 		}
 
 =======*/
-		if(Crafty.support.css3dtransform) trans.push("translate3d("+(~~this._x)+"px,"+(~~this._y)+"px,0)");
+		if(false && Crafty.support.css3dtransform) trans.push("translate3d("+(~~this._x)+"px,"+(~~this._y)+"px,0)");
 		else {
 			style.top = Number(this._y)+"px";
 			style.left = Number(this._x)+"px";
