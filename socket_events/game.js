@@ -180,9 +180,9 @@ exports.events = function (socket) {
 
 	function extractMillisFromScore(scoreString) {
 		var result = /(\d{2}):(\d{2}):(\d{3})/.exec(scoreString);
-		var min = praseInt(result[1])
-		,   sec = praseInt(result[2])
-		,   mil = praseInt(result[3]);
+		var min = parseInt(result[1])
+		,   sec = parseInt(result[2])
+		,   mil = parseInt(result[3]);
 
 		sec += (min * 60);
 		mil += (sec * 1000);
