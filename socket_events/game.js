@@ -70,16 +70,24 @@ function broadcastProjectilesPos() {
 	}
 }
 
+function changeGameState(socket, state) {
+	game.state = state;
+	socket.emit('state_change', state);
+	socket.broadcast.emit('state_change', state);
+}
+
 exports.events = function (socket) {
 	cleanupRoles();
 
 	if (!game.users[game.roles.ATTACKER]) {
 		game.users[game.roles.ATTACKER] = socket;
+		changeGameState(socket, game.states.WAITING_FOR_DEFENDER)
 		socket.emit('role_update', {
 			role: game.roles.ATTACKER
 		})
 	} else if (!game.users[game.roles.DEFENDER]) {
 		game.users[game.roles.DEFENDER] = socket;
+		changeGameState(socket, game.states.FIRST_ROUND)
 		socket.emit('role_update', {
 			role: game.roles.DEFENDER
 		})
