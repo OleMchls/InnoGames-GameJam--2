@@ -47,7 +47,19 @@ hk.Game = function() {
 				}
 			})
 			.collision()
-			.onHit('enemy', function() {
+			.onHit('enemy1', function() {
+				this.destroy();
+			})
+			.onHit('enemy2', function() {
+				this.destroy();
+			})
+			.onHit('enemy3', function() {
+				this.destroy();
+			})
+			.onHit('enemy4', function() {
+				this.destroy();
+			})
+			.onHit('enemy5', function() {
 				this.destroy();
 			});
 
@@ -64,10 +76,13 @@ hk.Game = function() {
 
 	this.shootProjectile = function() {
 		var austritt_x = hk.player.x + hk.player.w;
-		var austritt_y = hk.player.y + (hk.player.h / 2);
+		var austritt_y = hk.player.y + (hk.player.h / 2) + 1;
 
-		Crafty.e('2D, DOM, Color')
-			.attr({x: austritt_x, y: austritt_y, w: 10, h: 10})
-			.color('#FF0000');
+		Crafty.e('2D, DOM, Color, projectile')
+			.attr({x: austritt_x, y: austritt_y, w: 5, h: 5})
+			.color('#FF0000')
+			.bind('EnterFrame', function() {
+				this.x += 7;
+			});
 	}
 }

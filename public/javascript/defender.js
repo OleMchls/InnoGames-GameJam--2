@@ -69,6 +69,10 @@ hk.defender = function() {
 						this.destroy();
 					}
 				})
+				.collision()
+				.onHit('projectile', function() {
+					this.destroy();
+				});
 				break;
 			case 'enemy2':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy2")
@@ -86,6 +90,10 @@ hk.defender = function() {
 						this.destroy();
 					}
 				})
+				.collision()
+				.onHit('projectile', function() {
+					this.destroy();
+				});
 				break;
 			case 'enemy3':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
@@ -112,6 +120,10 @@ hk.defender = function() {
 						this.destroy();
 					}
 				})
+				.collision()
+				.onHit('projectile', function() {
+					this.destroy();
+				});
 				break;
 			case 'enemy4':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy4")
@@ -131,6 +143,10 @@ hk.defender = function() {
 						this.destroy();
 					}
 				})
+				.collision()
+				.onHit('projectile', function() {
+					this.destroy();
+				});
 				break;
 			case 'enemy5':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy5")
@@ -150,6 +166,10 @@ hk.defender = function() {
 						this.destroy();
 					}
 				})
+				.collision()
+				.onHit('projectile', function() {
+					this.destroy();
+				});
 				break;
 		}
 	}
