@@ -15,19 +15,19 @@ hk.defender = function() {
 		image("/images/dropzone.png").
 		bind("KeyDown", function(e) {
 			switch (e.keyCode) {
-				case Crafty.keys.NUMPAD_1:
+				case Crafty.keys['1']:
 					that.selectUnit('enemy1')
 					break;
-				case Crafty.keys.NUMPAD_2:
+				case Crafty.keys['2']:
 					that.selectUnit('enemy2')
 					break;
-				case Crafty.keys.NUMPAD_3:
+				case Crafty.keys['3']:
 					that.selectUnit('enemy3')
 					break;
-				case Crafty.keys.NUMPAD_4:
+				case Crafty.keys['4']:
 					that.selectUnit('enemy4')
 					break;
-				case Crafty.keys.NUMPAD_5:
+				case Crafty.keys['5']:
 					that.selectUnit('enemy5')
 					break;
 			}
@@ -76,6 +76,7 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
+				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy2':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy2")
@@ -97,6 +98,7 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
+				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy3':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
@@ -127,6 +129,7 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
+				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy4':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy4")
@@ -150,6 +153,7 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
+				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy5':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy5")
@@ -173,6 +177,7 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
+				socket.emit('spend_sink', {value: 1000});
 				break;
 		}
 
@@ -183,5 +188,9 @@ hk.defender = function() {
 
 	socket.on('create_enemy', function(data) {
 		that.spawnUnit(data.unit_name, data.x, data.y, false);
+	});
+
+	socket.on('sink_update', function(data) {
+		$('#sink span').text(data.sink)
 	});
 }
