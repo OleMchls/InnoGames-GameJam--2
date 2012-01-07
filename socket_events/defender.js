@@ -1,14 +1,15 @@
-var sink = 0;
+var sink = 25000;
+var growth = 2000;
 
 exports.events = function (socket) {
 
 	function updateSink() {
-		socket.emit('sink_update', {
-			sink: sink
-		})
-		socket.broadcast.emit('sink_update', {
-			sink: sink
-		})
+		var data = {
+			sink: sink,
+			growth: growth
+		}
+		socket.emit('sink_update', data)
+		socket.broadcast.emit('sink_update', data)
 	}
 
 	socket.on('send_enemy', function (data) {
@@ -20,9 +21,9 @@ exports.events = function (socket) {
 	});
 
 	setInterval(function(){
-		sink += 10;
+		sink += growth;
 		updateSink();
-	}, 800);
+	}, 5000);
 
 	updateSink();
 

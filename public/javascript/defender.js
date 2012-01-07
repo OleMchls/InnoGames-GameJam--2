@@ -4,11 +4,26 @@ hk.defender = function() {
 	this.selectedUnit = null;
 
 	var units = {
-		'enemy1': {price: 100},
-		'enemy2': {price: 300},
-		'enemy3': {price: 750},
-		'enemy4': {price: 1000},
-		'enemy5': {price: 1200}
+		'enemy1': {
+			price: 1000,
+			growth: 100
+		},
+		'enemy2': {
+			price: 3000,
+			growth: 220
+		},
+		'enemy3': {
+			price: 7500,
+			growth: 350
+		},
+		'enemy4': {
+			price: 10000,
+			growth: 400
+		},
+		'enemy5': {
+			price: 20000,
+			growth: 500
+		}
 	}
 
 	this.init = function() {
@@ -63,7 +78,7 @@ hk.defender = function() {
 
 	this.spawnUnit = function(unit_name, x, y, sync) {
 		var unit;
-		var currentSink = parseInt($('#sink span').text());
+		var currentSink = parseInt($('#sink .sink').text());
 		if (currentSink < units[unit_name].price) {
 			return
 		}
@@ -187,10 +202,18 @@ hk.defender = function() {
 				});
 				break;
 		}
-		socket.emit('spend_sink', {value: units[unit_name].price});
+		if (hk.role == 'defender') {
+			socket.emit('spend_sink', {
+				value: units[unit_name].price
+			});
+		}
 
 		if (unit && sync) {
-			socket.emit('send_enemy', {unit_name: unit_name, x: x, y: y});
+			socket.emit('send_enemy', {
+				unit_name: unit_name,
+				x: x,
+				y: y
+			});
 		}
 	}
 
@@ -199,6 +222,7 @@ hk.defender = function() {
 	});
 
 	socket.on('sink_update', function(data) {
-		$('#sink span').text(data.sink)
+		$('#sink .sink').text(data.sink)
+		$('#sink .growth').text(data.growth)
 	});
 }
