@@ -89,15 +89,13 @@ hk.defender = function() {
 //			return
 //		}
 
-		socket.emit('spawn_unit', {
-			unit_name: unit_name,
-			x: x,
-			y: y
-		});
+		socket.emit('spawn_unit', {unit_name: unit_name, x: x, y: y});
 	}
 
 	socket.on('create_unit', function(data) {
 		var unit = null;
+		var unit_id = data.id;
+
 		switch (data.unit_name) {
 			case 'enemy1':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy1")
@@ -112,9 +110,7 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
+					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
 			case 'enemy2':
@@ -128,6 +124,10 @@ hk.defender = function() {
 				})
 				.image('/images/bomb2.png')
 				.css('z-index', 100)
+				.collision()
+				.onHit('projectile', function(data) {
+					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
+				});
 				break;
 			case 'enemy3':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
@@ -142,10 +142,7 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-					data[0].obj.destroy();
+					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
 			case 'enemy4':
@@ -161,10 +158,7 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-					data[0].obj.destroy();
+					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
 			case 'enemy5':
@@ -180,10 +174,7 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-					data[0].obj.destroy();
+					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
 		}
@@ -196,6 +187,15 @@ hk.defender = function() {
 			if (spawned_units[i].id == data.id) {
 				spawned_units[i].unit.x = data.x;
 				spawned_units[i].unit.y = data.y;
+			}
+		}
+	});
+
+	socket.on('unit_down', function(data) {
+		for (var i in spawned_units) {
+			if (spawned_units[i].id == data.id) {
+				spawned_units[i].unit.destroy();
+				spawned_units.splice(i, 1);
 			}
 		}
 	});
