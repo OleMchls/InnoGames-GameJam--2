@@ -73,7 +73,8 @@ function broadcastProjectilesPos() {
 function broadcastUnitsPos() {
 	for (var i in game.units) {
 		var unit = game.units[i];
-		unit.x += 15;
+
+		
 
 		if (unit.x > game.viewport_w) {
 			// TODO: broadcast health
