@@ -2,11 +2,27 @@ hk.Game = function() {
 
 	var that = this;
 	var bg_pos = 0;
+	var resources = [
+		'/images/ship.png', '/images/dropzone.png', '/images/enemy1.png', '/images/enemy2.png',	'/images/enemy3.png',
+		'/images/enemy4.png', '/images/enemy5.png'
+	];
 
 	/**
 	 * Initializes the game.
 	 */
 	this.init = function() {
+		Crafty.load(resources, function() {
+			//when loaded
+			$('#cr_stage').text('');
+			that.startGame();
+		}, function(e) {
+			$('#cr_stage').text(e.percent + '%');
+		}, function(e) {
+			// fail
+		});
+	}
+
+	this.startGame = function() {
 		Crafty.init(1400, 600);
 		Crafty.canvas.init();
 
@@ -75,11 +91,11 @@ hk.Game = function() {
 	}
 
 	this.shootProjectile = function() {
-		var austritt_x = hk.player.x + hk.player.w;
-		var austritt_y = hk.player.y + (hk.player.h / 2) + 1;
+		var projectile_x = hk.player.x + hk.player.w;
+		var projectile_y = hk.player.y + (hk.player.h / 2) + 1;
 
 		Crafty.e('2D, DOM, Color, projectile')
-			.attr({x: austritt_x, y: austritt_y, w: 5, h: 5})
+			.attr({x: projectile_x, y: projectile_y, w: 5, h: 5})
 			.color('#FF0000')
 			.bind('EnterFrame', function() {
 				this.x += 7;

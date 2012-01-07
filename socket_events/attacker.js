@@ -1,7 +1,5 @@
-
 exports.events = function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
+	socket.on('new_attacker_pos', function (data) {
+		console.log(data);
+	});
 }
