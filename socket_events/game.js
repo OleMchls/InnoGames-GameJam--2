@@ -23,10 +23,12 @@ var game  = {
 	units: [],
 	unit_count: 1,
 	viewport_w: 1400,
-	viewport_h: 600
+	viewport_h: 600,
+	ai: null
 };
 
 game.state = game.states.WAITING_FOR_PLAYERS;
+game.ai = require('../ai.js').ai();
 
 function cleanupRoles() {
 	if (game.users.attacker && game.users.attacker.disconnected) {
@@ -66,6 +68,46 @@ function broadcastProjectilesPos() {
 		if (game.users.attacker) {
 			game.users[game.roles.ATTACKER].broadcast.emit('update_projectile_pos', projectile);
 			game.users[game.roles.ATTACKER].emit('update_projectile_pos', projectile);
+		}
+	}
+}
+
+function broadcastUnitsPos() {
+	for (var i in game.units) {
+		var unit = game.units[i];
+
+		if (unit.x > game.viewport_w) {
+			// TODO: broadcast health
+			//broadcastUnitDestroy(unit);
+			game.units.splice(i, 1);
+			continue;
+		}
+
+		var data = {x: unit.x, y: unit.y, player: game.attacker_pos};
+		switch (unit.unit_name) {
+			case 'enemy1':
+				data = game.ai.enemy1(data);
+				break;
+			case 'enemy2':
+				data = game.ai.enemy2(data);
+				break;
+			case 'enemy3':
+				data = game.ai.enemy3(data);
+				break;
+			case 'enemy4':
+				data = game.ai.enemy4(data);
+				break;
+			case 'enemy5':
+				data = game.ai.enemy5(data);
+				break;
+		}
+
+		unit.x = data.x;
+		unit.y = data.y;
+
+		if (game.users.defender) {
+			game.users[game.roles.DEFENDER].broadcast.emit('update_unit_pos', unit);
+			game.users[game.roles.DEFENDER].emit('update_unit_pos', unit);
 		}
 	}
 }
@@ -124,19 +166,16 @@ exports.events = function (socket) {
 		socket.broadcast.emit('create_projectile', {id: game.unit_count, x: data.x, y: data.y});
 		socket.emit('create_projectile', {id: game.unit_count, x: data.x, y: data.y});
 		game.unit_count++;
-
-		console.log(game.projectiles);
 	});
-	socket.on('send_enemy', function (data) {
+	socket.on('spawn_unit', function (data) {
 		if (socket != game.users[game.roles.DEFENDER]) {
 			return;
 		}
 
-		game.units.push({x: data.x, y: data.y});
-
-		console.log(game.units);
-
-		socket.broadcast.emit('create_enemy', data);
+		game.units.push({id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		socket.broadcast.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		socket.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		game.unit_count++;
 	});
 
 	function extractMillisFromScore(scoreString) {
@@ -179,6 +218,7 @@ exports.events = function (socket) {
 
 	setInterval(broadcastAttackerPos, 35);
 	setInterval(broadcastProjectilesPos, 35);
+	setInterval(broadcastUnitsPos, 35);
 
 	cleanupRoles();
 }
