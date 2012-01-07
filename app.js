@@ -45,4 +45,3 @@ _.each([require('./socket_events/attacker.js'), require('./socket_events/defende
 	console.log(module);
 	io.sockets.on('connection', module.events);
 })
-
