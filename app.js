@@ -5,6 +5,7 @@
 
 var express = require('express')
 , routes = require('./routes')
+, _ = require('underscore')
 
 var app = module.exports = express.createServer();
 
@@ -38,10 +39,10 @@ app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 // Socket.IO
-var io = require('socket.io').listen(app);
+var io = require('socket.io').listen(app)
 
-io.sockets.on('connection', function (socket) {
-	socket.on('positionUpdate', function(data){
-		socket.broadcast.emit(data);
-	});
-});
+_.each([require('./socket_events/attacker.js'), require('./socket_events/defender.js')], function(module) {
+	console.log(module);
+	io.sockets.on('connection', module.events);
+})
+
