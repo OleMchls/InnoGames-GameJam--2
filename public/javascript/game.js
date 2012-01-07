@@ -46,16 +46,20 @@ hk.Game = function() {
 				if (this.moving_key) {
 					switch (this.moving_key) {
 						case Crafty.keys.RIGHT_ARROW:
-							this.x += 10;
+							if (hk.role == 'attacker')
+								this.x += 10;
 							break;
 						case Crafty.keys.LEFT_ARROW:
-							this.x -= 10;
+							if (hk.role == 'attacker')
+								this.x -= 10;
 							break;
 						case Crafty.keys.UP_ARROW:
-							this.y -= 10;
+							if (hk.role == 'attacker')
+								this.y -= 10;
 							break;
 						case Crafty.keys.DOWN_ARROW:
-							this.y += 10;
+							if (hk.role == 'attacker')
+								this.y += 10;
 							break;
 						default:
 							break;
@@ -121,5 +125,6 @@ hk.Game = function() {
 
 	socket.on('role_update', function(data) {
 		hk.role = data.role;
+		$('#role span').text(data.role)
 	})
 }
