@@ -96,6 +96,12 @@ hk.defender = function() {
 				.bind('EnterFrame', function() {
 					this.x -= 1;
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						if (hk.role == 'defender' || this.x < 0) {
+							socket.emit('end_reached', {
+								unit: unit_name,
+								refund: units[unit_name].price * 2
+							})
+						}
 						this.destroy();
 					}
 				})
@@ -117,6 +123,12 @@ hk.defender = function() {
 				.bind('EnterFrame', function() {
 					this.x -= 3;
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						if (hk.role == 'defender' || this.x < 0) {
+							socket.emit('end_reached', {
+								unit: unit_name,
+								refund: units[unit_name].price * 2
+							})
+						}
 						this.destroy();
 					}
 				})
@@ -147,6 +159,12 @@ hk.defender = function() {
 							this.y -= 1;
 					}
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						if (hk.role == 'defender' || this.x < 0) {
+							socket.emit('end_reached', {
+								unit: unit_name,
+								refund: units[unit_name].price * 2
+							})
+						}
 						this.destroy();
 					}
 				})
@@ -170,6 +188,12 @@ hk.defender = function() {
 					this.y -= rand(0,3)
 					this.y += rand(0,3)
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						if (hk.role == 'defender' || this.x < 0) {
+							socket.emit('end_reached', {
+								unit: unit_name,
+								refund: units[unit_name].price * 2
+							})
+						}
 						this.destroy();
 					}
 				})
@@ -193,6 +217,12 @@ hk.defender = function() {
 					this.y -= rand(0,5)
 					this.y += rand(0,5)
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						if (hk.role == 'defender' || this.x < 0) {
+							socket.emit('end_reached', {
+								unit: unit_name,
+								refund: units[unit_name].price * 2
+							})
+						}
 						this.destroy();
 					}
 				})
@@ -203,8 +233,8 @@ hk.defender = function() {
 				break;
 		}
 		if (hk.role == 'defender') {
-			socket.emit('spend_sink', {
-				value: units[unit_name].price
+			socket.emit('build_unit', {
+				unit: units[unit_name]
 			});
 		}
 
