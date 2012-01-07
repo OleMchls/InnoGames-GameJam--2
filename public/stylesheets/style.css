@@ -1,12 +1,106 @@
 body {
-	background-color: #DDDDDD;
+	background-color: #1F1F1F;
+	margin: 0;
+}
+
+#game-wrapper {
+	background: url(/images/ui.png);
+	width: 1636px;
+	height: 758px;
+	margin-left: -818px;
+	left: 50%;
+	z-index: 100;
+	position: absolute;
 }
 
 #cr-stage {
-	position: absolute;
-	border: 1px solid;
-	box-shadow: 0px 0px 20px #000000;
-	opacity: 1.0;
-	float: left;
+	position: absolute !important;
+	left: 192px;
+	top: 92px;
 	background: url(/images/back_kitchen4.jpg) repeat-x;
+}
+
+#role {
+	left: 1596px;
+	top: 45px;
+}
+
+#sink {
+	left: 387px;
+	top: 693px;
+}
+
+#growth {
+	left: 698px;
+	top: 693px;
+}
+
+#timer {
+	top: 7px;
+	left: 330px;
+}
+
+#timer span,
+#health span{
+	font-size: 35px;
+}
+
+#health {
+	top: 54px;
+	left: 364px;
+}
+
+#role,
+#sink,
+#growth,
+#timer,
+#health {
+	position: absolute;
+	z-index: 110;
+	font-family: 'Schoolbell', cursive;
+	font-size: 30px;
+	color: #683B21;
+}
+
+#attack-bar {
+	position: absolute;
+	z-index: 110;
+	width: 158px;
+	height: 596px;
+	top: 82px;
+	left: 1600px;
+}
+
+#attack-bar .enemy {
+	position: absolute;
+	z-index: 110;
+	left: 6px;
+	width: 146px;
+	border: 2px #683B21 dashed;
+	opacity: 0.7;
+}
+
+#enemy1 {
+	top: 26px;
+	height: 83px;
+}
+
+#enemy2 {
+	top: 120px;
+	height: 83px;
+}
+
+#enemy3 {
+	top: 216px;
+	height: 93px;
+}
+
+#enemy4 {
+	top: 320px;
+	height: 93px;
+}
+
+#enemy5 {
+	top: 430px;
+	height: 127px;
 }

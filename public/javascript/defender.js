@@ -84,7 +84,7 @@ hk.defender = function() {
 
 	this.spawnUnit = function(unit_name, x, y) {
 //		var unit;
-//		var currentSink = parseInt($('#sink .sink').text());
+//		var currentSink = parseInt($('#sink span').text());
 //		if (currentSink < units[unit_name].price) {
 //			return
 //		}
@@ -201,7 +201,7 @@ hk.defender = function() {
 	});
 
 	socket.on('sink_update', function(data) {
-		$('#sink .sink').text(data.sink)
-		$('#sink .growth').text(data.growth)
+		$('#sink span').text(data.sink)
+		$('#growth span').text(data.growth)
 	});
 }

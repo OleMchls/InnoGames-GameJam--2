@@ -1,30 +1,25 @@
 #wrapper
+	#game-wrapper
 	#cr-stage
-	#defender-controlls
-		#attack-bar
-			ul
-				li#enemy1.enemy
-					a(href="#")
-						img(src="/images/bomb1.png", alt="enemy1")
-				li#enemy2.enemy
-					a(href="#")
-						img(src="/images/bomb2.png", alt="enemy2")
-				li#enemy3.enemy
-					a(href="#")
-						img(src="/images/bomb3.png", alt="enemy3")
-				li#enemy4.enemy
-					a(href="#")
-						img(src="/images/bomb4.png", alt="enemy4")
-				li#enemy5.enemy
-					a(href="#")
-						img(src="/images/bomb5.png", alt="enemy5")
-	#role You are
+	#attack-bar
+		#enemy1.enemy
+			a(href="#")
+		#enemy2.enemy
+			a(href="#")
+		#enemy3.enemy
+			a(href="#")
+		#enemy4.enemy
+			a(href="#")
+		#enemy5.enemy
+			a(href="#")
+	#role
 		span -
 	#sink
-		span SinkScore:
-		span.sink 0
-		br
-		span Growth:
-		span.growth 0
+		span 0
+	#growth
+		span 0
+		small &nbsp;/ 5 sec
 	#timer
 		span 00:00:000
+	#health
+		span 100
