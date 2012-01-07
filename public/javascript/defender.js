@@ -88,7 +88,6 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
-				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy2':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy2")
@@ -110,7 +109,6 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
-				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy3':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
@@ -141,7 +139,6 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
-				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy4':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy4")
@@ -165,7 +162,6 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
-				socket.emit('spend_sink', {value: 1000});
 				break;
 			case 'enemy5':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy5")
@@ -189,9 +185,9 @@ hk.defender = function() {
 				.onHit('projectile', function() {
 					this.destroy();
 				});
-				socket.emit('spend_sink', {value: 1000});
 				break;
 		}
+		socket.emit('spend_sink', {value: units[unit_name].price});
 
 		if (unit && sync) {
 			socket.emit('send_enemy', {unit_name: unit_name, x: x, y: y});
