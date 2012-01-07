@@ -144,8 +144,8 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 3;
-					this.y -= rand(0,3)
-					this.y += rand(0,3)
+					this.y -= rand(0,5)
+					this.y += rand(0,5)
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						this.destroy();
 					}
