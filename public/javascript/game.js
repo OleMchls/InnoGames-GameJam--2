@@ -3,8 +3,8 @@ hk.Game = function() {
 	var that = this;
 	var bg_pos = 0;
 	var resources = [
-		'/images/ship.png', '/images/dropzone.png', '/images/bomb1.png', '/images/bomb2.png', '/images/bomb3.png',
-		'/images/bomb4.png', '/images/bomb5.png', '/images/player.png'
+	'/images/ship.png', '/images/dropzone.png', '/images/bomb1.png', '/images/bomb2.png', '/images/bomb3.png',
+	'/images/bomb4.png', '/images/bomb5.png', '/images/player.png'
 	];
 	var ticks_player_unsynced = 0;
 	var projectile_cooldown = false;
@@ -117,33 +117,43 @@ hk.Game = function() {
 		})
 		.collision()
 		.onHit('enemy1', function() {
-			socket.emit('attacker_down', {
-				score: $('#timer span').text()
-			});
+			if (hk.role == 'attacker') {
+				socket.emit('attacker_down', {
+					score: $('#timer span').text()
+				});
+			}
 			this.destroy();
 		})
 		.onHit('enemy2', function() {
-			socket.emit('attacker_down', {
-				score: $('#timer span').text()
-			});
+			if (hk.role == 'attacker') {
+				socket.emit('attacker_down', {
+					score: $('#timer span').text()
+				});
+			}
 			this.destroy();
 		})
 		.onHit('enemy3', function() {
-			socket.emit('attacker_down', {
-				score: $('#timer span').text()
-			});
+			if (hk.role == 'attacker') {
+				socket.emit('attacker_down', {
+					score: $('#timer span').text()
+				});
+			}
 			this.destroy();
 		})
 		.onHit('enemy4', function() {
-			socket.emit('attacker_down', {
-				score: $('#timer span').text()
-			});
+			if (hk.role == 'attacker') {
+				socket.emit('attacker_down', {
+					score: $('#timer span').text()
+				});
+			}
 			this.destroy();
 		})
 		.onHit('enemy5', function() {
-			socket.emit('attacker_down', {
-				score: $('#timer span').text()
-			});
+			if (hk.role == 'attacker') {
+				socket.emit('attacker_down', {
+					score: $('#timer span').text()
+				});
+			}
 			this.destroy();
 		});
 
@@ -219,19 +229,30 @@ hk.Game = function() {
 		.image('/images/schuss1.png')
 		.collision()
 		.onHit('enemy2', function() {
-			socket.emit('projectile_down', {id: data.id});
+			socket.emit('projectile_down', {
+				id: data.id
+				});
 		})
 		.onHit('enemy3', function() {
-			socket.emit('projectile_down', {id: data.id});
+			socket.emit('projectile_down', {
+				id: data.id
+				});
 		})
 		.onHit('enemy4', function() {
-			socket.emit('projectile_down', {id: data.id});
+			socket.emit('projectile_down', {
+				id: data.id
+				});
 		})
 		.onHit('enemy5', function() {
-			socket.emit('projectile_down', {id: data.id});
+			socket.emit('projectile_down', {
+				id: data.id
+				});
 		});
 
-		projectiles.push({id: data.id, projectile: projectile});
+		projectiles.push({
+			id: data.id,
+			projectile: projectile
+		});
 	});
 
 	socket.on('update_projectile_pos', function(data) {
