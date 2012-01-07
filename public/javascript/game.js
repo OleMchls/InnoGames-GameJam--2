@@ -163,7 +163,7 @@ this.shootProjectile = function(sync) {
 			y: projectile_y,
 			w: 23,
 			h: 4,
-			damage: 100
+			damage: 1000
 		})
 		.image('/images/schuss1.png')
 		.bind('EnterFrame', function() {

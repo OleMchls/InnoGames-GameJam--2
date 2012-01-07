@@ -12,22 +12,22 @@ hk.defender = function() {
 		'enemy2': {
 			price: 3000,
 			growth: 220,
-			life: 3000
+			life: 1000
 		},
 		'enemy3': {
 			price: 7500,
 			growth: 350,
-			life: 7500
+			life: 2000
 		},
 		'enemy4': {
 			price: 10000,
 			growth: 400,
-			life: 10000
+			life: 3000
 		},
 		'enemy5': {
 			price: 20000,
 			growth: 500,
-			life: 20000
+			life: 5000
 		}
 	}
 
@@ -100,7 +100,7 @@ hk.defender = function() {
 				.image('/images/bomb1.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					this.x -= 1;
+					this.x -= 2.7;
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						if (hk.role == 'defender' || this.x < 0) {
 							socket.emit('end_reached', {
@@ -113,7 +113,7 @@ hk.defender = function() {
 				})
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data.obj.damage;
+					this.life -= data[0].obj.damage;
 					if (this.life < 1)
 						this.destroy();
 				});
@@ -130,7 +130,7 @@ hk.defender = function() {
 				.image('/images/bomb2.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					this.x -= 3;
+					this.x -= 3.5;
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						if (hk.role == 'defender' || this.x < 0) {
 							socket.emit('end_reached', {
@@ -143,9 +143,10 @@ hk.defender = function() {
 				})
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data.obj.damage;
+					this.life -= data[0].obj.damage;
 					if (this.life < 1)
 						this.destroy();
+					data[0].obj.destroy();
 				});
 				break;
 			case 'enemy3':
@@ -160,15 +161,12 @@ hk.defender = function() {
 				.image('/images/bomb3.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					if (hk.player.x < this.x)
-						this.x -= 0.8;
-					else
-						this.x -= 1;
+					this.x -= 1.7;
 					if (hk.player.x < this.x) {
 						if (hk.player.y > this.y)
-							this.y += 1;
+							this.y += 0.7;
 						else
-							this.y -= 1;
+							this.y -= 0.7;
 					}
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						if (hk.role == 'defender' || this.x < 0) {
@@ -182,9 +180,10 @@ hk.defender = function() {
 				})
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data.obj.damage;
+					this.life -= data[0].obj.damage;
 					if (this.life < 1)
 						this.destroy();
+					data[0].obj.destroy();
 				});
 				break;
 			case 'enemy4':
@@ -214,9 +213,10 @@ hk.defender = function() {
 				})
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data.obj.damage;
+					this.life -= data[0].obj.damage;
 					if (this.life < 1)
 						this.destroy();
+					data[0].obj.destroy();
 				});
 				break;
 			case 'enemy5':
@@ -246,9 +246,10 @@ hk.defender = function() {
 				})
 				.collision()
 				.onHit('projectile', function(data) {
-					this.life -= data.obj.damage;
+					this.life -= data[0].obj.damage;
 					if (this.life < 1)
 						this.destroy();
+					data[0].obj.destroy();
 				});
 				break;
 		}
