@@ -28,7 +28,7 @@ var game  = {
 };
 
 game.state = game.states.WAITING_FOR_PLAYERS;
-game.ai = require('../ai.js');
+game.ai = require('../ai.js').ai();
 
 function cleanupRoles() {
 	if (game.users.attacker && game.users.attacker.disconnected) {
