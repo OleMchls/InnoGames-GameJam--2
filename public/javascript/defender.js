@@ -45,6 +45,9 @@ hk.defender = function() {
 	}
 
 	this.selectUnit = function(unit_name) {
+		if (hk.role != 'defender') {
+			return
+		}
 		$('#attack-bar li').css('border', 'none')
 		that.selectedUnit = unit_name;
 		$('#'+unit_name).css('border', '2px dotted green')

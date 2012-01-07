@@ -1,6 +1,8 @@
 var game  = {
 	roles: {},
 	users: {
+		attacker: null,
+		defender: null,
 		visitor: []
 	}
 };
@@ -23,5 +25,4 @@ exports.events = function (socket) {
 	socket.on('myEvent', function (data) {
 		console.log(data);
 	});
-	console.log(game)
 }
