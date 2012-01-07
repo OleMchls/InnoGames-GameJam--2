@@ -34,12 +34,12 @@ hk.defender = function() {
 
 	this.init = function() {
 		// dropzone
-		var dropzone = Crafty.e("2D, DOM, Image, dropzone").
+		var dropzone = Crafty.e("2D, DOM, Image, Mouse, dropzone").
 		attr({
 			w: 160,
-			h: Crafty.viewport.height,
-			x: Crafty.viewport.width - 160,
-			y: 0
+			h: 485,
+			x: 1216,
+			y: 47
 		}).
 		image("/images/dropzone.png").
 		bind("KeyDown", function(e) {
@@ -62,13 +62,13 @@ hk.defender = function() {
 			}
 		})
 
-		$(dropzone._element).bind('click.dropzone', function(event) {
+		$('#hidden-dropzone').bind('click.dropzone', function(event) {s
 			var x = event.clientX;
 			var y = event.clientY;
 			that.spawnUnit(that.selectedUnit, x, y);
 		})
 
-		$('#defender-controlls .enemy').bind('click.defender', function(event){
+		$('#attack-bar .enemy').bind('click.defender', function(event){
 			that.selectUnit(event.currentTarget.id);
 		})
 	}
@@ -77,9 +77,9 @@ hk.defender = function() {
 		if (hk.role != 'defender') {
 			return
 		}
-		$('#attack-bar li').css('border', 'none')
+		$('#attack-bar div').removeClass('active')
 		that.selectedUnit = unit_name;
-		$('#'+unit_name).css('border', '2px dotted green')
+		$('#'+unit_name).addClass('active')
 	}
 
 	this.spawnUnit = function(unit_name, x, y) {
