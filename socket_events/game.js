@@ -139,6 +139,18 @@ exports.events = function (socket) {
 		socket.broadcast.emit('create_enemy', data);
 	});
 
+	function extractMillisFromScore(scoreString) {
+		var result = /(\d{2}):(\d{2}):(\d{3})/.exec(scoreString);
+		var min = praseInt(result[1])
+		,   sec = praseInt(result[2])
+		,   mil = praseInt(result[3]);
+
+		sec += (min * 60);
+		mil += (sec * 1000);
+
+		return mil;
+	}
+
 	socket.on('attacker_down', function(data) {
 		game.users.attacker.score = data.score;
 		if (game.state == game.states.FIRST_ROUND) {
@@ -154,11 +166,13 @@ exports.events = function (socket) {
 			})
 			changeGameState(socket, game.states.BACK_ROUND);
 		} else if (game.state == game.states.BACK_ROUND) {
-			var attacker_score = game.users.attacker.score;
-			var defender_score = game.users.defender.score;
-			console.log('attacker', attacker_score)
-			console.log('defender', defender_score)
-			// compare scores and emit corresponding event
+			var attacker_score = extractMillisFromScore(game.users.attacker.score);
+			var defender_score = extractMillisFromScore(game.users.defender.score);
+			if (attacker_score > defender_score) {
+				changeGameState(socket, game.states.ATTACKER_WIN);
+			} else {
+				changeGameState(socket, game.states.ATTACKER_LOST);
+			}
 		}
 
 	})
