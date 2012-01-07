@@ -138,6 +138,8 @@ hk.Game = function() {
 	if (hk.role == 'attacker') {
 		that.updatePosition();
 	}
+
+	$('#timer span').stopwatch({updateInterval: 10}).stopwatch('start')
 }
 
 this.scrollBackground = function() {
