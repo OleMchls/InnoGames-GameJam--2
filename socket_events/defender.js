@@ -15,6 +15,7 @@ exports.events = function (socket) {
 	socket.on('send_enemy', function (data) {
 		socket.broadcast.emit('create_enemy', data);
 	});
+
 	socket.on('build_unit', function (data) {
 		sink -= parseInt(data.unit.price);
 		growth += parseInt(data.unit.growth);

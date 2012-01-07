@@ -6,23 +6,28 @@ hk.defender = function() {
 	var units = {
 		'enemy1': {
 			price: 1000,
-			growth: 100
+			growth: 100,
+			life: 1000
 		},
 		'enemy2': {
 			price: 3000,
-			growth: 220
+			growth: 220,
+			life: 3000
 		},
 		'enemy3': {
 			price: 7500,
-			growth: 350
+			growth: 350,
+			life: 7500
 		},
 		'enemy4': {
 			price: 10000,
-			growth: 400
+			growth: 400,
+			life: 10000
 		},
 		'enemy5': {
 			price: 20000,
-			growth: 500
+			growth: 500,
+			life: 20000
 		}
 	}
 
@@ -89,7 +94,8 @@ hk.defender = function() {
 					w: 72,
 					h: 34,
 					x: x,
-					y: y
+					y: y,
+					life: units[unit_name].life
 				})
 				.image('/images/bomb1.png')
 				.css('z-index', 100)
@@ -106,8 +112,10 @@ hk.defender = function() {
 					}
 				})
 				.collision()
-				.onHit('projectile', function() {
-					this.destroy();
+				.onHit('projectile', function(data) {
+					this.life -= data.obj.damage;
+					if (this.life < 1)
+						this.destroy();
 				});
 				break;
 			case 'enemy2':
@@ -116,7 +124,8 @@ hk.defender = function() {
 					w: 73,
 					h: 29,
 					x: x,
-					y: y
+					y: y,
+					life: units[unit_name].life
 				})
 				.image('/images/bomb2.png')
 				.css('z-index', 100)
@@ -133,8 +142,10 @@ hk.defender = function() {
 					}
 				})
 				.collision()
-				.onHit('projectile', function() {
-					this.destroy();
+				.onHit('projectile', function(data) {
+					this.life -= data.obj.damage;
+					if (this.life < 1)
+						this.destroy();
 				});
 				break;
 			case 'enemy3':
@@ -143,7 +154,8 @@ hk.defender = function() {
 					w: 144,
 					h: 70,
 					x: x,
-					y: y
+					y: y,
+					life: units[unit_name].life
 				})
 				.image('/images/bomb3.png')
 				.css('z-index', 100)
@@ -169,8 +181,10 @@ hk.defender = function() {
 					}
 				})
 				.collision()
-				.onHit('projectile', function() {
-					this.destroy();
+				.onHit('projectile', function(data) {
+					this.life -= data.obj.damage;
+					if (this.life < 1)
+						this.destroy();
 				});
 				break;
 			case 'enemy4':
@@ -179,7 +193,8 @@ hk.defender = function() {
 					w: 50,
 					h: 50,
 					x: x,
-					y: y
+					y: y,
+					life: units[unit_name].life
 				})
 				.image('/images/bomb4.png')
 				.css('z-index', 100)
@@ -198,8 +213,10 @@ hk.defender = function() {
 					}
 				})
 				.collision()
-				.onHit('projectile', function() {
-					this.destroy();
+				.onHit('projectile', function(data) {
+					this.life -= data.obj.damage;
+					if (this.life < 1)
+						this.destroy();
 				});
 				break;
 			case 'enemy5':
@@ -208,7 +225,8 @@ hk.defender = function() {
 					w: 50,
 					h: 50,
 					x: x,
-					y: y
+					y: y,
+					life: units[unit_name].life
 				})
 				.image('/images/bomb5.png')
 				.css('z-index', 100)
@@ -227,8 +245,10 @@ hk.defender = function() {
 					}
 				})
 				.collision()
-				.onHit('projectile', function() {
-					this.destroy();
+				.onHit('projectile', function(data) {
+					this.life -= data.obj.damage;
+					if (this.life < 1)
+						this.destroy();
 				});
 				break;
 		}
