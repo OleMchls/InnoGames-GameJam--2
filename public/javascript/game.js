@@ -22,7 +22,7 @@ hk.Game = function() {
 			$('#cr_stage').text(e.percent + '%');
 		}, function(e) {
 			// fail
-		});
+			});
 	}
 
 	this.startGame = function() {
@@ -140,7 +140,9 @@ hk.Game = function() {
 			that.updatePosition();
 		}
 
-		$('#timer span').stopwatch({updateInterval: 10}).stopwatch('start')
+		$('#timer span').stopwatch({
+			updateInterval: 10
+		}).stopwatch('start')
 	}
 
 	this.scrollBackground = function() {
@@ -176,7 +178,7 @@ hk.Game = function() {
 			socket.emit('new_attacker_pos', {
 				x: hk.player.x,
 				y: hk.player.y
-				});
+			});
 			ticks_player_unsynced = 0;
 
 			hk.player.last_x = hk.player.x;
@@ -195,21 +197,24 @@ hk.Game = function() {
 
 	socket.on('create_projectile', function(data) {
 		var projectile = Crafty.e('2D, DOM, Image, projectile')
-			.attr({
-				x: data.x,
-				y: data.y,
-				w: 23,
-				h: 4,
-				damage: 1000
-			})
-			.image('/images/schuss1.png')
-			.bind('EnterFrame', function() {
-				if (this.x >= Crafty.viewport.width) {
-					this.destroy();
-				}
-			});
+		.attr({
+			x: data.x,
+			y: data.y,
+			w: 23,
+			h: 4,
+			damage: 1000
+		})
+		.image('/images/schuss1.png')
+		.bind('EnterFrame', function() {
+			if (this.x >= Crafty.viewport.width) {
+				this.destroy();
+			}
+		});
 
-		projectiles.push({id: data.id, projectile: projectile});
+		projectiles.push({
+			id: data.id,
+			projectile: projectile
+		});
 	});
 
 	socket.on('update_projectile_pos', function(data) {
@@ -231,5 +236,24 @@ hk.Game = function() {
 	socket.on('role_update', function(data) {
 		hk.role = data.role;
 		$('#role span').text(data.role)
+	})
+
+	socket.on('state_change', function(state) {
+		console.log(state);
+		switch (state) {
+			case 'waiting_for_players':
+				break;
+			case 'waiting_for_defender':
+				break;
+			case 'first_round':
+				break;
+			case 'back_round':
+				break;
+			case 'attacker_win':
+				break;
+			case 'attacker_lost':
+				break;
+		}
+
 	})
 }
