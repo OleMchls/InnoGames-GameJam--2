@@ -7,7 +7,7 @@ hk.Game = function() {
 	 * Initializes the game.
 	 */
 	this.init = function() {
-		Crafty.init(1000, 600);
+		Crafty.init(1400, 600);
 		Crafty.canvas.init();
 
 		that.scrollBackground();
