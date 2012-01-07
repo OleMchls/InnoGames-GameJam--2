@@ -144,10 +144,6 @@ exports.events = function (socket) {
 		cleanupRoles();
 	})
 
-	socket.on('myEvent', function (data) {
-		console.log(data);
-	});
-
 	// sync
 	socket.on('new_attacker_pos', function (data) {
 		if (socket != game.users[game.roles.ATTACKER]) {
@@ -181,6 +177,30 @@ exports.events = function (socket) {
 		socket.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
 		game.unit_count++;
 	});
+
+	socket.on('attacker_down', function(data) {
+		game.users.attacker.score = data.score;
+		if (game.state == game.states.FIRST_ROUND) {
+			var ex_attacker = game.users.attacker;
+			var ex_defender = game.users.defender;
+			game.users.attacker = ex_defender;
+			game.users.defender = ex_attacker;
+			game.users.attacker.emit('role_update', {
+				role: game.roles.ATTACKER
+			})
+			game.users.defender.emit('role_update', {
+				role: game.roles.DEFENDER
+			})
+			changeGameState(socket, game.states.BACK_ROUND);
+		} else if (game.state == game.states.BACK_ROUND) {
+			var attacker_score = game.users.attacker.score;
+			var defender_score = game.users.defender.score;
+			console.log('attacker', attacker_score)
+			console.log('defender', defender_score)
+			// compare scores and emit corresponding event
+		}
+
+	})
 
 	setInterval(broadcastAttackerPos, 35);
 	setInterval(broadcastProjectilesPos, 35);

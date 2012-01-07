@@ -117,18 +117,33 @@ hk.Game = function() {
 		})
 		.collision()
 		.onHit('enemy1', function() {
+			socket.emit('attacker_down', {
+				score: $('#timer span').text()
+			});
 			this.destroy();
 		})
 		.onHit('enemy2', function() {
+			socket.emit('attacker_down', {
+				score: $('#timer span').text()
+			});
 			this.destroy();
 		})
 		.onHit('enemy3', function() {
+			socket.emit('attacker_down', {
+				score: $('#timer span').text()
+			});
 			this.destroy();
 		})
 		.onHit('enemy4', function() {
+			socket.emit('attacker_down', {
+				score: $('#timer span').text()
+			});
 			this.destroy();
 		})
 		.onHit('enemy5', function() {
+			socket.emit('attacker_down', {
+				score: $('#timer span').text()
+			});
 			this.destroy();
 		});
 
@@ -139,10 +154,6 @@ hk.Game = function() {
 		if (hk.role == 'attacker') {
 			that.updatePosition();
 		}
-
-		$('#timer span').stopwatch({
-			updateInterval: 10
-		}).stopwatch('start')
 	}
 
 	this.scrollBackground = function() {
@@ -246,12 +257,22 @@ hk.Game = function() {
 			case 'waiting_for_defender':
 				break;
 			case 'first_round':
+				socket.emit('reset_game');
+				$('#timer span').stopwatch({
+					updateInterval: 10
+				}).stopwatch('start')
 				break;
 			case 'back_round':
+				socket.emit('reset_game');
+				$('#timer span').stopwatch({
+					updateInterval: 10
+				}).stopwatch('start');
 				break;
 			case 'attacker_win':
+				alert('attacker wins')
 				break;
 			case 'attacker_lost':
+				alert('defender wins')
 				break;
 		}
 
