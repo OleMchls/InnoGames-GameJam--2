@@ -2,7 +2,6 @@ hk.defender = function() {
 
 	var that = this;
 	this.selectedUnit = null;
-	var unitList = [];
 
 	this.init = function() {
 		// dropzone
@@ -15,21 +14,21 @@ hk.defender = function() {
 		}).
 		image("/images/dropzone.png").
 		bind("KeyDown", function(e) {
-			console.log(e)
 			switch (e.keyCode) {
-				case Crafty.keys:
-					this.move.right = false;
+				case Crafty.keys.NUMPAD_1:
+					that.selectUnit('enemy1')
 					break;
-				case Crafty.keys.LEFT_ARROW:
-					this.move.left = false;
+				case Crafty.keys.NUMPAD_2:
+					that.selectUnit('enemy2')
 					break;
-				case Crafty.keys.UP_ARROW:
-					this.move.up = false;
+				case Crafty.keys.NUMPAD_3:
+					that.selectUnit('enemy3')
 					break;
-				case Crafty.keys.DOWN_ARROW:
-					this.move.down = false;
+				case Crafty.keys.NUMPAD_4:
+					that.selectUnit('enemy4')
 					break;
-				default:
+				case Crafty.keys.NUMPAD_5:
+					that.selectUnit('enemy5')
 					break;
 			}
 		})
@@ -55,7 +54,7 @@ hk.defender = function() {
 		var unit;
 		switch (unit_name) {
 			case 'enemy1':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy1")
 				.attr({
 					w: 72,
 					h: 34,
@@ -66,10 +65,13 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
+					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						this.destroy();
+					}
 				})
 				break;
 			case 'enemy2':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy2")
 				.attr({
 					w: 73,
 					h: 29,
@@ -80,10 +82,13 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
+					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						this.destroy();
+					}
 				})
 				break;
 			case 'enemy3':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
 				.attr({
 					w: 144,
 					h: 70,
@@ -94,10 +99,13 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
+					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						this.destroy();
+					}
 				})
 				break;
 			case 'enemy4':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy4")
 				.attr({
 					w: 50,
 					h: 50,
@@ -108,10 +116,13 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
+					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						this.destroy();
+					}
 				})
 				break;
 			case 'enemy5':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy5")
 				.attr({
 					w: 50,
 					h: 50,
@@ -122,11 +133,12 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
+					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
+						this.destroy();
+					}
 				})
 				break;
 		}
-
-		unitList.push(unit);
 	}
 
 }
