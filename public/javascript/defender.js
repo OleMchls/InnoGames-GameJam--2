@@ -3,6 +3,14 @@ hk.defender = function() {
 	var that = this;
 	this.selectedUnit = null;
 
+	var units = {
+		'enemy1': {price: 1000},
+		'enemy2': {price: 1000},
+		'enemy3': {price: 1000},
+		'enemy4': {price: 1000},
+		'enemy5': {price: 1000}
+	}
+
 	this.init = function() {
 		// dropzone
 		var dropzone = Crafty.e("2D, DOM, Image, dropzone").
@@ -55,6 +63,10 @@ hk.defender = function() {
 
 	this.spawnUnit = function(unit_name, x, y, sync) {
 		var unit;
+		var currentSink = parseInt($('#sink span').text());
+		if (currentSink < units[unit_name].price) {
+			return
+		}
 		switch (unit_name) {
 			case 'enemy1':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy1")

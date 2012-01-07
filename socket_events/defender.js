@@ -20,7 +20,7 @@ exports.events = function (socket) {
 	});
 
 	setInterval(function(){
-		sink += 3;
+		sink += 10;
 		updateSink();
 	}, 800);
 
