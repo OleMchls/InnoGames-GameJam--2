@@ -36,7 +36,7 @@ hk.defender = function() {
 		$(dropzone._element).bind('click.dropzone', function(event) {
 			var x = event.clientX;
 			var y = event.clientY;
-			that.spawnUnit(that.selectedUnit, x, y);
+			that.spawnUnit(that.selectedUnit, x, y, true);
 		})
 
 		$('#defender-controlls .enemy').bind('click.defender', function(event){
@@ -50,7 +50,7 @@ hk.defender = function() {
 		$('#'+unit_name).css('border', '2px dotted green')
 	}
 
-	this.spawnUnit = function(unit_name, x, y) {
+	this.spawnUnit = function(unit_name, x, y, sync) {
 		var unit;
 		switch (unit_name) {
 			case 'enemy1':
@@ -172,6 +172,13 @@ hk.defender = function() {
 				});
 				break;
 		}
+
+		if (unit && sync) {
+			socket.emit('send_enemy', {unit_name: unit_name, x: x, y: y});
+		}
 	}
 
+	socket.on('create_enemy', function(data) {
+		that.spawnUnit(data.unit_name, data.x, data.y, false);
+	});
 }

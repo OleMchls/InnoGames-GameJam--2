@@ -1,5 +1,5 @@
 exports.events = function (socket) {
-	socket.on('new_defender_pos', function (data) {
-		console.log(data);
+	socket.on('send_enemy', function (data) {
+		socket.broadcast.emit('create_enemy', data);
 	});
 }

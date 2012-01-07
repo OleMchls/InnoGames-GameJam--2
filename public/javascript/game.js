@@ -36,7 +36,7 @@ hk.Game = function() {
 				this.moving_key = e.keyCode;
 
 				if (e.keyCode == Crafty.keys.SPACE) {
-					that.shootProjectile();
+					that.shootProjectile(true);
 				}
 			})
 			.bind("KeyUp", function(e) {
@@ -93,21 +93,30 @@ hk.Game = function() {
 		setTimeout(that.scrollBackground, 30);
 	}
 
-	this.shootProjectile = function() {
+	this.shootProjectile = function(sync) {
 		var projectile_x = hk.player.x + hk.player.w;
 		var projectile_y = hk.player.y + (hk.player.h / 2) + 1;
 
-		Crafty.e('2D, DOM, Color, projectile')
+		var projectile = Crafty.e('2D, DOM, Color, projectile')
 			.attr({x: projectile_x, y: projectile_y, w: 5, h: 5})
 			.color('#FF0000')
 			.bind('EnterFrame', function() {
 				this.x += 7;
 			});
+
+		if (sync) {
+			// broadcast projectile
+			socket.emit('shoot_projectile', {x: projectile.x, y: projectile.y});
+		}
 	}
 
 	socket.on('update_attacker_pos', function(data) {
 		hk.player.x = data.x;
 		hk.player.y = data.y;
+	});
+
+	socket.on('create_projectile', function(data) {
+		that.shootProjectile(false);
 	});
 
 	socket.on('role_update', function(data) {
