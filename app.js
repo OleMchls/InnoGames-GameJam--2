@@ -41,7 +41,7 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 // Socket.IO
 var io = require('socket.io').listen(app)
 
-_.each([require('./socket_events/attacker.js'), require('./socket_events/defender.js'), require('./socket_events/common.js')],
+_.each([require('./socket_events/attacker.js'), require('./socket_events/defender.js'), require('./socket_events/common.js'), require('./socket_events/game.js')],
 function(module) {
 	console.log(module);
 	io.sockets.on('connection', module.events);
