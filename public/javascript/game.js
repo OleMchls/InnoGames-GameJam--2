@@ -104,4 +104,9 @@ hk.Game = function() {
 				this.x += 7;
 			});
 	}
+
+	socket.on('update_attacker_pos', function(data) {
+		hk.player.x = data.x;
+		hk.player.y = data.y;
+	});
 }
