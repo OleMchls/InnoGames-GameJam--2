@@ -64,7 +64,7 @@ hk.defender = function() {
 					x: x,
 					y: y
 				})
-				.image('/images/enemy1.png')
+				.image('/images/bomb1.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
@@ -85,7 +85,7 @@ hk.defender = function() {
 					x: x,
 					y: y
 				})
-				.image('/images/enemy2.png')
+				.image('/images/bomb2.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 3;
@@ -106,7 +106,7 @@ hk.defender = function() {
 					x: x,
 					y: y
 				})
-				.image('/images/enemy3.png')
+				.image('/images/bomb3.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					if (hk.player.x < this.x)
@@ -136,7 +136,7 @@ hk.defender = function() {
 					x: x,
 					y: y
 				})
-				.image('/images/enemy1.png')
+				.image('/images/bomb4.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 1;
@@ -159,7 +159,7 @@ hk.defender = function() {
 					x: x,
 					y: y
 				})
-				.image('/images/enemy1.png')
+				.image('/images/bomb5.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
 					this.x -= 3;

@@ -3,8 +3,8 @@ hk.Game = function() {
 	var that = this;
 	var bg_pos = 0;
 	var resources = [
-		'/images/ship.png', '/images/dropzone.png', '/images/enemy1.png', '/images/enemy2.png',	'/images/enemy3.png',
-		'/images/enemy4.png', '/images/enemy5.png'
+		'/images/ship.png', '/images/dropzone.png', '/images/bomb1.png', '/images/bomb2.png', '/images/bomb3.png',
+		'/images/bomb4.png', '/images/bomb5.png'
 	];
 
 	/**
@@ -30,7 +30,7 @@ hk.Game = function() {
 
 		hk.player = Crafty.e("2D, DOM, Image, Collision, player")
 			.attr({w: 15, h: 15, x: 43, y: 43, moving_key: 0})
-			.image('/images/ship.png')
+			.image('/images/player.png')
 			.css('z-index', 100)
 			.bind("KeyDown", function(e) {
 				this.moving_key = e.keyCode;
