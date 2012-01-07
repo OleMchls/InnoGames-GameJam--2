@@ -18,6 +18,10 @@ hk.Game = function() {
 			.css('z-index', 100)
 			.bind("KeyDown", function(e) {
 				this.moving_key = e.keyCode;
+
+				if (e.keyCode == Crafty.keys.SPACE) {
+					console.log('pew')
+				}
 			})
 			.bind("KeyUp", function(e) {
 				this.moving_key = 0;
@@ -45,7 +49,6 @@ hk.Game = function() {
 			.collision()
 			.onHit('enemy', function() {
 				this.destroy();
-				alert('fucked');
 			});
 
 		var defender = new hk.defender();
