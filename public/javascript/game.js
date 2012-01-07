@@ -3,8 +3,8 @@ hk.Game = function() {
 	var that = this;
 	var bg_pos = 0;
 	var resources = [
-	'/images/ship.png', '/images/dropzone.png', '/images/bomb1.png', '/images/bomb2.png', '/images/bomb3.png',
-	'/images/bomb4.png', '/images/bomb5.png'
+		'/images/ship.png', '/images/dropzone.png', '/images/bomb1.png', '/images/bomb2.png', '/images/bomb3.png',
+		'/images/bomb4.png', '/images/bomb5.png', '/images/player.png'
 	];
 	var ticks_player_unsynced = 0;
 	var projectile_cooldown = false;

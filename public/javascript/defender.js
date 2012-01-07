@@ -65,7 +65,7 @@ hk.defender = function() {
 		$(dropzone._element).bind('click.dropzone', function(event) {
 			var x = event.clientX;
 			var y = event.clientY;
-			that.spawnUnit(that.selectedUnit, x, y, true);
+			that.spawnUnit(that.selectedUnit, x, y);
 		})
 
 		$('#defender-controlls .enemy').bind('click.defender', function(event){
@@ -82,117 +82,18 @@ hk.defender = function() {
 		$('#'+unit_name).css('border', '2px dotted green')
 	}
 
-	this.spawnUnit = function(unit_name, x, y, sync) {
-		var unit;
-		var currentSink = parseInt($('#sink .sink').text());
-		if (currentSink < units[unit_name].price) {
-			return
-		}
-		switch (unit_name) {
-			case 'enemy1':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy1")
-				.attr({
-					w: 72,
-					h: 34,
-					x: x,
-					y: y,
-					life: units[unit_name].life
-				})
-				.image('/images/bomb1.png')
-				.css('z-index', 100)
-				.bind('EnterFrame', ai.enemy1())
-				.collision()
-				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-				});
-				break;
-			case 'enemy2':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy2")
-				.attr({
-					w: 73,
-					h: 29,
-					x: x,
-					y: y,
-					life: units[unit_name].life
-				})
-				.image('/images/bomb2.png')
-				.css('z-index', 100)
-				.bind('EnterFrame', ai.enemy2());
-				break;
-			case 'enemy3':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
-				.attr({
-					w: 144,
-					h: 70,
-					x: x,
-					y: y,
-					life: units[unit_name].life
-				})
-				.image('/images/bomb3.png')
-				.css('z-index', 100)
-				.bind('EnterFrame', ai.enemy3())
-				.collision()
-				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-					data[0].obj.destroy();
-				});
-				break;
-			case 'enemy4':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy4")
-				.attr({
-					w: 50,
-					h: 50,
-					x: x,
-					y: y,
-					life: units[unit_name].life
-				})
-				.image('/images/bomb4.png')
-				.css('z-index', 100)
-				.bind('EnterFrame', ai.enemy4())
-				.collision()
-				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-					data[0].obj.destroy();
-				});
-				break;
-			case 'enemy5':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy5")
-				.attr({
-					w: 50,
-					h: 50,
-					x: x,
-					y: y,
-					life: units[unit_name].life
-				})
-				.image('/images/bomb5.png')
-				.css('z-index', 100)
-				.bind('EnterFrame', ai.enemy5())
-				.collision()
-				.onHit('projectile', function(data) {
-					this.life -= data[0].obj.damage;
-					if (this.life < 1)
-						this.destroy();
-					data[0].obj.destroy();
-				});
-				break;
-		}
-		if (hk.role == 'defender') {
-			socket.emit('build_unit', {
-				unit: units[unit_name]
-			});
-		}
+	this.spawnUnit = function(unit_name, x, y) {
+//		var unit;
+//		var currentSink = parseInt($('#sink .sink').text());
+//		if (currentSink < units[unit_name].price) {
+//			return
+//		}
 
 		socket.emit('spawn_unit', {
-				unit_name: unit_name,
-				x: x,
-				y: y
-			});
+			unit_name: unit_name,
+			x: x,
+			y: y
+		});
 	}
 
 	socket.on('create_unit', function(data) {
@@ -203,8 +104,8 @@ hk.defender = function() {
 				.attr({
 					w: 72,
 					h: 34,
-					x: x,
-					y: y,
+					x: data.x,
+					y: data.y,
 					life: units[data.unit_name].life
 				})
 				.image('/images/bomb1.png')
@@ -221,8 +122,8 @@ hk.defender = function() {
 				.attr({
 					w: 73,
 					h: 29,
-					x: x,
-					y: y,
+					x: data.x,
+					y: data.y,
 					life: units[data.unit_name].life
 				})
 				.image('/images/bomb2.png')
@@ -233,8 +134,8 @@ hk.defender = function() {
 				.attr({
 					w: 144,
 					h: 70,
-					x: x,
-					y: y,
+					x: data.x,
+					y: data.y,
 					life: units[data.unit_name].life
 				})
 				.image('/images/bomb3.png')
@@ -252,8 +153,8 @@ hk.defender = function() {
 				.attr({
 					w: 50,
 					h: 50,
-					x: x,
-					y: y,
+					x: data.x,
+					y: data.y,
 					life: units[data.unit_name].life
 				})
 				.image('/images/bomb4.png')
@@ -271,8 +172,8 @@ hk.defender = function() {
 				.attr({
 					w: 50,
 					h: 50,
-					x: x,
-					y: y,
+					x: data.x,
+					y: data.y,
 					life: units[data.unit_name].life
 				})
 				.image('/images/bomb5.png')

@@ -23,10 +23,12 @@ var game  = {
 	units: [],
 	unit_count: 1,
 	viewport_w: 1400,
-	viewport_h: 600
+	viewport_h: 600,
+	ai: null
 };
 
 game.state = game.states.WAITING_FOR_PLAYERS;
+game.ai = require('../ai.js');
 
 function cleanupRoles() {
 	if (game.users.attacker && game.users.attacker.disconnected) {
@@ -74,14 +76,34 @@ function broadcastUnitsPos() {
 	for (var i in game.units) {
 		var unit = game.units[i];
 
-
-
 		if (unit.x > game.viewport_w) {
 			// TODO: broadcast health
 			//broadcastUnitDestroy(unit);
 			game.units.splice(i, 1);
 			continue;
 		}
+
+		var data = {x: unit.x, y: unit.y, player: game.attacker_pos};
+		switch (unit.unit_name) {
+			case 'enemy1':
+				data = game.ai.enemy1(data);
+				break;
+			case 'enemy2':
+				data = game.ai.enemy2(data);
+				break;
+			case 'enemy3':
+				data = game.ai.enemy3(data);
+				break;
+			case 'enemy4':
+				data = game.ai.enemy4(data);
+				break;
+			case 'enemy5':
+				data = game.ai.enemy5(data);
+				break;
+		}
+
+		unit.x = data.x;
+		unit.y = data.y;
 
 		if (game.users.defender) {
 			game.users[game.roles.DEFENDER].broadcast.emit('update_unit_pos', unit);
@@ -162,6 +184,7 @@ exports.events = function (socket) {
 
 	setInterval(broadcastAttackerPos, 35);
 	setInterval(broadcastProjectilesPos, 35);
+	setInterval(broadcastUnitsPos, 35);
 
 	cleanupRoles();
 }
