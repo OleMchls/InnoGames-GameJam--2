@@ -13,7 +13,26 @@ hk.defender = function() {
 			x: Crafty.viewport.width - 160,
 			y: 0
 		}).
-		image("/images/dropzone.png")
+		image("/images/dropzone.png").
+		bind("KeyDown", function(e) {
+			console.log(e)
+			switch (e.keyCode) {
+				case Crafty.keys:
+					this.move.right = false;
+					break;
+				case Crafty.keys.LEFT_ARROW:
+					this.move.left = false;
+					break;
+				case Crafty.keys.UP_ARROW:
+					this.move.up = false;
+					break;
+				case Crafty.keys.DOWN_ARROW:
+					this.move.down = false;
+					break;
+				default:
+					break;
+			}
+		})
 
 		$(dropzone._element).bind('click.dropzone', function(event) {
 			var x = (Crafty.viewport.width - 160) + event.offsetX;
@@ -27,8 +46,9 @@ hk.defender = function() {
 	}
 
 	this.selectUnit = function(unit_name) {
+		$('#attack-bar li').css('border', 'none')
 		that.selectedUnit = unit_name;
-		$('#selected-unit img').attr('src', '/images/'+unit_name+'.png')
+		$('#'+unit_name).css('border', '2px dotted green')
 	}
 
 	this.spawnUnit = function(unit_name, x, y) {
