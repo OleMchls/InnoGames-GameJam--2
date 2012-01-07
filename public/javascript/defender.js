@@ -34,8 +34,9 @@ hk.defender = function() {
 		})
 
 		$(dropzone._element).bind('click.dropzone', function(event) {
-			var x = (Crafty.viewport.width - 160) + event.offsetX;
-			var y = event.offsetY;
+			console.log(event);
+			var x = event.clientX;
+			var y = event.clientY;
 			that.spawnUnit(that.selectedUnit, x, y);
 		})
 
