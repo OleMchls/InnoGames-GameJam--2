@@ -1,0 +1,2 @@
+exports.events = function (socket) {
+}
