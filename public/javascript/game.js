@@ -35,7 +35,7 @@ hk.Game = function() {
 			.bind("KeyDown", function(e) {
 				this.moving_key = e.keyCode;
 
-				if (e.keyCode == Crafty.keys.SPACE) {
+				if (hk.role == 'attacker' && e.keyCode == Crafty.keys.SPACE) {
 					that.shootProjectile(true);
 				}
 			})
