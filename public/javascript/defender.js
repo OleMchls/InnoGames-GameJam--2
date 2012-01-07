@@ -34,7 +34,6 @@ hk.defender = function() {
 		})
 
 		$(dropzone._element).bind('click.dropzone', function(event) {
-			console.log(event);
 			var x = event.clientX;
 			var y = event.clientY;
 			that.spawnUnit(that.selectedUnit, x, y);
@@ -99,7 +98,10 @@ hk.defender = function() {
 				.image('/images/enemy3.png')
 				.css('z-index', 100)
 				.bind('EnterFrame', function() {
-					this.x -= 1;
+					if (hk.player.x > this.x)
+						this.x -= 1;
+					else
+						this.y += 1;
 					if (this.x < 0 || this.y < 0 || this.x > Crafty.viewport.width || this.y > Crafty.viewport.height) {
 						this.destroy();
 					}
