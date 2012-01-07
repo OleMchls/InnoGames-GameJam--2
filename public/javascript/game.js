@@ -26,10 +26,8 @@ hk.Game = function() {
 		Crafty.init(1400, 600);
 		Crafty.canvas.init();
 
-		that.scrollBackground();
-
 		hk.player = Crafty.e("2D, DOM, Image, Collision, player")
-			.attr({w: 15, h: 15, x: 43, y: 43, moving_key: 0})
+			.attr({w: 15, h: 15, x: 43, y: 43, last_x: 43, last_y: 43, moving_key: 0})
 			.image('/images/player.png')
 			.css('z-index', 100)
 			.bind("KeyDown", function(e) {
@@ -43,31 +41,29 @@ hk.Game = function() {
 				this.moving_key = 0;
 			})
 			.bind("EnterFrame", function() {
-				if (this.moving_key) {
+				this.last_x = this.x;
+				this.last_y = this.y;
+
+				if (this.moving_key && hk.role == 'attacker') {
 					switch (this.moving_key) {
 						case Crafty.keys.RIGHT_ARROW:
-							if (hk.role == 'attacker')
-								this.x += 10;
+							this.x += 10;
 							break;
 						case Crafty.keys.LEFT_ARROW:
-							if (hk.role == 'attacker')
-								this.x -= 10;
+							this.x -= 10;
 							break;
 						case Crafty.keys.UP_ARROW:
-							if (hk.role == 'attacker')
-								this.y -= 10;
+							this.y -= 10;
 							break;
 						case Crafty.keys.DOWN_ARROW:
-							if (hk.role == 'attacker')
-								this.y += 10;
+							this.y += 10;
 							break;
 						default:
 							break;
 					}
-
-					// update position
-					socket.emit('new_attacker_pos', {x: this.x, y: this.y});
 				}
+
+				
 			})
 			.collision()
 			.onHit('enemy1', function() {
@@ -88,6 +84,11 @@ hk.Game = function() {
 
 		var defender = new hk.defender();
 		defender.init();
+
+		that.scrollBackground();
+		if (hk.role == 'attacker') {
+			that.updatePosition();
+		}
 	}
 
 	this.scrollBackground = function() {
@@ -99,11 +100,11 @@ hk.Game = function() {
 
 	this.shootProjectile = function(sync) {
 		var projectile_x = hk.player.x + hk.player.w;
-		var projectile_y = hk.player.y + (hk.player.h / 2) + 1;
+		var projectile_y = hk.player.y + (hk.player.h / 2) + 2;
 
-		var projectile = Crafty.e('2D, DOM, Color, projectile')
-			.attr({x: projectile_x, y: projectile_y, w: 5, h: 5})
-			.color('#FF0000')
+		var projectile = Crafty.e('2D, DOM, Image, projectile')
+			.attr({x: projectile_x, y: projectile_y, w: 23, h: 4})
+			.image('/images/schuss1.png')
 			.bind('EnterFrame', function() {
 				this.x += 7;
 			});
@@ -112,6 +113,14 @@ hk.Game = function() {
 			// broadcast projectile
 			socket.emit('shoot_projectile', {x: projectile.x, y: projectile.y});
 		}
+	}
+
+	this.updatePosition = function() {
+		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y) {
+			socket.emit('new_attacker_pos', {x: hk.player.x, y: hk.player.y});
+		}
+
+		setTimeout(that.updatePosition, 35);
 	}
 
 	socket.on('update_attacker_pos', function(data) {
