@@ -158,9 +158,9 @@ hk.Game = function() {
 
 	this.scrollBackground = function() {
 		bg_pos -= 2;
-		//$('#cr-stage').css('background-position', bg_pos);
+		$('#cr-stage').css('background-position', bg_pos);
 
-		//setTimeout(that.scrollBackground, 30);
+		setTimeout(that.scrollBackground, 30);
 	}
 
 	this.shootProjectile = function(sync) {
