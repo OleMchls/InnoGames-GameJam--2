@@ -105,7 +105,6 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					$(this._element).effect("shake", {}, 1000);
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
@@ -123,7 +122,6 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					$(this._element).effect("shake", {}, 1000);
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
@@ -141,7 +139,6 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					$(this._element).effect("shake", {}, 1000);
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
@@ -159,7 +156,6 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					$(this._element).effect("shake", {}, 1000);
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
@@ -177,7 +173,6 @@ hk.defender = function() {
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
-					$(this._element).effect("shake", {}, 1000);
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				});
 				break;
