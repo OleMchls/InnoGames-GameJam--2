@@ -349,6 +349,7 @@ hk.Game = function() {
 				} else {
 					hk.notification('Attacker won the Game!', 5000);
 				}
+				socket.emit('reset_game');
 				break;
 			case 'attacker_lost':
 				if (hk.role == 'defender'){
@@ -358,6 +359,7 @@ hk.Game = function() {
 				} else {
 					hk.notification('Defender won the Game!', 5000);
 				}
+				socket.emit('reset_game');
 				break;
 		}
 
