@@ -338,20 +338,20 @@ hk.Game = function() {
 				break;
 			case 'attacker_win':
 				if (hk.role == 'attacker'){
-					hk.notification('You WON!');
+					hk.notification('You WON!', 5000);
 				} else if (hk.role == 'defender') {
-					hk.notification('You Lost :(');
+					hk.notification('You Lost :(', 5000);
 				} else {
-					hk.notification('Attacker won the Game!');
+					hk.notification('Attacker won the Game!', 5000);
 				}
 				break;
 			case 'attacker_lost':
 				if (hk.role == 'defender'){
-					hk.notification('You WON!');
+					hk.notification('You WON!', 5000);
 				} else if (hk.role == 'attacker') {
-					hk.notification('You Lost :(');
+					hk.notification('You Lost :(', 5000);
 				} else {
-					hk.notification('Defender won the Game!');
+					hk.notification('Defender won the Game!', 5000);
 				}
 				break;
 		}
