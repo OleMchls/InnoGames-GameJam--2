@@ -10,31 +10,31 @@ function rand (min, max) {
 var ai = function() {
 
 	this.enemy1 = function(data) {
-		data.x -= 2.7;
+		data.x -= 5.4;
 
 		return data;
 	}
 
 	this.enemy2 = function(data) {
-		data.x -= 3.5;
+		data.x -= 7;
 
 		return data;
 	}
 
 	this.enemy3 = function(data) {
-		data.x -= 1.7;
+		data.x -= 3.4;
 		if (data.player.x < data.x) {
 			if (data.player.y > data.y)
-				data.y += 0.7;
+				data.y += 1.4;
 			else
-				data.y -= 0.7;
+				data.y -= 1.4;
 		}
 
 		return data;
 	}
 
 	this.enemy4 = function(data) {
-		data.x -= 1;
+		data.x -= 2;
 		data.y -= rand(0,3)
 		data.y += rand(0,3)
 
@@ -42,7 +42,7 @@ var ai = function() {
 	}
 
 	this.enemy5 = function(data) {
-		data.x -= 3;
+		data.x -= 6;
 		data.y -= rand(0,5)
 		data.y += rand(0,5)
 

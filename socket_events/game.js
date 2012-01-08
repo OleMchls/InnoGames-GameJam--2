@@ -97,7 +97,7 @@ function broadcastProjectileDestroy(projectile) {
 function broadcastProjectilesPos() {
 	for (var i in game.projectiles) {
 		var projectile = game.projectiles[i];
-		projectile.x += 15;
+		projectile.x += 30;
 
 		if (projectile.x > game.viewport_w) {
 			broadcastProjectileDestroy(projectile);
@@ -226,6 +226,10 @@ function checkAttackerUpgrade() {
 		game.users[game.roles.ATTACKER].broadcast.emit('upgrade_attacker', {upgrade: game.users[game.roles.ATTACKER].upgrade});
 	}
 }
+
+setInterval(broadcastAttackerPos, 35);
+setInterval(broadcastProjectilesPos, 35);
+setInterval(broadcastUnitsPos, 35);
 
 exports.events = function (socket) {
 	cleanupRoles();
@@ -393,10 +397,6 @@ exports.events = function (socket) {
 		socket.emit('reset_game');
 		socket.broadcast.emit('reset_game')
 	});
-
-	setInterval(broadcastAttackerPos, 35);
-	setInterval(broadcastProjectilesPos, 35);
-	setInterval(broadcastUnitsPos, 35);
 
 	if (socket == game.users[game.roles.DEFENDER]) {
 		setInterval(function() {
