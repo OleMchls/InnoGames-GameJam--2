@@ -302,7 +302,6 @@ hk.Game = function() {
 	})
 
 	socket.on('state_change', function(state) {
-		console.log(state);
 		switch (state) {
 			case 'waiting_for_players':
 				break;
