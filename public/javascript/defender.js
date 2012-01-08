@@ -70,13 +70,13 @@ hk.defender = function() {
 			if (event.offsetX) {
 				x = event.offsetX + 1229
 			} else {
-				x = event.pageX - 200;
+				x = event.clientX - event.target.offsetLeft + 1200;
 			}
 
 			if (event.offsetY) {
 				y = event.offsetY + 30;
 			} else {
-				y = event.pageY - 100;
+				y = event.clientY - event.target.offsetTop + 30;
 			}
 
 			that.spawnUnit(that.selectedUnit, x, y);
