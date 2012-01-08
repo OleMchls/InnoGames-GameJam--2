@@ -351,6 +351,10 @@ hk.Game = function() {
 				} else {
 					hk.notification('Attacker won the Game!', 5000);
 				}
+				setTimeout(function() {
+					hk.notification('Rematch!', 5000);
+					socket.emit('rematch');
+				}, 2000);
 				break;
 			case 'attacker_lost':
 				if (hk.role == 'defender'){
@@ -360,6 +364,10 @@ hk.Game = function() {
 				} else {
 					hk.notification('Defender won the Game!', 5000);
 				}
+				setTimeout(function() {
+					hk.notification('Rematch!', 5000);
+					socket.emit('rematch');
+				}, 2000);
 				break;
 		}
 

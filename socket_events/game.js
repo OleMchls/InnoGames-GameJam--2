@@ -464,6 +464,14 @@ exports.events = function (socket) {
 		socket.broadcast.emit('reset_game')
 	});
 
+	socket.on('rematch', function() {
+		game.sink = start_sink;
+		game.growth = start_growth;
+		updateSink();
+		socket.emit('reset_game');
+		socket.broadcast.emit('reset_game')
+	});
+
 	cleanupRoles();
 	updateSink();
 }
