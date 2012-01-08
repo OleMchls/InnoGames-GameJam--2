@@ -307,6 +307,13 @@ hk.Game = function() {
 		pollGameStarted();
 	})
 
+	socket.on('reset_game', function(){
+		$('#timer span').stopwatch({
+					updateInterval: 10
+				}).stopwatch('start');
+				$('#health').text(100);
+	});
+
 	socket.on('state_change', function(state) {
 		switch (state) {
 			case 'waiting_for_players':
@@ -316,10 +323,6 @@ hk.Game = function() {
 				break;
 			case 'first_round':
 				socket.emit('reset_game');
-				$('#timer span').stopwatch({
-					updateInterval: 10
-				}).stopwatch('start');
-				$('#health').text(100);
 				hk.notification('Start');
 				if (hk.role == 'attacker'){
 					hk.notification('You are ATTACKER!');
@@ -330,10 +333,6 @@ hk.Game = function() {
 			case 'back_round':
 				soundManager.getSoundById('ship_die').play();
 				socket.emit('reset_game');
-				$('#timer span').stopwatch({
-					updateInterval: 10
-				}).stopwatch('start');
-				$('#health').text(100);
 				hk.notification('Switching sides');
 				if (hk.role == 'attacker'){
 					hk.notification('You are ATTACKER!');
