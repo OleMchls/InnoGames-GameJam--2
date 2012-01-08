@@ -54,7 +54,8 @@ hk.Game = function() {
 				right: false,
 				up: false,
 				down: false
-			}
+			},
+			upgrade: 1
 		})
 		.image('/images/player_1.png')
 		.css('z-index', 100)
@@ -173,7 +174,21 @@ hk.Game = function() {
 		}
 
 		var projectile_x = hk.player.x + hk.player.w;
-		var projectile_y = hk.player.y + (hk.player.h / 2) + 2;
+		var projectile_y = 0;
+
+		switch (hk.player.upgrade) {
+			case 1:
+			case 2:
+			case 3:
+				projectile_y = hk.player.y + (hk.player.h / 2) + 2;
+				break;
+			case 4:
+				projectile_y = hk.player.y + (hk.player.h / 2) - 2;
+				break;
+			case 5:
+				projectile_y = hk.player.y + (hk.player.h / 2) + 16;
+				break;
+		}
 
 		socket.emit('shoot_projectile', {
 			x: projectile_x,
@@ -350,5 +365,6 @@ hk.Game = function() {
 
 	socket.on('upgrade_attacker', function(data) {
 		hk.player.image('/images/player_' + data.upgrade + '.png');
+		hk.player.upgrade = data.upgrade;
 	});
 }
