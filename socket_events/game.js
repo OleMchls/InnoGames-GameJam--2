@@ -62,7 +62,7 @@ var units = {
 	'enemy4': {
 		price: 10000,
 		growth: 400,
-		life: 3000,
+		life: 6000,
 		damage: 15
 	},
 	'enemy5': {
