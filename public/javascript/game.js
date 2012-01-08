@@ -115,8 +115,8 @@ hk.Game = function() {
 			}
 
 			// prevent player from moving outsite the map
-			if (this.x < 0) {
-				this.x = 0;
+			if (this.x < -120) {
+				this.x = -120;
 			}
 			if (this.y < 0) {
 				this.y = 0;
@@ -386,5 +386,7 @@ hk.Game = function() {
 				hk.player.h = 164;
 				break;
 		}
+
+		hk.notification('Upgrade !!!');
 	});
 }
