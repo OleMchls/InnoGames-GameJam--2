@@ -1,3 +1,6 @@
+var start_sink = 25000;
+var start_growth = 2000;
+
 var game  = {
 	roles: {
 		ATTACKER: 'attacker',
@@ -25,7 +28,9 @@ var game  = {
 	unit_count: 1,
 	viewport_w: 1400,
 	viewport_h: 600,
-	ai: null
+	ai: null,
+	sink: start_sink,
+	growth: start_growth
 };
 
 game.state = game.states.WAITING_FOR_PLAYERS;
@@ -133,7 +138,8 @@ function broadcastUnitsPos() {
 
 		if (data.x < 0 || data.y < 0 || data.x > game.viewport_w || data.y > game.viewport_h) {
 			if (data.x < 0) {
-				game.users[game.roles.DEFENDER].emit('end_reached', {unit: unit.unit_name, refund: units[unit.unit_name].price * 2});
+				game.sink += units[unit.unit_name].price * 2;
+				updateSink();
 			}
 
 			game.units.splice(i, 1);
@@ -169,6 +175,18 @@ function changeGameState(socket, state) {
 	game.state = state;
 	socket.emit('state_change', state);
 	socket.broadcast.emit('state_change', state);
+}
+
+function updateSink() {
+	var data = {sink: game.sink, growth: game.growth};
+
+	if (game.users.defender) {
+		game.users[game.roles.DEFENDER].emit('sink_update', data);
+		game.users[game.roles.DEFENDER].broadcast.emit('sink_update', data);
+	} else if(game.users.attacker) {
+		game.users[game.roles.ATTACKER].emit('sink_update', data);
+		game.users[game.roles.ATTACKER].broadcast.emit('sink_update', data);
+	}
 }
 
 exports.events = function (socket) {
@@ -217,9 +235,13 @@ exports.events = function (socket) {
 		game.unit_count++;
 	});
 	socket.on('spawn_unit', function (data) {
-		if (socket != game.users[game.roles.DEFENDER]) {
+		if (socket != game.users[game.roles.DEFENDER] || game.sink < units[data.unit_name].price) {
 			return;
 		}
+
+		game.sink -= units[data.unit_name].price;
+		game.growth += units[data.unit_name].growth;
+		updateSink();
 
 		game.units.push({id: game.unit_count, unit_name: data.unit_name, life: units[data.unit_name].life, x: data.x, y: data.y});
 		socket.broadcast.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
@@ -289,11 +311,30 @@ exports.events = function (socket) {
 			}
 		}
 
-	})
+	});
+
+	socket.on('end_reached', function (data) {
+		game.sink += parseInt(data.refund);
+		updateSink();
+	});
+
+	socket.on('reset_game', function() {
+		game.sink = start_sink;
+		game.growth = start_growth;
+		updateSink();
+	});
 
 	setInterval(broadcastAttackerPos, 35);
 	setInterval(broadcastProjectilesPos, 35);
 	setInterval(broadcastUnitsPos, 35);
 
+	if (socket == game.users[game.roles.DEFENDER]) {
+		setInterval(function() {
+			game.sink += game.growth;
+			updateSink();
+		}, 5000);
+	}
+
 	cleanupRoles();
+	updateSink();
 }

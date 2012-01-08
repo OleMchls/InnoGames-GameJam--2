@@ -83,12 +83,6 @@ hk.defender = function() {
 	}
 
 	this.spawnUnit = function(unit_name, x, y) {
-//		var unit;
-//		var currentSink = parseInt($('#sink span').text());
-//		if (currentSink < units[unit_name].price) {
-//			return
-//		}
-
 		socket.emit('spawn_unit', {unit_name: unit_name, x: x, y: y});
 	}
 
