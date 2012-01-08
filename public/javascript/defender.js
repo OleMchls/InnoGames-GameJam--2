@@ -63,8 +63,8 @@ hk.defender = function() {
 		})
 
 		$('#hidden-dropzone').bind('click.dropzone', function(event) {
-			var x = event.clientX - 150;
-			var y = event.clientY;
+			var x = event.offsetX + 1229;
+			var y = event.offsetY + 30;
 			that.spawnUnit(that.selectedUnit, x, y);
 		})
 
