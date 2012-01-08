@@ -310,8 +310,8 @@ hk.Game = function() {
 
 	socket.on('reset_game', function(){
 		$('#timer span').stopwatch({
-					updateInterval: 10
-				}).stopwatch('start');
+					updateInterval: 1
+				}).stopwatch('reset').stopwatch('start');
 				$('#health').text(100);
 	});
 
