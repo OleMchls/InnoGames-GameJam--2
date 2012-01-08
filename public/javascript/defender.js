@@ -63,8 +63,22 @@ hk.defender = function() {
 		})
 
 		$('#hidden-dropzone').bind('click.dropzone', function(event) {
-			var x = event.offsetX + 1229;
-			var y = event.offsetY + 30;
+			console.log(event);
+			var x = 0;
+			var y = 0;
+
+			if (event.offsetX) {
+				x = event.offsetX + 1229
+			} else {
+				x = event.pageX - 200;
+			}
+
+			if (event.offsetY) {
+				y = event.offsetY + 30;
+			} else {
+				y = event.pageY - 100;
+			}
+
 			that.spawnUnit(that.selectedUnit, x, y);
 		})
 
