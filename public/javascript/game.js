@@ -55,7 +55,8 @@ hk.Game = function() {
 				up: false,
 				down: false
 			},
-			upgrade: 1
+			upgrade: 1,
+			cooldown: 300
 		})
 		.image('/images/player_1.png')
 		.css('z-index', 100)
@@ -201,7 +202,7 @@ hk.Game = function() {
 		});
 
 		projectile_cooldown = true;
-		setTimeout(that.clearProjectileCooldown, 300);
+		setTimeout(that.clearProjectileCooldown, hk.player.cooldown);
 	}
 
 	this.clearProjectileCooldown = function() {
@@ -374,18 +375,22 @@ hk.Game = function() {
 			case 2:
 				hk.player.w = 291;
 				hk.player.h = 108;
+				hk.player.cooldown = 270;
 				break;
 			case 3:
 				hk.player.w = 291;
 				hk.player.h = 108;
+				hk.player.cooldown = 240;
 				break;
 			case 4:
 				hk.player.w = 291;
 				hk.player.h = 121;
+				hk.player.cooldown = 210;
 				break;
 			case 5:
 				hk.player.w = 292;
 				hk.player.h = 164;
+				hk.player.cooldown = 150;
 				break;
 		}
 
