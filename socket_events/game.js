@@ -144,7 +144,7 @@ function broadcastUnitsPos() {
 
 		if (data.x < 0 || data.y < 0 || data.x > game.viewport_w || data.y > game.viewport_h) {
 			if (data.x < 0) {
-				game.sink += units[unit.unit_name].price * 2;
+				game.sink += units[unit.unit_name].price * units[unit.unit_name].price / 4;
 				updateSink();
 			}
 
