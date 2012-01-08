@@ -136,3 +136,17 @@ body {
 	top: 430px;
 	height: 127px;
 }
+
+.ui-tooltip {
+	font-family: 'Schoolbell', cursive !important;
+	font-size: 20px !important;
+	line-height: 15px !important;
+}
+
+.bigger {
+ font-size: 25px;
+}
+
+.smaller {
+ font-size: 15px;
+}
