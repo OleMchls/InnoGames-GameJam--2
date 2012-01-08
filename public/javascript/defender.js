@@ -249,11 +249,11 @@ hk.defender = function() {
 		for (var i in spawned_units) {
 			if (spawned_units[i].id == data.id) {
 				if (data.shooted) {
-					soundManager.getSoundById('explosion_bomb').play();
 					spawned_units[i].unit.down = true;
 					spawned_units[i].unit.index = i;
 					spawned_units[i].unit.gravity();
 				} else {
+					soundManager.getSoundById('explosion_bomb').play();
 					spawned_units[i].unit.destroy();
 					spawned_units.splice(i, 1);
 				}
