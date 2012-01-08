@@ -193,6 +193,7 @@ hk.defender = function() {
 	socket.on('unit_down', function(data) {
 		for (var i in spawned_units) {
 			if (spawned_units[i].id == data.id) {
+				soundManager.getSoundById('explosion_bomb').play();
 				spawned_units[i].unit.destroy();
 				spawned_units.splice(i, 1);
 			}

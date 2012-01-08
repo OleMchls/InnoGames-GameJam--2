@@ -9,12 +9,16 @@ html
 		script(src='/javascript/jquery.stopwatch.js')
 		script(src='/javascript/crafty-min.js')
 		script(src='/socket.io/socket.io.js')
+		script(src='/javascript/soundmanager2-nodebug-jsmin.js')
 		script
 			var hk = {};
 			var socket = io.connect();
+			soundManager.url = '/swf/';
+			soundManager.flashVersion = 9;
 		script(src='/javascript/game.js')
 		script(src='/javascript/defender.js')
 		script(src='/javascript/notifications.js')
+		script(src='/javascript/soundlib.js')
 		script
 			$(function() {
 				var game = new hk.Game();
