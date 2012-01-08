@@ -1,4 +1,4 @@
-var start_sink = 25000;
+var start_sink = 15000;
 var start_growth = 2000;
 
 var game  = {
@@ -21,7 +21,10 @@ var game  = {
 		ATTACKER_LOST: 'attacker_lost'
 	},
 	state: null,
-	attacker_pos: {x: 43, y: 43},
+	attacker_pos: {
+		x: 43,
+		y: 43
+	},
 	attacker_health: 100,
 	projectiles: [],
 	projectiles_hit: [],
@@ -123,7 +126,11 @@ function broadcastUnitsPos() {
 			continue;
 		}
 
-		var data = {x: unit.x, y: unit.y, player: game.attacker_pos};
+		var data = {
+			x: unit.x,
+			y: unit.y,
+			player: game.attacker_pos
+			};
 		switch (unit.unit_name) {
 			case 'enemy1':
 				data = game.ai.enemy1(data);
@@ -144,15 +151,19 @@ function broadcastUnitsPos() {
 
 		if (data.x < 0 || data.y < 0 || data.x > game.viewport_w || data.y > game.viewport_h) {
 			if (data.x < 0) {
-				game.sink += units[unit.unit_name].price * units[unit.unit_name].price / 4;
+				game.sink += units[unit.unit_name].price * 2;
 				updateSink();
 			}
 
 			game.units.splice(i, 1);
 
 			if (game.users.defender) {
-				game.users[game.roles.DEFENDER].broadcast.emit('unit_down', {id: unit.id});
-				game.users[game.roles.DEFENDER].emit('unit_down', {id: unit.id});
+				game.users[game.roles.DEFENDER].broadcast.emit('unit_down', {
+					id: unit.id
+					});
+				game.users[game.roles.DEFENDER].emit('unit_down', {
+					id: unit.id
+					});
 			}
 		} else {
 			unit.x = data.x;
@@ -168,8 +179,12 @@ function broadcastUnitsPos() {
 
 function broadcastAttackerHealth() {
 	if (game.users.attacker) {
-		game.users[game.roles.ATTACKER].emit('update_health', {health: game.attacker_health});
-		game.users[game.roles.ATTACKER].broadcast.emit('update_health', {health: game.attacker_health});
+		game.users[game.roles.ATTACKER].emit('update_health', {
+			health: game.attacker_health
+			});
+		game.users[game.roles.ATTACKER].broadcast.emit('update_health', {
+			health: game.attacker_health
+			});
 	}
 }
 
@@ -192,7 +207,10 @@ function changeGameState(socket, state) {
 }
 
 function updateSink() {
-	var data = {sink: game.sink, growth: game.growth};
+	var data = {
+		sink: game.sink,
+		growth: game.growth
+		};
 
 	if (game.users.defender) {
 		game.users[game.roles.DEFENDER].emit('sink_update', data);
@@ -222,8 +240,12 @@ function checkAttackerUpgrade() {
 	}
 
 	if (game.users[game.roles.ATTACKER].upgrade > last) {
-		game.users[game.roles.ATTACKER].emit('upgrade_attacker', {upgrade: game.users[game.roles.ATTACKER].upgrade});
-		game.users[game.roles.ATTACKER].broadcast.emit('upgrade_attacker', {upgrade: game.users[game.roles.ATTACKER].upgrade});
+		game.users[game.roles.ATTACKER].emit('upgrade_attacker', {
+			upgrade: game.users[game.roles.ATTACKER].upgrade
+			});
+		game.users[game.roles.ATTACKER].broadcast.emit('upgrade_attacker', {
+			upgrade: game.users[game.roles.ATTACKER].upgrade
+			});
 	}
 }
 
@@ -275,9 +297,21 @@ exports.events = function (socket) {
 			return;
 		}
 
-		game.projectiles.push({id: game.unit_count, x: data.x, y: data.y});
-		socket.broadcast.emit('create_projectile', {id: game.unit_count, x: data.x, y: data.y});
-		socket.emit('create_projectile', {id: game.unit_count, x: data.x, y: data.y});
+		game.projectiles.push({
+			id: game.unit_count,
+			x: data.x,
+			y: data.y
+			});
+		socket.broadcast.emit('create_projectile', {
+			id: game.unit_count,
+			x: data.x,
+			y: data.y
+			});
+		socket.emit('create_projectile', {
+			id: game.unit_count,
+			x: data.x,
+			y: data.y
+			});
 		game.unit_count++;
 	});
 	socket.on('spawn_unit', function (data) {
@@ -289,9 +323,25 @@ exports.events = function (socket) {
 		game.growth += units[data.unit_name].growth;
 		updateSink();
 
-		game.units.push({id: game.unit_count, unit_name: data.unit_name, life: units[data.unit_name].life, x: data.x, y: data.y});
-		socket.broadcast.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
-		socket.emit('create_unit', {id: game.unit_count, unit_name: data.unit_name, x: data.x, y: data.y});
+		game.units.push({
+			id: game.unit_count,
+			unit_name: data.unit_name,
+			life: units[data.unit_name].life,
+			x: data.x,
+			y: data.y
+			});
+		socket.broadcast.emit('create_unit', {
+			id: game.unit_count,
+			unit_name: data.unit_name,
+			x: data.x,
+			y: data.y
+			});
+		socket.emit('create_unit', {
+			id: game.unit_count,
+			unit_name: data.unit_name,
+			x: data.x,
+			y: data.y
+			});
 		game.unit_count++;
 	});
 
@@ -299,7 +349,9 @@ exports.events = function (socket) {
 		for (var i in game.units) {
 			if (game.units[i].id == data.id && !hasProjectileHit(data.projectile_id)) {
 				if (game.units[i].unit_name != 'enemy1') {
-					game.projectiles_hit.push({id: data.projectile_id});
+					game.projectiles_hit.push({
+						id: data.projectile_id
+						});
 				}
 
 				game.units[i].life -= data.damage;
@@ -307,8 +359,14 @@ exports.events = function (socket) {
 				if (game.units[i].life < 1) {
 					game.units.splice(i, 1);
 
-					socket.broadcast.emit('unit_down', {id: data.id, shooted: true});
-					socket.emit('unit_down', {id: data.id, shooted: true});
+					socket.broadcast.emit('unit_down', {
+						id: data.id,
+						shooted: true
+					});
+					socket.emit('unit_down', {
+						id: data.id,
+						shooted: true
+					});
 
 					game.users.attacker.kills++;
 					checkAttackerUpgrade();
@@ -338,8 +396,12 @@ exports.events = function (socket) {
 
 	function killAttacker(score) {
 		for (var i in game.units) {
-			socket.broadcast.emit('unit_down', {id: game.units[i].id});
-			socket.emit('unit_down', {id: game.units[i].id});
+			socket.broadcast.emit('unit_down', {
+				id: game.units[i].id
+				});
+			socket.emit('unit_down', {
+				id: game.units[i].id
+				});
 		}
 		game.units = [];
 
@@ -375,8 +437,12 @@ exports.events = function (socket) {
 				broadcastAttackerHealth();
 
 				game.units.splice(i, 1);
-				socket.broadcast.emit('unit_down', {id: data.id});
-				socket.emit('unit_down', {id: data.id});
+				socket.broadcast.emit('unit_down', {
+					id: data.id
+					});
+				socket.emit('unit_down', {
+					id: data.id
+					});
 
 				if (game.attacker_health < 1) {
 					killAttacker(data.score);
@@ -398,13 +464,11 @@ exports.events = function (socket) {
 		socket.broadcast.emit('reset_game')
 	});
 
-	if (socket == game.users[game.roles.DEFENDER]) {
-		setInterval(function() {
-			game.sink += game.growth;
-			updateSink();
-		}, 5000);
-	}
-
 	cleanupRoles();
 	updateSink();
 }
+
+setInterval(function() {
+	game.sink += game.growth;
+	updateSink();
+}, 5000);
