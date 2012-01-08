@@ -56,7 +56,7 @@ hk.Game = function() {
 				down: false
 			},
 			upgrade: 1,
-			cooldown: 300
+			cooldown: 270
 		})
 		.image('/images/player_1.png')
 		.css('z-index', 100)
@@ -310,8 +310,8 @@ hk.Game = function() {
 
 	socket.on('reset_game', function(){
 		$('#timer span').stopwatch({
-					updateInterval: 10
-				}).stopwatch('start');
+					updateInterval: 1
+				}).stopwatch('reset').stopwatch('start');
 				$('#health').text(100);
 	});
 
@@ -375,22 +375,22 @@ hk.Game = function() {
 			case 2:
 				hk.player.w = 291;
 				hk.player.h = 108;
-				hk.player.cooldown = 270;
+				hk.player.cooldown = 240;
 				break;
 			case 3:
 				hk.player.w = 291;
 				hk.player.h = 108;
-				hk.player.cooldown = 240;
+				hk.player.cooldown = 210;
 				break;
 			case 4:
 				hk.player.w = 291;
 				hk.player.h = 121;
-				hk.player.cooldown = 210;
+				hk.player.cooldown = 180;
 				break;
 			case 5:
 				hk.player.w = 292;
 				hk.player.h = 164;
-				hk.player.cooldown = 150;
+				hk.player.cooldown = 120;
 				break;
 		}
 

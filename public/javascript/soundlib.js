@@ -6,42 +6,42 @@ soundManager.onready(function() {
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 40,
 		autoPlay: false
-	});
+	}).load();
 	soundManager.createSound({
 		id: 'hit', // required
 		url: '/audio/hit.mp3', // required
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 40,
 		autoPlay: false
-	});
+	}).load();
 	soundManager.createSound({
 		id: 'ship_die', // required
 		url: '/audio/ship_die.mp3', // required
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 40,
 		autoPlay: false
-	});
+	}).load();
 	soundManager.createSound({
 		id: 'shoot', // required
 		url: '/audio/shoot.mp3', // required
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 40,
 		autoPlay: false
-	});
+	}).load();
 	soundManager.createSound({
 		id: 'bell', // required
 		url: '/audio/bell.mp3', // required
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 60,
 		autoPlay: false
-	});
+	}).load();
 	soundManager.createSound({
 		id: 'print', // required
 		url: '/audio/print.mp3', // required
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 40,
 		autoPlay: false
-	});
+	}).load();
 
 	soundManager.createSound({
 		id: 'background', // required
