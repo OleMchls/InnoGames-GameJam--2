@@ -28,6 +28,20 @@ soundManager.onready(function() {
 		volume: 100,
 		autoPlay: false
 	});
+	soundManager.createSound({
+		id: 'bell', // required
+		url: '/audio/bell.mp3', // required
+		// optional sound parameters here, see Sound Properties for full list
+		volume: 120,
+		autoPlay: false
+	});
+	soundManager.createSound({
+		id: 'print', // required
+		url: '/audio/print.mp3', // required
+		// optional sound parameters here, see Sound Properties for full list
+		volume: 100,
+		autoPlay: false
+	});
 
 	soundManager.createSound({
 		id: 'background', // required

@@ -92,6 +92,8 @@ hk.defender = function() {
 		var unit = null;
 		var unit_id = data.id;
 
+		soundManager.getSoundById('print').play();
+
 		switch (data.unit_name) {
 			case 'enemy1':
 				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, Gravity, enemy1")
