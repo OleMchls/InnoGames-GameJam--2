@@ -2,26 +2,26 @@
 	#game-wrapper
 	#cr-stage
 	#attack-bar
-		#enemy1.enemy
+		#enemy1.enemy(title="<strong>-1000</strong> Sink<br/><strong>+100</strong> Growth")
 			a(href="#")
-		#enemy2.enemy
+		#enemy2.enemy(title="<strong>-3000</strong> Sink<br/><strong>+220</strong> Growth")
 			a(href="#")
-		#enemy3.enemy
+		#enemy3.enemy(title="<strong>-7500</strong> Sink<br/><strong>+350</strong> Growth")
 			a(href="#")
-		#enemy4.enemy
+		#enemy4.enemy(title="<strong>-10000</strong> Sink<br/><strong>+400</strong> Growth")
 			a(href="#")
-		#enemy5.enemy
+		#enemy5.enemy(title="<strong>-20000</strong> Sink<br/><strong>+500</strong> Growth")
 			a(href="#")
 	#hidden-dropzone
-	#role
+	#role(title="Your current Role!<p class='smaller'>There are 2 Roles in the Game:<dl><dt>attacker</dt><dd class='smaller'>The Attacker controls the Ship. He should avoid or destroy the defenders 'bombs'!</dd><dt>defender</dt><dd class='smaller'>The Defender has to stop the Attackers ship by spawning so called 'bombs'.</dd></dl></p>")
 		span -
-	#sink
+	#sink(title="With the <strong>Sink score</strong> the Defender can buy new Units.")
 		span 0
-	#growth
+	#growth(title="Amount of <strong>Sink</strong> the Defender will gain every 5 seconds.")
 		span 0
 		small &nbsp;/ 5 sec
-	#timer
+	#timer(title="Time the Attacker survived!")
 		span 00:00:000
-	#health
+	#health(title="Current Attackers health!")
 		span 100
 	#notifications-wrapper
