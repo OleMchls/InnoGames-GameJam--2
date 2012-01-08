@@ -130,30 +130,35 @@ hk.Game = function() {
 		})
 		.collision()
 		.onHit('enemy1', function(data) {
+			soundManager.getSoundById('hit').play();
 			if (hk.role == 'attacker' && !data[0].obj.down) {
 				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
 			//this.destroy();
 		})
 		.onHit('enemy2', function(data) {
+			soundManager.getSoundById('hit').play();
 			if (hk.role == 'attacker') {
 				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
 			//this.destroy();
 		})
 		.onHit('enemy3', function(data) {
+			soundManager.getSoundById('hit').play();
 			if (hk.role == 'attacker') {
 				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
 			//this.destroy();
 		})
 		.onHit('enemy4', function(data) {
+			soundManager.getSoundById('hit').play();
 			if (hk.role == 'attacker') {
 				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
 			//this.destroy();
 		})
 		.onHit('enemy5', function(data) {
+			soundManager.getSoundById('hit').play();
 			if (hk.role == 'attacker') {
 				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
@@ -228,6 +233,7 @@ hk.Game = function() {
 	});
 
 	socket.on('create_projectile', function(data) {
+		soundManager.getSoundById('shoot').play();
 		var projectile = Crafty.e('2D, DOM, Image, Collision, projectile')
 		.attr({
 			x: data.x,
@@ -322,6 +328,7 @@ hk.Game = function() {
 				}
 				break;
 			case 'back_round':
+				soundManager.getSoundById('ship_die').play();
 				socket.emit('reset_game');
 				$('#timer span').stopwatch({
 					updateInterval: 10

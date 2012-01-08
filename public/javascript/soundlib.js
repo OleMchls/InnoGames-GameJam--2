@@ -7,6 +7,27 @@ soundManager.onready(function() {
 		volume: 100,
 		autoPlay: false
 	});
+	soundManager.createSound({
+		id: 'hit', // required
+		url: '/audio/hit.mp3', // required
+		// optional sound parameters here, see Sound Properties for full list
+		volume: 100,
+		autoPlay: false
+	});
+	soundManager.createSound({
+		id: 'ship_die', // required
+		url: '/audio/ship_die.mp3', // required
+		// optional sound parameters here, see Sound Properties for full list
+		volume: 100,
+		autoPlay: false
+	});
+	soundManager.createSound({
+		id: 'shoot', // required
+		url: '/audio/shoot.mp3', // required
+		// optional sound parameters here, see Sound Properties for full list
+		volume: 100,
+		autoPlay: false
+	});
 
 	soundManager.createSound({
 		id: 'background', // required
