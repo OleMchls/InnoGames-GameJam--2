@@ -128,45 +128,35 @@ hk.Game = function() {
 			}
 		})
 		.collision()
-		.onHit('enemy1', function() {
+		.onHit('enemy1', function(data) {
 			if (hk.role == 'attacker') {
-				socket.emit('attacker_down', {
-					score: $('#timer span').text()
-				});
+				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
-			this.destroy();
+			//this.destroy();
 		})
-		.onHit('enemy2', function() {
+		.onHit('enemy2', function(data) {
 			if (hk.role == 'attacker') {
-				socket.emit('attacker_down', {
-					score: $('#timer span').text()
-				});
+				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
-			this.destroy();
+			//this.destroy();
 		})
-		.onHit('enemy3', function() {
+		.onHit('enemy3', function(data) {
 			if (hk.role == 'attacker') {
-				socket.emit('attacker_down', {
-					score: $('#timer span').text()
-				});
+				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
-			this.destroy();
+			//this.destroy();
 		})
-		.onHit('enemy4', function() {
+		.onHit('enemy4', function(data) {
 			if (hk.role == 'attacker') {
-				socket.emit('attacker_down', {
-					score: $('#timer span').text()
-				});
+				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
-			this.destroy();
+			//this.destroy();
 		})
-		.onHit('enemy5', function() {
+		.onHit('enemy5', function(data) {
 			if (hk.role == 'attacker') {
-				socket.emit('attacker_down', {
-					score: $('#timer span').text()
-				});
+				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
-			this.destroy();
+			//this.destroy();
 		});
 	}
 
@@ -285,7 +275,12 @@ hk.Game = function() {
 			if (!hk.started) {
 				setTimeout(pollGameStarted, 50);
 			} else {
+				Crafty('player').destroy();
 				that.createPlayer();
+
+				if (hk.role == 'attacker') {
+					that.updatePosition();
+				}
 			}
 		}
 		pollGameStarted();
@@ -302,13 +297,15 @@ hk.Game = function() {
 				socket.emit('reset_game');
 				$('#timer span').stopwatch({
 					updateInterval: 10
-				}).stopwatch('start')
+				}).stopwatch('start');
+				$('#health').text(100);
 				break;
 			case 'back_round':
 				socket.emit('reset_game');
 				$('#timer span').stopwatch({
 					updateInterval: 10
 				}).stopwatch('start');
+				$('#health').text(100);
 				break;
 			case 'attacker_win':
 				alert('attacker wins')
@@ -318,5 +315,9 @@ hk.Game = function() {
 				break;
 		}
 
+	})
+
+	socket.on('update_health', function(data) {
+		$('#health').text(data.health);
 	})
 }

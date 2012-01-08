@@ -22,6 +22,7 @@ var game  = {
 	},
 	state: null,
 	attacker_pos: {x: 43, y: 43},
+	attacker_health: 100,
 	projectiles: [],
 	projectiles_hit: [],
 	units: [],
@@ -40,27 +41,32 @@ var units = {
 	'enemy1': {
 		price: 1000,
 		growth: 100,
-		life: 1000
+		life: 1000,
+		damage: 2
 	},
 	'enemy2': {
 		price: 3000,
 		growth: 220,
-		life: 1000
+		life: 1000,
+		damage: 5
 	},
 	'enemy3': {
 		price: 7500,
 		growth: 350,
-		life: 2000
+		life: 2000,
+		damage: 10
 	},
 	'enemy4': {
 		price: 10000,
 		growth: 400,
-		life: 3000
+		life: 3000,
+		damage: 15
 	},
 	'enemy5': {
 		price: 20000,
 		growth: 500,
-		life: 5000
+		life: 5000,
+		damage: 20
 	}
 }
 
@@ -160,6 +166,13 @@ function broadcastUnitsPos() {
 	}
 }
 
+function broadcastAttackerHealth() {
+	if (game.users.attacker) {
+		game.users[game.roles.ATTACKER].emit('update_health', {health: game.attacker_health});
+		game.users[game.roles.ATTACKER].broadcast.emit('update_health', {health: game.attacker_health});
+	}
+}
+
 function hasProjectileHit(id) {
 	var hit = false;
 	for (var i in game.projectiles_hit) {
@@ -175,6 +188,7 @@ function changeGameState(socket, state) {
 	game.state = state;
 	socket.emit('state_change', state);
 	socket.broadcast.emit('state_change', state);
+	game.attacker_health = 100;
 }
 
 function updateSink() {
@@ -287,8 +301,14 @@ exports.events = function (socket) {
 		return mil;
 	}
 
-	socket.on('attacker_down', function(data) {
-		game.users.attacker.score = data.score;
+	function killAttacker(score) {
+		for (var i in game.units) {
+			socket.broadcast.emit('unit_down', {id: game.units[i].id});
+			socket.emit('unit_down', {id: game.units[i].id});
+		}
+		game.units = [];
+
+		game.users.attacker.score = score;
 		if (game.state == game.states.FIRST_ROUND) {
 			var ex_attacker = game.users.attacker;
 			var ex_defender = game.users.defender;
@@ -310,7 +330,24 @@ exports.events = function (socket) {
 				changeGameState(socket, game.states.ATTACKER_LOST);
 			}
 		}
+	}
 
+	socket.on('attacker_hit', function(data) {
+		for (var i in game.units) {
+			if (game.units[i] != undefined && game.units[i].id == data.id) {
+				game.attacker_health -= units[game.units[i].unit_name].damage;
+				game.attacker_health = Math.max(0, game.attacker_health);
+				broadcastAttackerHealth();
+
+				game.units.splice(i, 1);
+				socket.broadcast.emit('unit_down', {id: data.id});
+				socket.emit('unit_down', {id: data.id});
+
+				if (game.attacker_health < 1) {
+					killAttacker(data.score);
+				}
+			}
+		}
 	});
 
 	socket.on('end_reached', function (data) {

@@ -98,7 +98,8 @@ hk.defender = function() {
 					h: 34,
 					x: data.x,
 					y: data.y,
-					life: units[data.unit_name].life
+					life: units[data.unit_name].life,
+					unit_id: unit_id
 				})
 				.image('/images/bomb1.png')
 				.css('z-index', 100)
@@ -114,7 +115,8 @@ hk.defender = function() {
 					h: 29,
 					x: data.x,
 					y: data.y,
-					life: units[data.unit_name].life
+					life: units[data.unit_name].life,
+					unit_id: unit_id
 				})
 				.image('/images/bomb2.png')
 				.css('z-index', 100)
@@ -130,7 +132,8 @@ hk.defender = function() {
 					h: 70,
 					x: data.x,
 					y: data.y,
-					life: units[data.unit_name].life
+					life: units[data.unit_name].life,
+					unit_id: unit_id
 				})
 				.image('/images/bomb3.png')
 				.css('z-index', 100)
@@ -146,7 +149,8 @@ hk.defender = function() {
 					h: 50,
 					x: data.x,
 					y: data.y,
-					life: units[data.unit_name].life
+					life: units[data.unit_name].life,
+					unit_id: unit_id
 				})
 				.image('/images/bomb4.png')
 				.css('z-index', 100)
@@ -162,7 +166,8 @@ hk.defender = function() {
 					h: 50,
 					x: data.x,
 					y: data.y,
-					life: units[data.unit_name].life
+					life: units[data.unit_name].life,
+					unit_id: unit_id
 				})
 				.image('/images/bomb5.png')
 				.css('z-index', 100)
