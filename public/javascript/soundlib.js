@@ -13,7 +13,8 @@ soundManager.onready(function() {
 		url: '/audio/background.mp3', // required
 		// optional sound parameters here, see Sound Properties for full list
 		volume: 80,
-		autoPlay: true
+		autoPlay: true,
+		loops: 100000000
 	});
 
 });

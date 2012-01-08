@@ -319,8 +319,6 @@ hk.Game = function() {
 					hk.notification('You are ATTACKER!');
 				} else if (hk.role == 'defender') {
 					hk.notification('You are DEFENDER!');
-				} else {
-					hk.notification('Start!');
 				}
 				break;
 			case 'back_round':
@@ -334,8 +332,6 @@ hk.Game = function() {
 					hk.notification('You are ATTACKER!');
 				} else if (hk.role == 'defender') {
 					hk.notification('You are DEFENDER!');
-				} else {
-					hk.notification('Start!');
 				}
 				break;
 			case 'attacker_win':
