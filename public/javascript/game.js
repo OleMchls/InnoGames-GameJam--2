@@ -314,6 +314,7 @@ hk.Game = function() {
 					updateInterval: 10
 				}).stopwatch('start');
 				$('#health').text(100);
+				hk.notification('Start');
 				if (hk.role == 'attacker'){
 					hk.notification('You are ATTACKER!');
 				} else if (hk.role == 'defender') {
@@ -328,6 +329,7 @@ hk.Game = function() {
 					updateInterval: 10
 				}).stopwatch('start');
 				$('#health').text(100);
+				hk.notification('Switching sides');
 				if (hk.role == 'attacker'){
 					hk.notification('You are ATTACKER!');
 				} else if (hk.role == 'defender') {
