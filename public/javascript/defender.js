@@ -102,10 +102,13 @@ hk.defender = function() {
 					h: 34,
 					x: data.x,
 					y: data.y,
+					last_x: 0,
+					last_y: 0,
 					life: units[data.unit_name].life,
 					unit_id: unit_id,
 					down: false,
-					index: 0
+					index: 0,
+					nto: 0
 				})
 				.image('/images/bomb1.png')
 				.css('z-index', 100)
@@ -115,6 +118,9 @@ hk.defender = function() {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				})
 				.bind('EnterFrame', function() {
+					this.last_x = this.x;
+					this.last_y = this.y;
+
 					if (this.down) {
 						this.x -= 5;
 						if (this.y > 700) {
@@ -131,10 +137,13 @@ hk.defender = function() {
 					h: 29,
 					x: data.x,
 					y: data.y,
+					last_x: 0,
+					last_y: 0,
 					life: units[data.unit_name].life,
 					unit_id: unit_id,
 					down: false,
-					index: 0
+					index: 0,
+					nto: 0
 				})
 				.image('/images/bomb2.png')
 				.css('z-index', 100)
@@ -144,6 +153,9 @@ hk.defender = function() {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				})
 				.bind('EnterFrame', function() {
+					this.last_x = this.x;
+					this.last_y = this.y;
+
 					if (this.down) {
 						this.x -= 5;
 						if (this.y > 700) {
@@ -160,10 +172,13 @@ hk.defender = function() {
 					h: 70,
 					x: data.x,
 					y: data.y,
+					last_x: 0,
+					last_y: 0,
 					life: units[data.unit_name].life,
 					unit_id: unit_id,
 					down: false,
-					index: 0
+					index: 0,
+					nto: 0
 				})
 				.image('/images/bomb3.png')
 				.css('z-index', 100)
@@ -173,6 +188,9 @@ hk.defender = function() {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				})
 				.bind('EnterFrame', function() {
+					this.last_x = this.x;
+					this.last_y = this.y;
+
 					if (this.down) {
 						this.x -= 5;
 						if (this.y > 700) {
@@ -189,10 +207,13 @@ hk.defender = function() {
 					h: 50,
 					x: data.x,
 					y: data.y,
+					last_x: 0,
+					last_y: 0,
 					life: units[data.unit_name].life,
 					unit_id: unit_id,
 					down: false,
-					index: 0
+					index: 0,
+					nto: 0
 				})
 				.image('/images/bomb4.png')
 				.css('z-index', 100)
@@ -202,6 +223,9 @@ hk.defender = function() {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				})
 				.bind('EnterFrame', function() {
+					this.last_x = this.x;
+					this.last_y = this.y;
+
 					if (this.down) {
 						this.x -= 5;
 						if (this.y > 700) {
@@ -218,10 +242,13 @@ hk.defender = function() {
 					h: 50,
 					x: data.x,
 					y: data.y,
+					last_x: 0,
+					last_y: 0,
 					life: units[data.unit_name].life,
 					unit_id: unit_id,
 					down: false,
-					index: 0
+					index: 0,
+					nto: 0
 				})
 				.image('/images/bomb5.png')
 				.css('z-index', 100)
@@ -231,6 +258,9 @@ hk.defender = function() {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
 				})
 				.bind('EnterFrame', function() {
+					this.last_x = this.x;
+					this.last_y = this.y;
+
 					if (this.down) {
 						this.x -= 5;
 						if (this.y > 700) {
@@ -257,15 +287,9 @@ hk.defender = function() {
 	socket.on('unit_down', function(data) {
 		for (var i in spawned_units) {
 			if (spawned_units[i].id == data.id) {
-				if (data.shooted) {
-					spawned_units[i].unit.down = true;
-					spawned_units[i].unit.index = i;
-					spawned_units[i].unit.gravity();
-				} else {
 					soundManager.getSoundById('explosion_bomb').play();
 					spawned_units[i].unit.destroy();
 					spawned_units.splice(i, 1);
-				}
 			}
 		}
 	});
