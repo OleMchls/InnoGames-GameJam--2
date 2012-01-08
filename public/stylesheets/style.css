@@ -15,8 +15,9 @@ body {
 
 #cr-stage {
 	position: absolute !important;
-	left: 192px;
-	top: 92px;
+	margin-left: -765px;
+	margin-top: 92px;
+	left: 50%;
 	background: url(/images/back_kitchen7.jpg) repeat-x;
 }
 
@@ -24,29 +25,29 @@ body {
 	position: absolute !important;
 	width: 160px;
 	height: 485px;
-	left: 1408px;
-	top: 139px;
+	margin-left: 1408px;
+	margin-top: 139px;
 	z-index: 200;
 }
 
 #role {
-	left: 1596px;
-	top: 45px;
+	margin-left: 629px;
+	margin-top: 45px;
 }
 
 #sink {
-	left: 387px;
-	top: 693px;
+	margin-left: -573px;
+	margin-top: 693px;
 }
 
 #growth {
-	left: 698px;
-	top: 693px;
+	margin-left: -261px;
+	margin-top: 693px;
 }
 
 #timer {
-	top: 7px;
-	left: 330px;
+	margin-top: 7px;
+	margin-left: -630px;
 }
 
 #timer span,
@@ -55,8 +56,8 @@ body {
 }
 
 #health {
-	top: 54px;
-	left: 364px;
+	margin-top: 54px;
+	margin-left: -597px;
 }
 
 #role,
@@ -66,6 +67,7 @@ body {
 #health {
 	position: absolute;
 	z-index: 110;
+	left: 50%;
 	font-family: 'Schoolbell', cursive;
 	font-size: 30px;
 	color: #683B21;
@@ -73,12 +75,13 @@ body {
 
 #notifications-wrapper {
 	position: absolute;
+	left: 50%;
 	z-index: 1010;
 	color: #683B21;
 	width: 400px;
 	height: 200px;
-	top: 300px;
-	left: 700px;
+	margin-top: 300px;
+	margin-left: -200px;
 }
 
 #notifications-wrapper .message {
