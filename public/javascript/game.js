@@ -375,22 +375,22 @@ hk.Game = function() {
 			case 2:
 				hk.player.w = 291;
 				hk.player.h = 108;
-				hk.player.cooldown = 240;
+				hk.player.cooldown = 220;
 				break;
 			case 3:
 				hk.player.w = 291;
 				hk.player.h = 108;
-				hk.player.cooldown = 210;
+				hk.player.cooldown = 170;
 				break;
 			case 4:
 				hk.player.w = 291;
 				hk.player.h = 121;
-				hk.player.cooldown = 180;
+				hk.player.cooldown = 120;
 				break;
 			case 5:
 				hk.player.w = 292;
 				hk.player.h = 164;
-				hk.player.cooldown = 120;
+				hk.player.cooldown = 70;
 				break;
 		}
 
