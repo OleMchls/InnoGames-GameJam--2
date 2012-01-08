@@ -29,6 +29,18 @@ hk.Game = function() {
 		Crafty.init(1400, 600);
 		Crafty.canvas.init();
 
+		var defender = new hk.defender();
+		defender.init();
+
+		that.scrollBackground();
+		if (hk.role == 'attacker') {
+			that.updatePosition();
+		}
+
+		hk.started = true;
+	}
+
+	this.createPlayer = function() {
 		hk.player = Crafty.e("2D, DOM, Image, Collision, player")
 		.attr({
 			w: 15,
@@ -156,14 +168,6 @@ hk.Game = function() {
 			}
 			this.destroy();
 		});
-
-		var defender = new hk.defender();
-		defender.init();
-
-		that.scrollBackground();
-		if (hk.role == 'attacker') {
-			that.updatePosition();
-		}
 	}
 
 	this.scrollBackground = function() {
@@ -195,7 +199,7 @@ hk.Game = function() {
 	}
 
 	this.updatePosition = function() {
-		if (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 20) {
+		if (hk.player && (hk.player.last_x != hk.player.x || hk.player.last_y != hk.player.y || ticks_player_unsynced >= 20)) {
 			socket.emit('new_attacker_pos', {
 				x: hk.player.x,
 				y: hk.player.y
@@ -212,8 +216,10 @@ hk.Game = function() {
 	}
 
 	socket.on('update_attacker_pos', function(data) {
-		hk.player.x = data.x;
-		hk.player.y = data.y;
+		if (hk.player) {
+			hk.player.x = data.x;
+			hk.player.y = data.y;
+		}
 	});
 
 	socket.on('create_projectile', function(data) {
@@ -274,6 +280,15 @@ hk.Game = function() {
 	socket.on('role_update', function(data) {
 		hk.role = data.role;
 		$('#role span').text(data.role)
+
+		var pollGameStarted = function() {
+			if (!hk.started) {
+				setTimeout(pollGameStarted, 50);
+			} else {
+				that.createPlayer();
+			}
+		}
+		pollGameStarted();
 	})
 
 	socket.on('state_change', function(state) {
