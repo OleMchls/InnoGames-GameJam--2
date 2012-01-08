@@ -24,7 +24,7 @@ var ai = function() {
 	this.enemy3 = function(data) {
 		data.x -= 3.4;
 		if (data.player.x < data.x) {
-			if (data.player.y > (data.y - 100))
+			if (data.player.y > (data.y - 50))
 				data.y += 1.4;
 			else
 				data.y -= 1.4;
