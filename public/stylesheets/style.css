@@ -11,6 +11,7 @@ body {
 	left: 50%;
 	z-index: 100;
 	position: absolute;
+	box-shadow: 1px 0px 43px #000;
 }
 
 #cr-stage {
@@ -18,7 +19,7 @@ body {
 	margin-left: -765px;
 	margin-top: 92px;
 	left: 50%;
-	background: url(/images/back_kitchen7.jpg) repeat-x;
+	background: url(/images/back_kitchen.jpg) repeat-x;
 }
 
 #hidden-dropzone {

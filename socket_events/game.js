@@ -130,7 +130,7 @@ function broadcastUnitsPos() {
 			x: unit.x,
 			y: unit.y,
 			player: game.attacker_pos
-			};
+		};
 		switch (unit.unit_name) {
 			case 'enemy1':
 				data = game.ai.enemy1(data);
@@ -210,7 +210,7 @@ function updateSink() {
 	var data = {
 		sink: game.sink,
 		growth: game.growth
-		};
+	};
 
 	if (game.users.defender) {
 		game.users[game.roles.DEFENDER].emit('sink_update', data);
