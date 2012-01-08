@@ -119,7 +119,9 @@ hk.Game = function() {
 			if (this.x < -120) {
 				this.x = -120;
 			}
-			if (this.y < 0) {
+			if (this.upgrade == 5 && this.y < -20) {
+				this.y = 20;
+			} else if (this.y < 0) {
 				this.y = 0;
 			}
 			if (this.y > Crafty.viewport.height - this.h) {
