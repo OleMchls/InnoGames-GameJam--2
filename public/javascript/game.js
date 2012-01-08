@@ -292,6 +292,7 @@ hk.Game = function() {
 			case 'waiting_for_players':
 				break;
 			case 'waiting_for_defender':
+				hk.notification('Waiting for Defender!');
 				break;
 			case 'first_round':
 				socket.emit('reset_game');
@@ -299,6 +300,13 @@ hk.Game = function() {
 					updateInterval: 10
 				}).stopwatch('start');
 				$('#health').text(100);
+				if (hk.role == 'attacker'){
+					hk.notification('You are ATTACKER!');
+				} else if (hk.role == 'defender') {
+					hk.notification('You are DEFENDER!');
+				} else {
+					hk.notification('Start!');
+				}
 				break;
 			case 'back_round':
 				socket.emit('reset_game');
@@ -306,12 +314,31 @@ hk.Game = function() {
 					updateInterval: 10
 				}).stopwatch('start');
 				$('#health').text(100);
+				if (hk.role == 'attacker'){
+					hk.notification('You are ATTACKER!');
+				} else if (hk.role == 'defender') {
+					hk.notification('You are DEFENDER!');
+				} else {
+					hk.notification('Start!');
+				}
 				break;
 			case 'attacker_win':
-				alert('attacker wins')
+				if (hk.role == 'attacker'){
+					hk.notification('You WON!');
+				} else if (hk.role == 'defender') {
+					hk.notification('You Lost :(');
+				} else {
+					hk.notification('Attacker won the Game!');
+				}
 				break;
 			case 'attacker_lost':
-				alert('defender wins')
+				if (hk.role == 'defender'){
+					hk.notification('You WON!');
+				} else if (hk.role == 'attacker') {
+					hk.notification('You Lost :(');
+				} else {
+					hk.notification('Defender won the Game!');
+				}
 				break;
 		}
 
