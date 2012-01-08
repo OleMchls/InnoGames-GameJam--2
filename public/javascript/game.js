@@ -43,8 +43,8 @@ hk.Game = function() {
 	this.createPlayer = function() {
 		hk.player = Crafty.e("2D, DOM, Image, Collision, player")
 		.attr({
-			w: 15,
-			h: 15,
+			w: 225,
+			h: 108,
 			x: 43,
 			y: 43,
 			last_x: 43,
@@ -130,7 +130,7 @@ hk.Game = function() {
 		})
 		.collision()
 		.onHit('enemy1', function(data) {
-			if (hk.role == 'attacker') {
+			if (hk.role == 'attacker' && !data[0].obj.down) {
 				socket.emit('attacker_hit', {id: data[0].obj.unit_id, score: $('#timer span').text()});
 			}
 			//this.destroy();
@@ -365,5 +365,24 @@ hk.Game = function() {
 	socket.on('upgrade_attacker', function(data) {
 		hk.player.image('/images/player_' + data.upgrade + '.png');
 		hk.player.upgrade = data.upgrade;
+
+		switch (data.upgrade) {
+			case 2:
+				hk.player.w = 291;
+				hk.player.h = 108;
+				break;
+			case 3:
+				hk.player.w = 291;
+				hk.player.h = 108;
+				break;
+			case 4:
+				hk.player.w = 291;
+				hk.player.h = 121;
+				break;
+			case 5:
+				hk.player.w = 292;
+				hk.player.h = 164;
+				break;
+		}
 	});
 }

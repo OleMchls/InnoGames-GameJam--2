@@ -303,8 +303,8 @@ exports.events = function (socket) {
 				if (game.units[i].life < 1) {
 					game.units.splice(i, 1);
 
-					socket.broadcast.emit('unit_down', {id: data.id});
-					socket.emit('unit_down', {id: data.id});
+					socket.broadcast.emit('unit_down', {id: data.id, shooted: true});
+					socket.emit('unit_down', {id: data.id, shooted: true});
 
 					game.users.attacker.kills++;
 					checkAttackerUpgrade();

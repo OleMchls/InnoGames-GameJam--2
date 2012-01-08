@@ -92,88 +92,143 @@ hk.defender = function() {
 
 		switch (data.unit_name) {
 			case 'enemy1':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy1")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, Gravity, enemy1")
 				.attr({
 					w: 72,
 					h: 34,
 					x: data.x,
 					y: data.y,
 					life: units[data.unit_name].life,
-					unit_id: unit_id
+					unit_id: unit_id,
+					down: false,
+					index: 0
 				})
 				.image('/images/bomb1.png')
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
+				})
+				.bind('EnterFrame', function() {
+					if (this.down) {
+						this.x -= 5;
+						if (this.y > 700) {
+							spawned_units.splice(this.index, 1);
+							this.destroy();
+						}
+					}
 				});
 				break;
 			case 'enemy2':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy2")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, Gravity, enemy2")
 				.attr({
 					w: 73,
 					h: 29,
 					x: data.x,
 					y: data.y,
 					life: units[data.unit_name].life,
-					unit_id: unit_id
+					unit_id: unit_id,
+					down: false,
+					index: 0
 				})
 				.image('/images/bomb2.png')
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
+				})
+				.bind('EnterFrame', function() {
+					if (this.down) {
+						this.x -= 5;
+						if (this.y > 700) {
+							spawned_units.splice(this.index, 1);
+							this.destroy();
+						}
+					}
 				});
 				break;
 			case 'enemy3':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy3")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, Gravity, enemy3")
 				.attr({
 					w: 144,
 					h: 70,
 					x: data.x,
 					y: data.y,
 					life: units[data.unit_name].life,
-					unit_id: unit_id
+					unit_id: unit_id,
+					down: false,
+					index: 0
 				})
 				.image('/images/bomb3.png')
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
+				})
+				.bind('EnterFrame', function() {
+					if (this.down) {
+						this.x -= 5;
+						if (this.y > 700) {
+							spawned_units.splice(this.index, 1);
+							this.destroy();
+						}
+					}
 				});
 				break;
 			case 'enemy4':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy4")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, Gravity, enemy4")
 				.attr({
 					w: 50,
 					h: 50,
 					x: data.x,
 					y: data.y,
 					life: units[data.unit_name].life,
-					unit_id: unit_id
+					unit_id: unit_id,
+					down: false,
+					index: 0
 				})
 				.image('/images/bomb4.png')
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
+				})
+				.bind('EnterFrame', function() {
+					if (this.down) {
+						this.x -= 5;
+						if (this.y > 700) {
+							spawned_units.splice(this.index, 1);
+							this.destroy();
+						}
+					}
 				});
 				break;
 			case 'enemy5':
-				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, enemy5")
+				unit = Crafty.e("2D, Canvas, Image, Collision, HTML, Gravity, enemy5")
 				.attr({
 					w: 50,
 					h: 50,
 					x: data.x,
 					y: data.y,
 					life: units[data.unit_name].life,
-					unit_id: unit_id
+					unit_id: unit_id,
+					down: false,
+					index: 0
 				})
 				.image('/images/bomb5.png')
 				.css('z-index', 100)
 				.collision()
 				.onHit('projectile', function(data) {
 					socket.emit('unit_hit', {id: unit_id, damage: data[0].obj.damage, projectile_id: data[0].obj.projectile_id});
+				})
+				.bind('EnterFrame', function() {
+					if (this.down) {
+						this.x -= 5;
+						if (this.y > 700) {
+							spawned_units.splice(this.index, 1);
+							this.destroy();
+						}
+					}
 				});
 				break;
 		}
@@ -193,8 +248,14 @@ hk.defender = function() {
 	socket.on('unit_down', function(data) {
 		for (var i in spawned_units) {
 			if (spawned_units[i].id == data.id) {
-				spawned_units[i].unit.destroy();
-				spawned_units.splice(i, 1);
+				if (data.shooted) {
+					spawned_units[i].unit.down = true;
+					spawned_units[i].unit.index = i;
+					spawned_units[i].unit.gravity();
+				} else {
+					spawned_units[i].unit.destroy();
+					spawned_units.splice(i, 1);
+				}
 			}
 		}
 	});
