@@ -83,7 +83,9 @@ hk.defender = function() {
 	}
 
 	this.spawnUnit = function(unit_name, x, y) {
-		socket.emit('spawn_unit', {unit_name: unit_name, x: x, y: y});
+		if (unit_name && x && y) {
+			socket.emit('spawn_unit', {unit_name: unit_name, x: x, y: y});
+		}
 	}
 
 	socket.on('create_unit', function(data) {
