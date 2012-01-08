@@ -56,7 +56,7 @@ hk.Game = function() {
 				down: false
 			}
 		})
-		.image('/images/player.png')
+		.image('/images/player_1.png')
 		.css('z-index', 100)
 		.bind("KeyDown", function(e) {
 			if (e.keyCode && hk.role == 'attacker') {
@@ -74,7 +74,7 @@ hk.Game = function() {
 						this.move.down = true;
 						break;
 					case Crafty.keys.SPACE:
-						that.shootProjectile(true);
+						that.shootProjectile();
 						break;
 					default:
 						break;
@@ -167,7 +167,7 @@ hk.Game = function() {
 		setTimeout(that.scrollBackground, 30);
 	}
 
-	this.shootProjectile = function(sync) {
+	this.shootProjectile = function() {
 		if (projectile_cooldown) {
 			return;
 		}
@@ -319,5 +319,9 @@ hk.Game = function() {
 
 	socket.on('update_health', function(data) {
 		$('#health').text(data.health);
-	})
+	});
+
+	socket.on('upgrade_attacker', function(data) {
+		hk.player.image('/images/player_' + data.upgrade + '.png');
+	});
 }

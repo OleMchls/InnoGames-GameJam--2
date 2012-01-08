@@ -203,17 +203,45 @@ function updateSink() {
 	}
 }
 
+function checkAttackerUpgrade() {
+	var last = game.users[game.roles.ATTACKER].upgrade;
+
+	switch (game.users[game.roles.ATTACKER].kills) {
+		case 25:
+			game.users[game.roles.ATTACKER].upgrade = 2;
+			break;
+		case 50:
+			game.users[game.roles.ATTACKER].upgrade = 3;
+			break;
+		case 100:
+			game.users[game.roles.ATTACKER].upgrade = 4;
+			break;
+		case 200:
+			game.users[game.roles.ATTACKER].upgrade = 5;
+			break;
+	}
+
+	if (game.users[game.roles.ATTACKER].upgrade > last) {
+		game.users[game.roles.ATTACKER].emit('upgrade_attacker', {upgrade: game.users[game.roles.ATTACKER].upgrade});
+		game.users[game.roles.ATTACKER].broadcast.emit('upgrade_attacker', {upgrade: game.users[game.roles.ATTACKER].upgrade});
+	}
+}
+
 exports.events = function (socket) {
 	cleanupRoles();
 
 	if (!game.users[game.roles.ATTACKER]) {
 		game.users[game.roles.ATTACKER] = socket;
+		game.users[game.roles.ATTACKER].kills = 0;
+		game.users[game.roles.ATTACKER].upgrade = 1;
 		changeGameState(socket, game.states.WAITING_FOR_DEFENDER)
 		socket.emit('role_update', {
 			role: game.roles.ATTACKER
 		})
 	} else if (!game.users[game.roles.DEFENDER]) {
 		game.users[game.roles.DEFENDER] = socket;
+		game.users[game.roles.DEFENDER].kills = 0;
+		game.users[game.roles.DEFENDER].upgrade = 1;
 		changeGameState(socket, game.states.FIRST_ROUND)
 		socket.emit('role_update', {
 			role: game.roles.DEFENDER
@@ -277,6 +305,9 @@ exports.events = function (socket) {
 
 					socket.broadcast.emit('unit_down', {id: data.id});
 					socket.emit('unit_down', {id: data.id});
+
+					game.users.attacker.kills++;
+					checkAttackerUpgrade();
 				}
 			}
 		}
