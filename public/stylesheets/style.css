@@ -22,10 +22,11 @@ body {
 }
 
 #hidden-dropzone {
+	left: 50%;
 	position: absolute !important;
 	width: 160px;
 	height: 485px;
-	margin-left: 1408px;
+	margin-left: 451px;
 	margin-top: 139px;
 	z-index: 200;
 }
@@ -93,11 +94,12 @@ body {
 
 #attack-bar {
 	position: absolute;
+	left: 50%;
 	z-index: 110;
 	width: 158px;
 	height: 596px;
-	top: 82px;
-	left: 1600px;
+	margin-top: 82px;
+	margin-left: 646px;
 }
 
 #attack-bar .enemy {
